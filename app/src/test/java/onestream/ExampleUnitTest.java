@@ -1,4 +1,4 @@
-package russ.multimusic;
+package onestream;
 
 import org.junit.Test;
 

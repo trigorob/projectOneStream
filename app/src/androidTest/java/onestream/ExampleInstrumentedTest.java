@@ -1,4 +1,4 @@
-package russ.multimusic;
+package onestream;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("russ.multimusic", appContext.getPackageName());
+        assertEquals("onestream", appContext.getPackageName());
     }
 }
