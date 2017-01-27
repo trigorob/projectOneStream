@@ -8,20 +8,56 @@ import android.util.ArraySet;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class MusicGetter {
 
     //"src/main/res/foodlists/Berries.txt"
     String[] files;
-    String directory = "./app/src/main/res/raw/";
+    Integer[] fileData;
+    static String testDirectory = "./app/src/main/res/raw/";
+    String directory = "R.raw";
 
-    public MusicGetter(ArrayList<File> f) {
-        this.files = fileNames("./app/src/main/res/raw/");
+
+    public void getRawFiles() {
+        Field[] fields = R.raw.class.getFields();
+        ArrayList<Integer> tempFiles = new ArrayList<Integer>();
+        ArrayList<String> tempNames = new ArrayList<String>();
+        for(Field f : fields)
+            try {
+                tempFiles.add(f.getInt(null));
+                if (f!= null && f.getName() != null) {
+                    tempNames.add(f.getName());
+                }
+            } catch (IllegalArgumentException e) {
+            } catch (IllegalAccessException e) { }
+
+        fileData = new Integer[tempFiles.size()];
+        files = new String[tempFiles.size()];
+        for (int i = 0; i < tempFiles.size(); i++)
+        {
+            fileData[i] = tempFiles.get(i);
+            files[i] = tempNames.get(i);
+        }
+
+        return;
+    }
+
+    public MusicGetter() {
+        this.getRawFiles();
+    }
+
+    public Integer[] getFileData() {
+        return this.fileData;
+    }
+
+    public MusicGetter(String directory) {
+        this.files = fileNames(directory);
     }
 
     public String[] getFileStrings() {
-        return files;
+        return this.files;
     }
 
     public String getDirectory()
@@ -29,7 +65,12 @@ public class MusicGetter {
         return this.directory;
     }
 
-    public static String[] fileNames(String directoryPath) {
+    public String getTestDirectory()
+    {
+        return testDirectory;
+    }
+
+    public String[] fileNames(String directoryPath) {
 
         File dir = new File(directoryPath);
         Collection<String> files = new ArrayList<String>();
@@ -40,7 +81,6 @@ public class MusicGetter {
                     String fname = file.getName();
                     String[] s = fname.split(".mp3");
                     fname = s[0];
-                    System.out.println(fname);
                     files.add(fname);
                 }
             }
@@ -75,7 +115,8 @@ public class MusicGetter {
     }
 
     public static void main(String[] args) throws IOException {
-        MusicGetter fs = new MusicGetter(null);
+        MusicGetter fs = new MusicGetter(testDirectory);
+        System.out.println(fs.fileNames(fs.getTestDirectory())[1]);
         System.out.println(fs.selectSong(0));
         System.out.println(fs.selectRandomSong());
 

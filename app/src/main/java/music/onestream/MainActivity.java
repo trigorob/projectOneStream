@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Switch;
 import android.widget.TextView;
 import android.app.Activity;
 import android.media.MediaPlayer;
@@ -29,16 +30,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     // variable declaration
     private ListView mainList;
-    private MusicGetter mG = new MusicGetter(null);
+    private MusicGetter mG = new MusicGetter();
     private MediaPlayer mp;
-    //private final String[] listContent = mG.getFileStrings();
-    //private Integer[] resID = mG.getFiles(mG.getDirectory());
-    private final String[] listContent = {"badsong" , "samesong"};
-    private final int[] resID = { R.raw.badsong, R.raw.samesong };
+
+    private String[] listContent = mG.getFileStrings();
+    private Integer[] resID = mG.getFileData();
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -90,6 +90,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -107,6 +111,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        mViewPager.setCurrentItem(1);
 
         // Initializing variables
         mp = new MediaPlayer();
@@ -115,10 +120,33 @@ public class MainActivity extends Activity {
                 android.R.layout.simple_list_item_1, listContent);
         mainList.setAdapter(adapter);
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {playSong(position);}});
 
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            //TODO: Optimize. Also need lists for spotify/soundcloud
+            @Override
+            public void onPageSelected(int position) {
+                switch (mViewPager.getCurrentItem()) {
+                    case 0:
+                        mainList.setVisibility(View.INVISIBLE);
+                        break;
+                    case 1:
+                        mainList.setVisibility(View.VISIBLE);
+                        break;
+                    case 2:
+                        mainList.setVisibility(View.INVISIBLE);
+                        break;
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
+        mViewPager.setCurrentItem(1);
     }
 
     /**
@@ -162,7 +190,8 @@ public class MainActivity extends Activity {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public SectionsPagerAdapter(FragmentManager fm)
+        {
             super(fm);
         }
 
@@ -183,11 +212,11 @@ public class MainActivity extends Activity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Spotify";
                 case 1:
-                    return "SECTION 2";
+                    return "Local";
                 case 2:
-                    return "SECTION 3";
+                    return "Soundcloud";
             }
             return null;
         }
