@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="onestream.MainActivity">
+    tools:context="music.onestream.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -38,6 +38,31 @@
             android:layout_weight="1" />
 
     </android.support.design.widget.AppBarLayout>
+
+
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.example.audio.MainActivity" >
+
+        <ListView
+            android:id="@+id/ListView1"
+            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:layout_height="368dp"
+            android:layout_marginTop="105dp">
+        </ListView>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="317dp"
@@ -92,5 +117,6 @@
             android:clickable="true" />
 
     </RelativeLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,4 +1,4 @@
-package onestream;
+package music.onestream;
 
 import org.junit.Test;
 
