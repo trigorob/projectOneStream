@@ -54,7 +54,10 @@
         tools:context="com.example.audio.MainActivity" >
 
         <ListView
+            android:background="@drawable/listbackground"
+            android:listSelector="#E0ECF8"
             android:id="@+id/ListView1"
+            android:choiceMode="singleChoice"
             android:layout_width="match_parent"
             android:layout_centerHorizontal="true"
             android:orientation="vertical"
@@ -81,7 +84,8 @@
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
             app:backgroundTint="@android:color/black"
-            app:srcCompat="@mipmap/fabio" />
+            android:scaleType="center"
+            android:src="@drawable/play"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/Next"

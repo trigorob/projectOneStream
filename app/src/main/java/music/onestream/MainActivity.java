@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] listContent = mG.getFileStrings();
     private Integer[] resID = mG.getFileData();
+    int currentSongPosition = -1;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -60,6 +61,14 @@ public class MainActivity extends AppCompatActivity {
         mp.reset();// stops any current playing song
         mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
         mp.start(); // starting mediaplayer
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        fabIO.setImageResource(R.drawable.stop);
+    }
+
+    public void stopSong() {
+        mp.reset();
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        fabIO.setImageResource(R.drawable.play);
     }
 
     @Override
@@ -102,15 +111,6 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-        fabIO.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         mViewPager.setCurrentItem(1);
 
         // Initializing variables
@@ -121,8 +121,28 @@ public class MainActivity extends AppCompatActivity {
         mainList.setAdapter(adapter);
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {playSong(position);}});
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+            {
+                currentSongPosition = position;
+                playSong(position);
+            }});
 
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        fabIO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    //Play song. TODO: change to stopbutton after
+                    if (currentSongPosition != -1) {
+                        if (!mp.isPlaying()) {
+                            playSong(currentSongPosition);
+                        } else //Stop song. TODO: change to playbutton after
+                        {
+                            stopSong();
+                        }
+                    }
+                };
+        }});
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

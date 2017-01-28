@@ -1,0 +1,3 @@
+Soundcloud:
+	Client ID: 0785a1e619c34d11b2f50cb717c27da0
+	Client Secret: 64cc31d2363943199a9b580db2b1dfcd
