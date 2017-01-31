@@ -1,8 +1,8 @@
 package music.onestream;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -17,14 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Switch;
 import android.widget.TextView;
-import android.app.Activity;
 import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -61,13 +55,13 @@ public class MainActivity extends AppCompatActivity {
         mp.reset();// stops any current playing song
         mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
         mp.start(); // starting mediaplayer
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
         fabIO.setImageResource(R.drawable.stop);
     }
 
     public void stopSong() {
         mp.reset();
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
         fabIO.setImageResource(R.drawable.play);
     }
 
@@ -91,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent settings = new Intent(mViewPager.getContext(), Settings.class);
+            startActivityForResult(settings, 0);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -102,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -127,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 playSong(position);
             }});
 
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
         fabIO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
+
     }
 
     /**

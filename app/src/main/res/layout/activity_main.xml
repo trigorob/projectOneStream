@@ -74,7 +74,7 @@
         android:layout_weight="100"
         android:layout_marginLeft="@dimen/fab_margin">
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabIO"
+            android:id="@+id/change_dir"
             android:height="100dp"
             android:layout_width="277dp"
             android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
             android:layout_width="277dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_toRightOf="@+id/fabIO"
+            android:layout_toRightOf="@+id/change_dir"
             app:srcCompat="@android:drawable/ic_dialog_email"
             app:elevation="0dp"
             android:layout_margin="@dimen/fab_margin"
