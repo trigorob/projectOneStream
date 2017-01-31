@@ -9,6 +9,7 @@ import android.util.ArraySet;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.*;
 
 public class MusicGetter {
@@ -16,6 +17,7 @@ public class MusicGetter {
     //"src/main/res/foodlists/Berries.txt"
     String[] files;
     Integer[] fileData;
+    URI[] fileURI;
     static String testDirectory = "./app/src/main/res/raw/";
     String directory = "R.raw";
 
@@ -46,14 +48,21 @@ public class MusicGetter {
 
     public MusicGetter() {
         this.getRawFiles();
+        this.fileURI = null;
     }
 
     public Integer[] getFileData() {
         return this.fileData;
     }
 
-    public MusicGetter(String directory) {
-        this.files = fileNames(directory);
+    public MusicGetter(String directory)
+    {
+        if (!directory.equals("Default")) {
+            this.files = fileNames(directory);
+            this.fileURI = getFiles(directory);
+            this.fileData = null;
+        }
+        else this.getRawFiles();
     }
 
     public String[] getFileStrings() {
@@ -85,13 +94,14 @@ public class MusicGetter {
                 }
             }
         }
-        return files.toArray(new String[]{});
+        this.files = files.toArray(new String[]{});
+        return this.files;
     }
 
-    public static Integer[] getFiles(String directoryPath) {
+    public URI[] getFiles(String directoryPath) {
 
         File dir = new File(directoryPath);
-        Collection<File> files = new ArrayList<File>();
+        ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()){
             File[] listFiles = dir.listFiles();
             for(File file : listFiles){
@@ -100,7 +110,13 @@ public class MusicGetter {
                 }
             }
         }
-        return files.toArray(new Integer[]{});
+        URI[] fileInts = new URI[files.size()];
+        for (int i = 0; i < files.size(); i++)
+        {
+            fileInts[i] = files.get(i).toURI();
+        }
+        this.fileURI = fileInts;
+        return this.fileURI;
     }
 
     public File selectSong(int numItems) throws IOException{

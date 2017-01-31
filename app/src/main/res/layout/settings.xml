@@ -19,14 +19,23 @@
     />
 
 
-    <android.widget.EditText
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="250dp"
+        android:id="@+id/resetDir"
+        android:text="Reset directory"
+        android:onClick="goBack" />
+    />
+
+    <TextView
         android:visibility="visible"
         android:id="@+id/dirName"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="80dp"
-        android:text="C:/android.raw" />
+        android:text="Default" />
 
     <RelativeLayout
         android:layout_width="317dp"

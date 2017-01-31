@@ -1,6 +1,8 @@
 package music.onestream;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -23,16 +25,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.net.URI;
+
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int ACTIVITY_CHOOSE_FILE = 5;
+    public static final int ACTIVITY_CHANGE_DIR = 6;
+
     // variable declaration
     private ListView mainList;
-    private MusicGetter mG = new MusicGetter();
+    private MusicGetter mG;
     private MediaPlayer mp;
-
-    private String[] listContent = mG.getFileStrings();
-    private Integer[] resID = mG.getFileData();
+    private static String[] listContent;
+    private static Integer[] resID;
+    private static Uri[] resURI;
     int currentSongPosition = -1;
 
     /**
@@ -53,10 +60,36 @@ public class MainActivity extends AppCompatActivity {
     public void playSong(int songIndex) {
         // Play song
         mp.reset();// stops any current playing song
-        mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
+
+        if (resURI != null) {
+            mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
+        }
+        else  {
+            mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
+        }
         mp.start(); // starting mediaplayer
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
         fabIO.setImageResource(R.drawable.stop);
+    }
+
+    public void setMusicDir(MusicGetter mG, String dir)
+    {
+        mG = new MusicGetter(dir);
+        listContent = mG.files;
+        if (!(mG.fileData == null))
+        {
+            resID = mG.fileData;
+            resURI = null;
+        }
+        else
+        {
+            resURI = new Uri[mG.fileURI.length];
+            for (int i = 0; i < mG.fileURI.length; i++) {
+                resURI[i] = android.net.Uri.parse(mG.fileURI[i].toString());
+            }
+            resID = null;
+        }
+
     }
 
     public void stopSong() {
@@ -79,6 +112,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ACTIVITY_CHANGE_DIR) {
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = getIntent().getExtras();
+                String dir = bundle.getString("dir");
+                this.setMusicDir(mG, dir);
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -94,6 +138,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        SharedPreferences settings = getSharedPreferences("dirInfo", 0);
+        String directory = settings.getString("dir", "Default");
+        setMusicDir(mG, directory);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
