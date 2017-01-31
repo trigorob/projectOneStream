@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
@@ -8,14 +9,24 @@
     android:fitsSystemWindows="true"
     tools:context="music.onestream.Settings">
 
-
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/back"
         android:gravity="top"
+        android:text="Back"
+        android:onClick="goBack" />
+    />
 
-        />
+
+    <android.widget.EditText
+        android:visibility="visible"
+        android:id="@+id/dirName"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="80dp"
+        android:text="C:/android.raw" />
 
     <RelativeLayout
         android:layout_width="317dp"
@@ -23,11 +34,6 @@
         android:layout_gravity="bottom"
         android:layout_weight="100">
 
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/change_dir"/>
 
         <Button
             android:id="@+id/change_dir"
