@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_centerHorizontal="true"
             android:orientation="vertical"
-            android:layout_height="368dp"
+            android:layout_height="380dp"
             android:layout_marginTop="105dp">
         </ListView>
 
@@ -73,16 +73,15 @@
         android:layout_gravity="bottom"
         android:layout_weight="100">
 
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/Prev"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:backgroundTint="@android:color/black"
             android:layout_gravity="bottom|start"
             app:srcCompat="@android:drawable/ic_media_previous"
             android:clickable="true"
-            android:layout_margin="@dimen/fab_margin" />
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/Rewind"
@@ -91,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             app:srcCompat="@android:drawable/ic_media_rew"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="16dp"
             android:clickable="true" />
 
 
@@ -101,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="16dp"
             android:clickable="true"
             app:backgroundTint="@android:color/black"
             android:src="@android:drawable/ic_media_play"/>
@@ -113,7 +112,7 @@
             android:layout_gravity="start|bottom"
             app:backgroundTint="@android:color/black"
             app:srcCompat="@android:drawable/ic_media_next"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="16dp"
             android:clickable="true" />
 
         <android.support.design.widget.FloatingActionButton
@@ -124,6 +123,6 @@
             android:layout_gravity="bottom|start"
             app:srcCompat="@drawable/shuffle"
             android:clickable="true"
-            android:layout_margin="@dimen/fab_margin" />
+            android:layout_marginBottom="16dp" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
