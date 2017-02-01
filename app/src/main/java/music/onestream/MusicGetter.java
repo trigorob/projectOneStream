@@ -79,6 +79,20 @@ public class MusicGetter {
         return testDirectory;
     }
 
+    public String getFileIfValid(String fname){
+        String[] acceptedTypes = {".mp3", ".wav", "mp4", ".3gp", ".flac", ".mid", ".ogg", ".mkv"};
+        for (int i = 0; i < acceptedTypes.length; i++)
+        {
+            String[] str = fname.split(acceptedTypes[i]);
+            if (!str[0].equals(fname))
+            {
+                return str[0];
+            }
+        }
+
+        return null;
+    }
+
     public String[] fileNames(String directoryPath) {
 
         File dir = new File(directoryPath);
@@ -88,9 +102,10 @@ public class MusicGetter {
             for(File file : listFiles){
                 if(file.isFile()) {
                     String fname = file.getName();
-                    String[] s = fname.split(".mp3");
-                    fname = s[0];
-                    files.add(fname);
+                    fname = getFileIfValid(fname);
+                    if (fname != null) {
+                        files.add(fname);
+                    }
                 }
             }
         }
@@ -105,7 +120,7 @@ public class MusicGetter {
         if(dir.isDirectory()){
             File[] listFiles = dir.listFiles();
             for(File file : listFiles){
-                if(file.isFile()) {
+                if(file.isFile() && (getFileIfValid(file.getName()) != null)) {
                     files.add(file);
                 }
             }
