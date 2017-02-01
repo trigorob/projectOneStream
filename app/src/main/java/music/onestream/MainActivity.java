@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Adapter;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.media.MediaPlayer;
 import android.widget.AdapterView;
@@ -33,7 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
     public static final int ACTIVITY_CHOOSE_FILE = 5;
     public static final int ACTIVITY_CHANGE_DIR = 6;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static String[] listContent;
     private static Integer[] resID;
     private static Uri[] resURI;
+    int currentSongListPosition = -1;
     int currentSongPosition = -1;
 
     /**
@@ -62,17 +65,33 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    public void playSong(int songIndex) {
-        // Play song
-        mp.reset();// stops any current playing song
+    public void resumeSong(int songIndex) {
+        if (currentSongPosition!= -1 && songIndex == currentSongListPosition) {
+            mp.seekTo(currentSongPosition);
+            mp.start(); // starting mediaplayer
 
+            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+            seekbar.setMax(mp.getDuration());
+            final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+            fabIO.setImageResource(R.drawable.stop);
+        }
+        else
+            playSong(songIndex);
+    }
+
+    // Play song
+    public void playSong(int songIndex) {
+
+        mp.reset();
         if (resURI != null) {
             mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
-        }
-        else  {
+        } else {
             mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
         }
-        mp.start(); // starting mediaplayer
+        mp.start();
+
+        SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+        seekbar.setMax(mp.getDuration());
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.stop);
     }
@@ -99,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopSong() {
-        mp.reset();
+        mp.pause();
+        currentSongPosition = mp.getCurrentPosition();
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.play);
     }
@@ -166,6 +186,11 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(1);
 
         mp = new MediaPlayer();
+
+        final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+        final Handler mHandler = new Handler();
+        //Make sure you update Seekbar on UI thread
+
         mainList = (ListView) findViewById(R.id.ListView1);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, listContent);
@@ -175,12 +200,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                if (currentSongPosition != -1) {
-                    getViewByPosition(mainList, currentSongPosition).setBackgroundColor(getResources().getColor(R.color.default_color));
+                if (currentSongListPosition != -1) {
+                    getViewByPosition(mainList, currentSongListPosition).setBackgroundColor(getResources().getColor(R.color.default_color));
                 }
-                currentSongPosition = position;
-                mainList.setItemChecked(currentSongPosition,true);
-                getViewByPosition(mainList,currentSongPosition).setBackgroundColor(Color.parseColor("#E0ECF8"));
+                currentSongListPosition = position;
+                mainList.setItemChecked(currentSongListPosition,true);
+                getViewByPosition(mainList,currentSongListPosition).setBackgroundColor(Color.parseColor("#E0ECF8"));
                 playSong(position);
             }});
 
@@ -189,11 +214,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 {
-                    //Play song. TODO: change to stopbutton after
-                    if (currentSongPosition != -1) {
+                    //Play or resume song
+                    if (currentSongListPosition != -1) {
                         if (!mp.isPlaying()) {
-                            playSong(currentSongPosition);
-                        } else //Stop song. TODO: change to playbutton after
+                            resumeSong(currentSongListPosition);
+                        } else //Stop song.
                         {
                             stopSong();
                         }
@@ -210,14 +235,14 @@ public class MainActivity extends AppCompatActivity {
                         int choice = mG.selectRandomSongAsInt();
                         View choiceRow = getViewByPosition(mainList,choice);
 
-                        if (currentSongPosition != -1) {
-                            View oldRow = getViewByPosition(mainList, currentSongPosition);
+                        if (currentSongListPosition != -1) {
+                            View oldRow = getViewByPosition(mainList, currentSongListPosition);
                             oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
                         }
                         mainList.requestFocusFromTouch();
                         mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
                         choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                        currentSongPosition = choice;
+                        currentSongListPosition = choice;
                     }
                     catch (IOException e) {}
                 };
@@ -228,8 +253,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 {
-                    if (currentSongPosition != -1) {
-                        playSong(currentSongPosition);
+                    if (currentSongListPosition != -1) {
+                        playSong(currentSongListPosition);
                     }
                 };
             }});
@@ -240,22 +265,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 {
                         int next;
-                        if (currentSongPosition > 0) {
-                            next = currentSongPosition - 1;
+                        if (currentSongListPosition > 0) {
+                            next = currentSongListPosition - 1;
                         }
                         else {
                             next = mG.files.length-1;
                         }
                         View nextRow = getViewByPosition(mainList,next);
 
-                        if (currentSongPosition != -1) {
-                            View oldRow = getViewByPosition(mainList, currentSongPosition);
+                        if (currentSongListPosition != -1) {
+                            View oldRow = getViewByPosition(mainList, currentSongListPosition);
                             oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
                         }
                         mainList.requestFocusFromTouch();
                         mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
                         nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                        currentSongPosition = next;
+                        currentSongListPosition = next;
                 };
             }});
 
@@ -266,22 +291,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 {
                     int next;
-                    if (currentSongPosition < mG.files.length-1) {
-                        next = currentSongPosition + 1;
+                    if (currentSongListPosition < mG.files.length-1) {
+                        next = currentSongListPosition + 1;
                     }
                     else {
                         next = 0;
                     }
                     View nextRow = getViewByPosition(mainList,next);
 
-                    if (currentSongPosition != -1) {
-                        View oldRow = getViewByPosition(mainList, currentSongPosition);
+                    if (currentSongListPosition != -1) {
+                        View oldRow = getViewByPosition(mainList, currentSongListPosition);
                         oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
                     }
                     mainList.requestFocusFromTouch();
                     mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
                     nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                    currentSongPosition = next;
+                    currentSongListPosition = next;
                 };
             }});
 
@@ -306,8 +331,46 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
-
         mViewPager.setCurrentItem(1);
+
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mp != null && fromUser){
+                    currentSongPosition = progress;
+                    mp.seekTo(currentSongPosition);
+                }
+            }
+        });
+
+
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mp != null && mp.isPlaying()) {
+                        int mCurrentPosition = mp.getCurrentPosition();
+                        seekbar.setProgress(mCurrentPosition);
+                    }
+                    mHandler.postDelayed(this, 1000);
+                }
+                catch (IllegalStateException IE)
+                {
+
+                }
+            }
+        });
     }
 
 
@@ -322,6 +385,23 @@ public class MainActivity extends AppCompatActivity {
             final int childIndex = pos - firstListItemPosition;
             return listView.getChildAt(childIndex);
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if(mp != null && fromUser){
+            mp.seekTo(progress);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        //AutogenStub
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        //AutogenStub
     }
 
     /**
