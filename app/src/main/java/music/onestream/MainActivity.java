@@ -1,7 +1,10 @@
 package music.onestream;
 
+import android.app.ListActivity;
+import android.app.Presentation;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +22,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Adapter;
 import android.widget.TextView;
 import android.media.MediaPlayer;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.net.URI;
 
 
@@ -68,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
             mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
         }
         mp.start(); // starting mediaplayer
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.stop);
     }
 
-    public void setMusicDir(MusicGetter mG, String dir)
+    public MusicGetter setMusicDir(MusicGetter mG, String dir)
     {
         mG = new MusicGetter(dir);
         listContent = mG.files;
@@ -90,11 +95,12 @@ public class MainActivity extends AppCompatActivity {
             resID = null;
         }
 
+        return mG;
     }
 
     public void stopSong() {
         mp.reset();
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.play);
     }
 
@@ -139,10 +145,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         String directory = settings.getString("dir", "Default");
-        setMusicDir(mG, directory);
+        mG = setMusicDir(mG, directory);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -160,21 +165,26 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager.setCurrentItem(1);
 
-        // Initializing variables
         mp = new MediaPlayer();
         mainList = (ListView) findViewById(R.id.ListView1);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, listContent);
         mainList.setAdapter(adapter);
+
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
+                if (currentSongPosition != -1) {
+                    getViewByPosition(mainList, currentSongPosition).setBackgroundColor(getResources().getColor(R.color.default_color));
+                }
                 currentSongPosition = position;
+                mainList.setItemChecked(currentSongPosition,true);
+                getViewByPosition(mainList,currentSongPosition).setBackgroundColor(Color.parseColor("#E0ECF8"));
                 playSong(position);
             }});
 
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.change_dir);
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,6 +200,90 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
         }});
+
+        final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
+        random.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    try {
+                        int choice = mG.selectRandomSongAsInt();
+                        View choiceRow = getViewByPosition(mainList,choice);
+
+                        if (currentSongPosition != -1) {
+                            View oldRow = getViewByPosition(mainList, currentSongPosition);
+                            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+                        }
+                        mainList.requestFocusFromTouch();
+                        mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+                        choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+                        currentSongPosition = choice;
+                    }
+                    catch (IOException e) {}
+                };
+            }});
+
+        final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.Rewind);
+        rewind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    if (currentSongPosition != -1) {
+                        playSong(currentSongPosition);
+                    }
+                };
+            }});
+
+        final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.Prev);
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                        int next;
+                        if (currentSongPosition > 0) {
+                            next = currentSongPosition - 1;
+                        }
+                        else {
+                            next = mG.files.length-1;
+                        }
+                        View nextRow = getViewByPosition(mainList,next);
+
+                        if (currentSongPosition != -1) {
+                            View oldRow = getViewByPosition(mainList, currentSongPosition);
+                            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+                        }
+                        mainList.requestFocusFromTouch();
+                        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
+                        nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+                        currentSongPosition = next;
+                };
+            }});
+
+
+        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    int next;
+                    if (currentSongPosition < mG.files.length-1) {
+                        next = currentSongPosition + 1;
+                    }
+                    else {
+                        next = 0;
+                    }
+                    View nextRow = getViewByPosition(mainList,next);
+
+                    if (currentSongPosition != -1) {
+                        View oldRow = getViewByPosition(mainList, currentSongPosition);
+                        oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+                    }
+                    mainList.requestFocusFromTouch();
+                    mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
+                    nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+                    currentSongPosition = next;
+                };
+            }});
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -214,6 +308,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mViewPager.setCurrentItem(1);
+    }
+
+
+    //Use this to grab a row from music list
+    public View getViewByPosition(ListView listView, int pos) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
     /**

@@ -125,6 +125,10 @@ public class MusicGetter {
         return f;
     }
 
+    public int selectRandomSongAsInt() throws IOException{
+        return (int)(Math.random()*files.length);
+    }
+
     public File selectRandomSong() throws IOException{
         File f = new File(files[(int)(Math.random()*files.length)]);
         return f;

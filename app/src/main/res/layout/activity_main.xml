@@ -67,60 +67,63 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="317dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
-        android:layout_weight="100"
-        android:layout_marginLeft="@dimen/fab_margin">
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/change_dir"
-            android:height="100dp"
-            android:layout_width="277dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_toRightOf="@+id/Prev"
-            app:elevation="0dp"
-            android:layout_margin="@dimen/fab_margin"
-            android:clickable="true"
-            app:backgroundTint="@android:color/black"
-            android:scaleType="center"
-            android:src="@drawable/play"/>
+        android:layout_weight="100">
+
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/Next"
-            android:layout_width="277dp"
+            android:id="@+id/Prev"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_toRightOf="@+id/change_dir"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:elevation="0dp"
+            app:backgroundTint="@android:color/black"
+            android:layout_gravity="bottom|start"
+            app:srcCompat="@android:drawable/ic_media_previous"
+            android:clickable="true"
+            android:layout_margin="@dimen/fab_margin" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/Rewind"
+            app:backgroundTint="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            app:srcCompat="@android:drawable/ic_media_rew"
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true" />
 
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/Prev"
-            android:layout_width="277dp"
+            android:id="@+id/fabIO"
+            android:height="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_toRightOf="@+id/Random"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:elevation="0dp"
+            android:layout_gravity="start|bottom"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            app:backgroundTint="@android:color/black"
+            android:src="@android:drawable/ic_media_play"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            app:backgroundTint="@android:color/black"
+            app:srcCompat="@android:drawable/ic_media_next"
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/Random"
-            android:layout_width="277dp"
+            app:backgroundTint="@android:color/black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:elevation="0dp"
-            android:layout_margin="@dimen/fab_margin"
-            android:clickable="true" />
-
-    </RelativeLayout>
-
-
+            app:srcCompat="@drawable/shuffle"
+            android:clickable="true"
+            android:layout_margin="@dimen/fab_margin" />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
