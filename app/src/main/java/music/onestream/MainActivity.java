@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static Uri[] resURI;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
+    boolean randomNext = false;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -89,6 +90,17 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
         }
         mp.start();
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp) {
+                if (!randomNext) {
+                    final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
+                    next.performClick();
+                }
+                else {
+                    playRandomSong();
+                }
+            }});
 
         SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         seekbar.setMax(mp.getDuration());
@@ -231,20 +243,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onClick(View view) {
                 {
-                    try {
-                        int choice = mG.selectRandomSongAsInt();
-                        View choiceRow = getViewByPosition(mainList,choice);
-
-                        if (currentSongListPosition != -1) {
-                            View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-                        }
-                        mainList.requestFocusFromTouch();
-                        mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
-                        choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                        currentSongListPosition = choice;
+                    if (randomNext == true)
+                    {
+                        randomNext = false;
+                        random.setImageResource(R.drawable.shuffle);
                     }
-                    catch (IOException e) {}
+                    else
+                    {
+                        randomNext = true;
+                        random.setImageResource(R.drawable.notrandom);
+                    }
                 };
             }});
 
@@ -371,6 +379,24 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 }
             }
         });
+    }
+
+
+    public void playRandomSong() {
+        try {
+            int choice = mG.selectRandomSongAsInt();
+            View choiceRow = getViewByPosition(mainList,choice);
+
+            if (currentSongListPosition != -1) {
+                View oldRow = getViewByPosition(mainList, currentSongListPosition);
+                oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+            }
+            mainList.requestFocusFromTouch();
+            mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+            choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+            currentSongListPosition = choice;
+        }
+        catch (IOException e) {}
     }
 
 
