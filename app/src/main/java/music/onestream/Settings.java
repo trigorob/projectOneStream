@@ -1,6 +1,7 @@
 package music.onestream;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -33,8 +34,8 @@ public class Settings extends Activity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Intent settings = new Intent(v.getContext(), MainActivity.class);
-                    startActivityForResult(settings, 0);
+                    Intent back = new Intent(v.getContext(), MainActivity.class);
+                    startActivityForResult(back, 0);
                 }
             });
 
@@ -50,6 +51,15 @@ public class Settings extends Activity {
         properties.root=new File(DialogConfigs.DEFAULT_DIR);
         properties.error_dir=new File(DialogConfigs.DEFAULT_DIR);
         properties.extensions=null;
+
+        final Button accountsPage = (Button) findViewById(R.id.accountsPage);
+        accountsPage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent login = new Intent(v.getContext(), LoginActivity.class);
+                startActivityForResult(login, 0);
+            }
+        });
 
 
         final Button resetDir = (Button) findViewById(R.id.resetDir);
@@ -94,6 +104,10 @@ public class Settings extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+    public static Intent createIntent(Context context) {
+        return new Intent(context, Settings.class);
     }
 
 

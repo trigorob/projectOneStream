@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="music.onestream">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         tools:replace="android:theme"
         android:allowBackup="true"
@@ -23,6 +24,20 @@
             android:name=".Settings"
             android:label="Settings">
         </activity>
+
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <data
+                    android:host="callback"
+                    android:scheme="testschema"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
     </application>
 
 </manifest>

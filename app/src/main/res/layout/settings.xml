@@ -16,8 +16,6 @@
         android:gravity="top"
         android:text="Back"
         android:onClick="goBack" />
-    />
-
 
     <Button
         android:layout_width="100dp"
@@ -26,7 +24,13 @@
         android:id="@+id/resetDir"
         android:text="Reset directory"
         android:onClick="goBack" />
-    />
+
+    <Button
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:layout_marginTop="100dp"
+        android:text="User accounts"
+        android:id="@+id/accountsPage"/>
 
     <TextView
         android:visibility="visible"
