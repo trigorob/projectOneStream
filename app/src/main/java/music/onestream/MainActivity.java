@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public static final int ACTIVITY_CHOOSE_FILE = 5;
     public static final int ACTIVITY_CHANGE_DIR = 6;
+    private static String directory;
 
     // variable declaration
     private ListView mainList;
@@ -83,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     // Play song
     public void playSong(int songIndex) {
 
+        if (mG == null)
+        {
+            setMusicDir(mG,directory);
+        }
         mp.reset();
         if (resURI != null) {
             mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
@@ -154,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         if (requestCode == ACTIVITY_CHANGE_DIR) {
             if (resultCode == RESULT_OK) {
                 Bundle bundle = getIntent().getExtras();
-                String dir = bundle.getString("dir");
-                this.setMusicDir(mG, dir);
+                this.directory = bundle.getString("dir");
+                this.setMusicDir(mG, directory);
                 mViewPager.setCurrentItem(0);
             }
         }
@@ -179,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         setContentView(R.layout.activity_main);
 
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
-        String directory = settings.getString("dir", "Default");
+        final String directory = settings.getString("dir", "Default");
         mG = setMusicDir(mG, directory);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -273,6 +278,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onClick(View view) {
                 {
                         int next;
+                        if (currentSongListPosition == -1)
+                        {
+                            return;
+                        }
+
                         if (currentSongListPosition > 0) {
                             next = currentSongListPosition - 1;
                         }
@@ -299,6 +309,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onClick(View view) {
                 {
                     int next;
+                    if (currentSongListPosition == -1)
+                    {
+                        return;
+                    }
                     if (currentSongListPosition < mG.files.length-1) {
                         next = currentSongListPosition + 1;
                     }
@@ -327,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
                         mainList.setVisibility(View.VISIBLE);
-                        setMusicDir(mG, mG.getDirectory());
+                        setMusicDir(mG, directory);
                         break;
                     case 1:
                         mainList.setVisibility(View.INVISIBLE);
