@@ -4,17 +4,12 @@ package music.onestream;
  * Created by ruspe_000 on 2017-01-26.
  */
 
-import android.util.ArraySet;
-
 import java.io.*;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.*;
 
 public class MusicGetter {
-
-    //"src/main/res/foodlists/Berries.txt"
     String[] files;
     Integer[] fileData;
     URI[] fileURI;

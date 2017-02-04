@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 Bundle bundle = getIntent().getExtras();
                 String dir = bundle.getString("dir");
                 this.setMusicDir(mG, dir);
+                mViewPager.setCurrentItem(0);
             }
         }
     }
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(0);
 
         mp = new MediaPlayer();
 
@@ -204,8 +205,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         //Make sure you update Seekbar on UI thread
 
         mainList = (ListView) findViewById(R.id.ListView1);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, listContent);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent);
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -326,10 +326,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onPageSelected(int position) {
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
-                        mainList.setVisibility(View.INVISIBLE);
+                        mainList.setVisibility(View.VISIBLE);
+                        setMusicDir(mG, mG.getDirectory());
                         break;
                     case 1:
-                        mainList.setVisibility(View.VISIBLE);
+                        mainList.setVisibility(View.INVISIBLE);
                         break;
                     case 2:
                         mainList.setVisibility(View.INVISIBLE);
@@ -339,7 +340,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
-        mViewPager.setCurrentItem(1);
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -487,18 +487,21 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
+
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Spotify";
-                case 1:
                     return "Local";
+                case 1:
+                    return "Spotify";
                 case 2:
                     return "Soundcloud";
+                case 3:
+                    return "Playlists";
             }
             return null;
         }
