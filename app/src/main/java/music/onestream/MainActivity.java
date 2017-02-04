@@ -335,6 +335,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 2:
                         mainList.setVisibility(View.INVISIBLE);
                         break;
+                    case 3:
+                        mainList.setVisibility(View.INVISIBLE);
+                        break;
                 }
             }
             @Override
