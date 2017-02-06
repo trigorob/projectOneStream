@@ -1,11 +1,17 @@
 package music.onestream;
 
-import android.app.ListActivity;
-import android.app.Presentation;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -23,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Adapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.media.MediaPlayer;
@@ -31,26 +35,60 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Connectivity;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.net.URI;
 
-
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, AsyncResponse, Player.NotificationCallback, ConnectionStateCallback {
 
     public static final int ACTIVITY_CHOOSE_FILE = 5;
     public static final int ACTIVITY_CHANGE_DIR = 6;
     private static String directory;
 
+    private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
+
     // variable declaration
     private ListView mainList;
     private MusicGetter mG;
+    private SpotifyMusicGetter sMG;
     private MediaPlayer mp;
+    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> spotifyAdapter;
     private static String[] listContent;
+    private static String[] spotifyListContent = {};
     private static Integer[] resID;
     private static Uri[] resURI;
+    private static String[] spotURIStrings;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
+    private SpotifyPlayer spotPlayer;
     boolean randomNext = false;
+    private String currentSongType = "Local";
+    private BroadcastReceiver mNetworkStateReceiver;
+
+    //Callback for spotify player
+    private final Player.OperationCallback opCallback = new Player.OperationCallback() {
+        @Override
+        public void onSuccess() {
+
+        }
+
+        @Override
+        public void onError(Error error) {
+
+        }
+    };
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -68,14 +106,21 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private ViewPager mViewPager;
 
     public void resumeSong(int songIndex) {
-        if (currentSongPosition!= -1 && songIndex == currentSongListPosition) {
-            mp.seekTo(currentSongPosition);
-            mp.start(); // starting mediaplayer
+        if (currentSongType.equals("Local")) {
+            if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
+                mp.seekTo(currentSongPosition);
+                mp.start(); // starting mediaplayer
 
-            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-            seekbar.setMax(mp.getDuration());
-            final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-            fabIO.setImageResource(R.drawable.stop);
+                SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+                seekbar.setMax(mp.getDuration());
+                final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+                fabIO.setImageResource(R.drawable.stop);
+            }
+        }
+        //todo: make it play from previous position
+        else if (currentSongType.equals("Spotify"))
+        {
+            playSong(songIndex);
         }
         else
             playSong(songIndex);
@@ -84,31 +129,68 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     // Play song
     public void playSong(int songIndex) {
 
+        if (spotPlayer != null && spotPlayer.getPlaybackState().isPlaying)
+        {
+            spotPlayer.pause(opCallback);
+        }
+        if (mp.isPlaying())
+        {
+            mp.stop();
+        }
+
         if (mG == null)
         {
             setMusicDir(mG,directory);
         }
         mp.reset();
-        if (resURI != null) {
-            mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
-        } else {
-            mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
+
+        if (mainList.getAdapter() == adapter) {
+            if (resURI != null) {
+                mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
+            } else {
+                mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
+            }
+            mp.start();
+            currentSongType = "Local";
+
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    if (!randomNext) {
+                        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
+                        next.performClick();
+                    }
+                    else {
+                        playRandomSong();
+                    }
+                }});
+
+            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+            seekbar.setMax(mp.getDuration());
         }
-        mp.start();
 
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            public void onCompletion(MediaPlayer mp) {
-                if (!randomNext) {
-                    final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
-                    next.performClick();
-                }
-                else {
-                    playRandomSong();
-                }
-            }});
+        else if (mainList.getAdapter() == spotifyAdapter) {
+            spotPlayer.playUri(opCallback, spotURIStrings[songIndex],0,0);
+            currentSongType = "Spotify";
+        }
 
-        SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-        seekbar.setMax(mp.getDuration());
+        //Remote mp3 link
+        else {
+            try {
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mp.setDataSource(this.getBaseContext(),
+                        Uri.parse("https://p.scdn.co/mp3-preview/ae80da5d6bcb97facc0f60feac34fb53395f12c3?cid=null"));
+                mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        mp.start();
+                    }
+                });
+                mp.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.stop);
     }
@@ -136,6 +218,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public void stopSong() {
         mp.pause();
+        if ((currentSongType.equals("Spotify")))
+        {
+            spotPlayer.pause(opCallback);
+            //Todo: get song pos;
+        }
         currentSongPosition = mp.getCurrentPosition();
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.play);
@@ -167,6 +254,48 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mNetworkStateReceiver);
+
+        // Note that calling Spotify.destroyPlayer() will also remove any callbacks on whatever
+        // instance was passed as the refcounted owner. So in the case of this particular example,
+        // it's not strictly necessary to call these methods, however it is generally good practice
+        // and also will prevent your application from doing extra work in the background when
+        // paused.
+        if (spotPlayer != null) {
+            spotPlayer.removeNotificationCallback(MainActivity.this);
+            spotPlayer.removeConnectionStateCallback(MainActivity.this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Set up the broadcast receiver for network events. Note that we also unregister
+        // this receiver again in onPause().
+        mNetworkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (spotPlayer != null) {
+                    Connectivity connectivity = getNetworkConnectivity(getBaseContext());
+                    spotPlayer.setConnectivityStatus(opCallback, connectivity);
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetworkStateReceiver, filter);
+
+        if (spotPlayer != null) {
+            spotPlayer.addNotificationCallback(MainActivity.this);
+            spotPlayer.addConnectionStateCallback(MainActivity.this);
+        }
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -194,6 +323,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
+        //this to set listener back to this class
+        sMG = new SpotifyMusicGetter();
+        sMG.SAR = this;
+        getSpotifyLibrary();
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -202,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         tabLayout.setupWithViewPager(mViewPager);
 
         mViewPager.setCurrentItem(0);
-
         mp = new MediaPlayer();
 
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
@@ -210,7 +343,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         //Make sure you update Seekbar on UI thread
 
         mainList = (ListView) findViewById(R.id.ListView1);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent);
+
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -232,12 +366,32 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onClick(View view) {
                 {
                     //Play or resume song
-                    if (currentSongListPosition != -1) {
-                        if (!mp.isPlaying()) {
-                            resumeSong(currentSongListPosition);
-                        } else //Stop song.
+
+                    if (currentSongListPosition == -1)
+                    {
+                        if (mp.isPlaying() || (spotPlayer != null && spotPlayer.getPlaybackState().isPlaying))
                         {
                             stopSong();
+                        }
+                    }
+                    else {
+                        if (currentSongType.equals("Local")) {
+                            if (!mp.isPlaying()) {
+                                resumeSong(currentSongListPosition);
+                            } else //Stop song.
+                            {
+                                stopSong();
+                            }
+                        }
+                        else if (currentSongType.equals("Spotify"))
+                        {
+                            if (!spotPlayer.getPlaybackState().isPlaying) {
+                                resumeSong(currentSongListPosition);
+                            } else //Stop song.
+                            {
+                                stopSong();
+                            }
+
                         }
                     }
                 };
@@ -338,13 +492,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             //TODO: Optimize. Also need lists for spotify/soundcloud
             @Override
             public void onPageSelected(int position) {
+                currentSongListPosition = -1;
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
+                        mainList.setAdapter(adapter);
                         mainList.setVisibility(View.VISIBLE);
-                        setMusicDir(mG, directory);
                         break;
                     case 1:
-                        mainList.setVisibility(View.INVISIBLE);
+                        mainList.setAdapter(spotifyAdapter);
+                        mainList.setVisibility(View.VISIBLE);
                         break;
                     case 2:
                         mainList.setVisibility(View.INVISIBLE);
@@ -430,6 +586,47 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
     }
 
+    public void getSpotifyLibrary() {
+        CredentialsHandler CH = new CredentialsHandler();
+        final String accessToken = CH.getToken(getBaseContext());
+        if (accessToken != null) {
+            sMG = new SpotifyMusicGetter();
+            sMG.SAR = this;
+            sMG.execute(accessToken);
+        }
+
+        Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
+        // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
+        // the second argument in order to refcount it properly. Note that the method
+        // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
+        // one passed in here. If you pass different instances to Spotify.getPlayer() and
+        // Spotify.destroyPlayer(), that will definitely result in resource leaks.
+
+        spotPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer player) {
+                    player.setConnectivityStatus(opCallback, getNetworkConnectivity(MainActivity.this));
+                    player.addNotificationCallback(MainActivity.this);
+                    player.addConnectionStateCallback(MainActivity.this);
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                error.printStackTrace();}
+        });
+    }
+
+    private Connectivity getNetworkConnectivity(Context context) {
+        ConnectivityManager connectivityManager;
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            return Connectivity.fromNetworkType(activeNetwork.getType());
+        } else {
+            return Connectivity.OFFLINE;
+        }
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if(mp != null && fromUser){
@@ -446,6 +643,50 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void onStopTrackingTouch(SeekBar seekBar) {
         //AutogenStub
     }
+
+    //Called when spotifyMusicGetter gets music
+    @Override
+    public void processFinish(String output) {
+        if (output == null)
+        {
+            return;
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            JSONArray jArray = jsonObject.getJSONArray("items");
+
+            spotifyListContent = new String[jArray.length()];
+            spotURIStrings = new String[jArray.length()];
+            for (int i = 0; i < jArray.length(); i++)
+            {
+                jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
+                spotURIStrings[i] =  (String) jsonObject.get("uri");
+                spotifyListContent[i] =  (String) jsonObject.get("name");
+            }
+        } catch (JSONException e) {}
+        setupSpotifyAdapter();
+    }
+
+    public void setupSpotifyAdapter()
+    {
+        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifyListContent);
+    }
+
+    //Spotify interface implementations
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {}
+    @Override
+    public void onPlaybackError(Error error) {}
+    @Override
+    public void onLoggedIn() {}
+    @Override
+    public void onLoggedOut() {}
+    @Override
+    public void onLoginFailed(Error error) {}
+    @Override
+    public void onTemporaryError() {}
+    @Override
+    public void onConnectionMessage(String s) {}
 
     /**
      * A placeholder fragment containing a simple view.
@@ -483,3 +724,5 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     }
 }
+
+

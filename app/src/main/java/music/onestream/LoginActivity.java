@@ -41,7 +41,7 @@ public class LoginActivity extends Activity {
 
     public void onLoginButtonClicked(View view) {
             final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
-                    .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"}).setShowDialog(true)
+                    .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read", "playlist-read-private", "streaming"}).setShowDialog(true)
                     .build();
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
