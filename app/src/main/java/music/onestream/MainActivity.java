@@ -393,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
 
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
-        loginButton.setVisibility(View.VISIBLE);
+        loginButton.setVisibility(View.INVISIBLE);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -819,7 +819,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onPlaybackError(Error error) {}
     @Override
-    public void onLoggedIn() {}
+    public void onLoggedIn() {
+        Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
+        loginButton.setVisibility(View.INVISIBLE);
+    }
     @Override
     public void onLoggedOut() {}
     @Override
