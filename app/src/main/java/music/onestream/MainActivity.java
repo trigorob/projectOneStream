@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             if (resURI != null) {
                 mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
             } else {
-                mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
+                mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
             }
             mp.start();
             currentSongType = "Local";
