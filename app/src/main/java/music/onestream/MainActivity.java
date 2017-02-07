@@ -117,10 +117,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 fabIO.setImageResource(R.drawable.stop);
             }
         }
-        //todo: make it play from previous position
         else if (currentSongType.equals("Spotify"))
         {
-            playSong(songIndex);
+            spotPlayer.resume(opCallback);
+            spotPlayer.playUri(opCallback, spotURIStrings[currentSongListPosition], 0, currentSongPosition);
+
+            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+            seekbar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
+            final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+            fabIO.setImageResource(R.drawable.stop);
         }
         else
             playSong(songIndex);
@@ -129,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     // Play song
     public void playSong(int songIndex) {
 
-        if (spotPlayer != null && spotPlayer.getPlaybackState().isPlaying)
+        if (spotPlayer != null && spotPlayer.getPlaybackState() != null && spotPlayer.getPlaybackState().isPlaying)
         {
             spotPlayer.pause(opCallback);
         }
@@ -142,9 +147,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             setMusicDir(mG,directory);
         }
-        mp.reset();
-
+        SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         if (mainList.getAdapter() == adapter) {
+            mp.reset();
             if (resURI != null) {
                 mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
             } else {
@@ -163,12 +168,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         playRandomSong();
                     }
                 }});
-
-            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
             seekbar.setMax(mp.getDuration());
         }
 
-        else if (mainList.getAdapter() == spotifyAdapter) {
+        else if (mainList.getAdapter() == spotifyAdapter && spotPlayer != null) {
             spotPlayer.playUri(opCallback, spotURIStrings[songIndex],0,0);
             currentSongType = "Spotify";
         }
@@ -217,13 +220,18 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     public void stopSong() {
-        mp.pause();
-        if ((currentSongType.equals("Spotify")))
+
+        if (currentSongType.equals("Local"))
+        {
+            mp.pause();
+            currentSongPosition = mp.getCurrentPosition();
+        }
+        else if ((currentSongType.equals("Spotify")))
         {
             spotPlayer.pause(opCallback);
-            //Todo: get song pos;
+            currentSongPosition = (int) spotPlayer.getPlaybackState().positionMs;
         }
-        currentSongPosition = mp.getCurrentPosition();
+
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setImageResource(R.drawable.play);
     }
@@ -441,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                             next = currentSongListPosition - 1;
                         }
                         else {
-                            next = mG.files.length-1;
+                            next = mainList.getCount()-1;
                         }
                         View nextRow = getViewByPosition(mainList,next);
 
@@ -467,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     {
                         return;
                     }
-                    if (currentSongListPosition < mG.files.length-1) {
+                    if (currentSongListPosition < mainList.getCount()) {
                         next = currentSongListPosition + 1;
                     }
                     else {
@@ -528,9 +536,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mp != null && fromUser){
+                if(mp != null && fromUser && currentSongType.equals("Local")){
                     currentSongPosition = progress;
                     mp.seekTo(currentSongPosition);
+                }
+                else if (fromUser && currentSongType.equals("Spotify"))
+                {
+                    currentSongPosition = progress;
+                    spotPlayer.resume(opCallback);
+                    spotPlayer.seekToPosition(opCallback,progress);
                 }
             }
         });
@@ -542,6 +556,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 try {
                     if (mp != null && mp.isPlaying()) {
                         int mCurrentPosition = mp.getCurrentPosition();
+                        seekbar.setProgress(mCurrentPosition);
+                    }
+                    else if (spotPlayer != null && spotPlayer.getPlaybackState() != null && spotPlayer.getPlaybackState().isPlaying)
+                    {
+                        int mCurrentPosition = (int) spotPlayer.getPlaybackState().positionMs;
                         seekbar.setProgress(mCurrentPosition);
                     }
                     mHandler.postDelayed(this, 1000);
@@ -557,17 +576,32 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public void playRandomSong() {
         try {
-            int choice = mG.selectRandomSongAsInt();
-            View choiceRow = getViewByPosition(mainList,choice);
+            if (currentSongType.equals("Local")) {
+                int choice = mG.selectRandomSongAsInt();
+                View choiceRow = getViewByPosition(mainList, choice);
 
-            if (currentSongListPosition != -1) {
-                View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+                if (currentSongListPosition != -1) {
+                    View oldRow = getViewByPosition(mainList, currentSongListPosition);
+                    oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+                }
+                mainList.requestFocusFromTouch();
+                mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+                choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+                currentSongListPosition = choice;
             }
-            mainList.requestFocusFromTouch();
-            mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
-            choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-            currentSongListPosition = choice;
+            else if (currentSongType.equals("Spotify")) {
+                int choice = (int) (Math.random() * spotURIStrings.length);
+                View choiceRow = getViewByPosition(mainList, choice);
+
+                if (currentSongListPosition != -1) {
+                    View oldRow = getViewByPosition(mainList, currentSongListPosition);
+                    oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+                }
+                mainList.requestFocusFromTouch();
+                mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+                choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+                currentSongListPosition = choice;
+            }
         }
         catch (IOException e) {}
     }
@@ -629,8 +663,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(mp != null && fromUser){
+        if(mp != null && fromUser && currentSongType.equals("Local")){
+            currentSongPosition = progress;
             mp.seekTo(progress);
+        }
+        else if (spotPlayer!= null && fromUser && currentSongType.equals("Spotify"))
+        {
+            currentSongPosition = progress;
+            spotPlayer.resume(opCallback);
+
         }
     }
 
@@ -674,7 +715,21 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     //Spotify interface implementations
     @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {}
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+        if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
+            if (!randomNext) {
+                final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
+                next.performClick();
+            }
+            else {
+                playRandomSong();
+            }
+        }
+        else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
+            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+            seekbar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
+        }
+    }
     @Override
     public void onPlaybackError(Error error) {}
     @Override

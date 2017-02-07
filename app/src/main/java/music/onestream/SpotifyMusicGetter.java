@@ -25,7 +25,8 @@ public class SpotifyMusicGetter extends AsyncTask {
         SAR.processFinish((String)result);
     }
 
-    //This is the async process that gets songs. It only gets 50 right now though.
+    //This is the async process that gets songs. It only gets 50 right now.
+    //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
     @Override
     protected String doInBackground(Object[] params) {
         String result = null;
