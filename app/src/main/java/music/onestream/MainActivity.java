@@ -1,10 +1,5 @@
 package music.onestream;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.ProgressDialog;
-import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,7 +9,6 @@ import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -46,6 +40,7 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
+import android.content.BroadcastReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static String directory;
 
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
+    static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
     // variable declaration
     private ListView mainList;
@@ -177,7 +173,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
 
         else if (mainList.getAdapter() == spotifyAdapter && spotPlayer != null) {
+            if (!spotPlayer.isLoggedIn())
+            {
+                spotPlayer.login(CredentialsHandler.getToken(getApplicationContext()));
+            }
             spotPlayer.playUri(opCallback, spotURIStrings[songIndex],0,0);
+
             currentSongType = "Spotify";
         }
 
@@ -245,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void onDestroy() {
         super.onDestroy();
         mp.release();
+        spotPlayer.destroy();
     }
 
     @Override
@@ -294,6 +296,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 if (spotPlayer != null) {
                     Connectivity connectivity = getNetworkConnectivity(getBaseContext());
                     spotPlayer.setConnectivityStatus(opCallback, connectivity);
+                    //if (spotPlayer != null && spotPlayer.getPlaybackState() != null && !spotPlayer.getPlaybackState().isPlaying)
+                    {
+                        nextSongInService();
+                    }
                 }
             }
         };
@@ -315,6 +321,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            if (spotPlayer.getPlaybackState() != null && spotPlayer.getPlaybackState().isPlaying)
+            {
+                spotPlayer.pause(opCallback);
+            }
+            if (mp.isPlaying())
+            {
+                mp.stop();
+            }
+
             Intent settings = new Intent(mViewPager.getContext(), Settings.class);
             startActivityForResult(settings, 0);
 
@@ -372,6 +387,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 getViewByPosition(mainList,currentSongListPosition).setBackgroundColor(Color.parseColor("#E0ECF8"));
                 playSong(position);
             }});
+
+        for (int i = 0; i < mainList.getChildCount(); i++) {
+            View listItem = mainList.getChildAt(i);
+            listItem.setBackgroundColor(Color.parseColor("#E0ECF8"));
+        }
 
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setOnClickListener(new View.OnClickListener() {
@@ -444,28 +464,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onClick(View view) {
                 {
-                        int next;
-                        if (currentSongListPosition == -1)
-                        {
-                            return;
-                        }
-
-                        if (currentSongListPosition > 0) {
-                            next = currentSongListPosition - 1;
-                        }
-                        else {
-                            next = mainList.getCount()-1;
-                        }
-                        View nextRow = getViewByPosition(mainList,next);
-
-                        if (currentSongListPosition != -1) {
-                            View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-                        }
-                        mainList.requestFocusFromTouch();
-                        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
-                        nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                        currentSongListPosition = next;
+                    previousSong();
                 };
             }});
 
@@ -475,27 +474,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onClick(View view) {
                 {
-                    int next;
-                    if (currentSongListPosition == -1)
-                    {
-                        return;
-                    }
-                    if (currentSongListPosition < mainList.getCount()-1) {
-                        next = currentSongListPosition + 1;
-                    }
-                    else {
-                        next = 0;
-                    }
-                    View nextRow = getViewByPosition(mainList,next);
-
-                    if (currentSongListPosition != -1) {
-                        View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                        oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-                    }
-                    mainList.requestFocusFromTouch();
-                    mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
-                    nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                    currentSongListPosition = next;
+                    nextSong();
                 };
             }});
 
@@ -578,6 +557,88 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
     }
 
+    public void previousSong() {
+
+        int next;
+        if (currentSongListPosition == -1)
+        {
+            return;
+        }
+
+        if (currentSongListPosition > 0) {
+            next = currentSongListPosition - 1;
+        }
+        else {
+            next = mainList.getCount()-1;
+        }
+        View nextRow = getViewByPosition(mainList,next);
+
+        if (currentSongListPosition != -1) {
+            View oldRow = getViewByPosition(mainList, currentSongListPosition);
+            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+        }
+        mainList.requestFocusFromTouch();
+        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
+        nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+        currentSongListPosition = next;
+    }
+
+
+    //This is meant to ONLY be called through a service. Do NOT call this within the UI
+    public void nextSongInService() {
+        int next;
+        int totalSongs = -1;
+        if (currentSongType.equals("Local")) {
+            if (resURI == null) {
+                totalSongs = resID.length - 1;
+            }
+            else {
+                totalSongs = resURI.length - 1;
+            }
+        }
+        else if (currentSongType.equals("Spotify"))
+        {
+            totalSongs = spotURIStrings.length-1;
+        }
+        if (currentSongListPosition == -1)
+        {
+            return;
+        }
+        if (currentSongListPosition < totalSongs) {
+            next = currentSongListPosition + 1;
+        }
+        else {
+            next = 0;
+        }
+        View nextRow = getViewByPosition(mainList,next);
+        playSong(next);
+        currentSongListPosition = next;
+    }
+
+    public void nextSong() {
+        int next;
+        if (currentSongListPosition == -1)
+        {
+            return;
+        }
+        if (currentSongListPosition < mainList.getCount()-1) {
+            next = currentSongListPosition + 1;
+        }
+        else {
+            next = 0;
+        }
+        View nextRow = getViewByPosition(mainList,next);
+
+        if (currentSongListPosition != -1) {
+            View oldRow = getViewByPosition(mainList, currentSongListPosition);
+            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+        }
+        mainList.requestFocusFromTouch();
+        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
+        nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+        currentSongListPosition = next;
+    }
+
 
     public void playRandomSong() {
         try {
@@ -653,6 +714,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onError(Throwable error) {
                 error.printStackTrace();}
         });
+
     }
 
     private Connectivity getNetworkConnectivity(Context context) {
