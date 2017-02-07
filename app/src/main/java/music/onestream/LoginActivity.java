@@ -74,7 +74,7 @@ public class LoginActivity extends Activity {
     }
 
     private void startMainActivity(String token) {
-        Intent intent = Settings.createIntent(this);
+        Intent intent = MainActivity.createIntent(this);
         intent.putExtra("SPOTIFY_TOKEN", token);
         startActivity(intent);
         finish();

@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.media.MediaPlayer;
@@ -50,7 +51,6 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, AsyncResponse, Player.NotificationCallback, ConnectionStateCallback {
 
-    public static final int ACTIVITY_CHOOSE_FILE = 5;
     public static final int ACTIVITY_CHANGE_DIR = 6;
     private static String directory;
 
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     boolean randomNext = false;
     private String currentSongType = "Local";
     private BroadcastReceiver mNetworkStateReceiver;
+
 
     //Todo: Make service (So next song happens when phone screen off)
 
@@ -246,7 +247,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void onDestroy() {
         super.onDestroy();
         mp.release();
-        spotPlayer.destroy();
+        if (spotPlayer != null) {
+            Spotify.destroyPlayer(this);
+        }
     }
 
     @Override
@@ -296,10 +299,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 if (spotPlayer != null) {
                     Connectivity connectivity = getNetworkConnectivity(getBaseContext());
                     spotPlayer.setConnectivityStatus(opCallback, connectivity);
-                    //if (spotPlayer != null && spotPlayer.getPlaybackState() != null && !spotPlayer.getPlaybackState().isPlaying)
-                    {
-                        nextSongInService();
-                    }
                 }
             }
         };
@@ -392,6 +391,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             View listItem = mainList.getChildAt(i);
             listItem.setBackgroundColor(Color.parseColor("#E0ECF8"));
         }
+
+        final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
+        loginButton.setVisibility(View.VISIBLE);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settings = new Intent(mViewPager.getContext(), LoginActivity.class);
+                startActivityForResult(settings, 0);
+            }
+        });
 
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         fabIO.setOnClickListener(new View.OnClickListener() {
@@ -489,9 +498,14 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 0:
                         mainList.setAdapter(adapter);
                         mainList.setVisibility(View.VISIBLE);
+                        loginButton.setVisibility(View.INVISIBLE);
                         break;
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
+                        if (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()))
+                        {
+                            loginButton.setVisibility(View.VISIBLE);
+                        }
                         mainList.setVisibility(View.VISIBLE);
                         break;
                     case 2:
@@ -779,6 +793,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     {
         spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifyListContent);
     }
+
+    public static Intent createIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
 
     //Spotify interface implementations
     @Override

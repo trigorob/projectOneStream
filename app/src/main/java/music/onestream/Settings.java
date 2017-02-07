@@ -106,9 +106,4 @@ public class Settings extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, Settings.class);
-    }
-
-
 }
