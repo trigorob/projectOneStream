@@ -1,6 +1,9 @@
 package music.onestream;
 
+import android.app.IntentService;
+import android.app.Notification;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -77,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private String currentSongType = "Local";
     private BroadcastReceiver mNetworkStateReceiver;
 
+    //Todo: Make service (So next song happens when phone screen off)
+
     //Callback for spotify player
     private final Player.OperationCallback opCallback = new Player.OperationCallback() {
         @Override
@@ -123,12 +128,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             spotPlayer.playUri(opCallback, spotURIStrings[currentSongListPosition], 0, currentSongPosition);
 
             SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-            seekbar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
             final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
             fabIO.setImageResource(R.drawable.stop);
         }
-        else
+        else {
             playSong(songIndex);
+        }
     }
 
     // Play song
@@ -475,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     {
                         return;
                     }
-                    if (currentSongListPosition < mainList.getCount()) {
+                    if (currentSongListPosition < mainList.getCount()-1) {
                         next = currentSongListPosition + 1;
                     }
                     else {
