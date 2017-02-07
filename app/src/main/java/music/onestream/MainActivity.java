@@ -502,7 +502,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         break;
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
-                        if (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()))
+                        //Sometimes logged in but player is not. We check length for handling that
+                        if (spotURIStrings.length == 0 && (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn())))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
