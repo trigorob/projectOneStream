@@ -1,3 +1,9 @@
-Soundcloud:
+Spotify:
 	Client ID: 0785a1e619c34d11b2f50cb717c27da0
 	Client Secret: 64cc31d2363943199a9b580db2b1dfcd
+	
+	
+Soundcloud:
+	Client ID: asNLcGe4DAQ1YHSRKNyCo15sfFnXDbvS
+	Client Secret: 2W7E1oEwhXuAMVx8dL2KAArXw1Kv1NK6
+	Redirect URI:  onestream.local/dashboard/
