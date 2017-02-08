@@ -4,13 +4,15 @@ package music.onestream;
  * Created by ruspe_000 on 2017-01-26.
  */
 
+import android.media.MediaMetadataRetriever;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.*;
 
 public class MusicGetter {
-    String[] files;
+    String[][] files;
     Integer[] fileData;
     URI[] fileURI;
     static String testDirectory = "./app/src/main/res/raw/";
@@ -27,15 +29,17 @@ public class MusicGetter {
                 if (f!= null && f.getName() != null) {
                     tempNames.add(f.getName());
                 }
+                //Resource files dont have this data, so we dont need to look for it
             } catch (IllegalArgumentException e) {
             } catch (IllegalAccessException e) { }
 
         fileData = new Integer[tempFiles.size()];
-        files = new String[tempFiles.size()];
+        files = new String[tempFiles.size()][2];
         for (int i = 0; i < tempFiles.size(); i++)
         {
             fileData[i] = tempFiles.get(i);
-            files[i] = tempNames.get(i);
+            files[i][0] = tempNames.get(i);
+            files[i][1] = "<Unknown>";
         }
 
         return;
@@ -60,7 +64,7 @@ public class MusicGetter {
         else this.getRawFiles();
     }
 
-    public String[] getFileStrings() {
+    public String[][] getFileStrings() {
         return this.files;
     }
 
@@ -88,28 +92,38 @@ public class MusicGetter {
         return null;
     }
 
-    public String[] fileNames(String directoryPath) {
+    public String[][] fileNames(String directoryPath) {
 
         File dir = new File(directoryPath);
-        Collection<String> files = new ArrayList<String>();
-        if(dir.isDirectory()){
+        ArrayList<String> filess = new ArrayList<String>();
+        ArrayList<String> artists = new ArrayList<String>();
+        if(dir.isDirectory()) {
             File[] listFiles = dir.listFiles();
-            for(File file : listFiles){
-                if(file.isFile()) {
+            for (File file : listFiles) {
+                if (file.isFile()) {
                     String fname = file.getName();
                     fname = getFileIfValid(fname);
                     if (fname != null) {
-                        files.add(fname);
+                        filess.add(fname);
+
+                        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                        mmr.setDataSource(file.getPath());
+                        String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                        artists.add(albumName);
                     }
                 }
             }
+
+            this.files = new String[filess.size()][2];
+            for (int i = 0; i < files.length; i++) {
+                this.files[i][0] = filess.get(i);
+                this.files[i][1] = artists.get(i);
+            }
         }
-        this.files = files.toArray(new String[]{});
         return this.files;
     }
 
     public URI[] getFiles(String directoryPath) {
-
         File dir = new File(directoryPath);
         ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()){
@@ -120,6 +134,7 @@ public class MusicGetter {
                 }
             }
         }
+
         URI[] fileInts = new URI[files.size()];
         for (int i = 0; i < files.size(); i++)
         {
@@ -131,7 +146,7 @@ public class MusicGetter {
 
     public File selectSong(int numItems) throws IOException{
 
-        File f = new File(files[numItems]);
+        File f = new File(files[numItems][0]);
         return f;
     }
 
@@ -140,7 +155,7 @@ public class MusicGetter {
     }
 
     public File selectRandomSong() throws IOException{
-        File f = new File(files[(int)(Math.random()*files.length)]);
+        File f = new File(files[(int)(Math.random()*files.length)][0]);
         return f;
     }
 

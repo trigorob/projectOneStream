@@ -21,18 +21,32 @@ public class ParallelSorter {
     String[] Array3;
     Integer[] Array4;
     String type;
+    String[][] Array5;
     Object[] retArr = null;
 
-    public ParallelSorter(String[] Array1, Uri[] Array2, String[] Array3, Integer[] Array4,  String type)
+    public ParallelSorter(String[] Array1, Uri[] Array2, String[] Array3, Integer[] Array4, String[][] Array5, String type)
     {
         //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
         this.Array1 = Array1;
         this.Array2 = Array2;
         this.Array3 = Array3;
         this.Array4 = Array4;
+        this.Array5 = Array5;
         this.type = type;
 
-        if (this.Array2 != null) {
+        if (this.Array5 != null)
+        {
+            if (this.Array4 != null)
+            {
+                sortIntLocal();
+                retArr = new Object[]{Array5 , Array4};
+            }
+            else if (this.Array2 != null) {
+                sortUriLocal();
+                retArr = new Object[]{Array5 , Array2};
+            }
+        }
+        else if (this.Array2 != null) {
             sortUri();
             retArr = new Object[]{Array1 , Array2};
         }
@@ -73,6 +87,42 @@ public class ParallelSorter {
                 }
         }
 
+        public void sortUriLocal() {
+
+            ArrayList<LocalCompUri> metaData= new ArrayList<LocalCompUri>();
+            for (int i = 0; i < Array5.length; i++)
+            {
+                metaData.add(new LocalCompUri(Array5[i][0], Array5[i][1], Array2[i]));
+            }
+
+            Collections.sort(metaData, new LocalResultComparatorURI(type));
+            for(int i =0; i < metaData.size(); i++)
+            {
+                LocalCompUri comp = metaData.get(i);
+                Array5[i][0] = comp.output;
+                Array5[i][1] = comp.artist;
+                Array2[i]    = comp.result;
+            }
+        }
+
+        public void sortIntLocal() {
+
+            ArrayList<LocalCompInt> metaData= new ArrayList<LocalCompInt>();
+            for (int i = 0; i < Array5.length; i++)
+            {
+                metaData.add(new LocalCompInt(Array5[i][0], Array5[i][1], Array4[i]));
+            }
+
+            Collections.sort(metaData, new LocalResultComparatorInt(type));
+            for(int i =0; i < metaData.size(); i++)
+            {
+                LocalCompInt comp = metaData.get(i);
+                Array5[i][0] = comp.output;
+                Array5[i][1] = comp.artist;
+                Array4[i]    = comp.result;
+            }
+        }
+
         public void sortString() {
 
             ArrayList<compString> metaData= new ArrayList<compString>();
@@ -104,6 +154,28 @@ public class ParallelSorter {
                 Array4[i] = comp.result;
             }
 
+        }
+    }
+
+
+    class LocalResultComparatorURI implements Comparator<LocalCompUri> {
+        String type;
+
+        public LocalResultComparatorURI(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int compare(LocalCompUri a, LocalCompUri b) {
+            if (type.equals("ALPH-ASC")) {
+                return a.output.compareTo(b.output) < 0 ? -1 : a.output == b.output ? 0 : 1;
+            }
+            else if (type.equals("ALPH-DESC")) {
+                return b.output.compareTo(a.output) < 0 ? -1 : b.output == a.output ? 0 : 1;
+            }
+            else {
+                return 0;
+            }
         }
     }
 
@@ -149,6 +221,26 @@ public class ParallelSorter {
         }
     }
 
+    class LocalResultComparatorInt implements Comparator<LocalCompInt> {
+        String type;
+
+        public LocalResultComparatorInt(String type) {
+            this.type = type;
+        }
+        @Override
+        public int compare(LocalCompInt a, LocalCompInt b) {
+            if (type.equals("ALPH-ASC")) {
+                return a.output.compareTo(b.output) < 0 ? -1 : a.output == b.output ? 0 : 1;
+            }
+            else if (type.equals("ALPH-DESC")) {
+                return b.output.compareTo(a.output) < 0 ? -1 : b.output == a.output ? 0 : 1;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+
     class ResultComparatorInt implements Comparator<compInt> {
         String type;
 
@@ -176,6 +268,30 @@ public class ParallelSorter {
         compUri(String n, Uri a) {
             output = n;
             result = a;
+        }
+    }
+
+    class LocalCompUri{
+        String output;
+        Uri result;
+        String artist;
+
+        LocalCompUri(String n, String art, Uri a) {
+            output = n;
+            result = a;
+            artist = art;
+        }
+    }
+
+    class LocalCompInt{
+        String output;
+        int result;
+        String artist;
+
+        LocalCompInt(String n, String art, int a) {
+            output = n;
+            result = a;
+            artist = art;
         }
     }
 

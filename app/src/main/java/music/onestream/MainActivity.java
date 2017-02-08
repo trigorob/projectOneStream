@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private MediaPlayer mp;
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> spotifyAdapter;
-    private static String[] listContent;
+    private static String[][] listContent;
+    private static String[] listSongs;
     private static String[] spotifyListContent = {};
     private static Integer[] resID;
     private static Uri[] resURI;
@@ -217,6 +218,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     {
         mG = new MusicGetter(dir);
         listContent = mG.files;
+
+        if (listSongs == null)
+        {
+            listSongs = new String[listContent.length];
+        }
+        for (int i = 0; i < listContent.length; i++)
+        {
+            this.listSongs[i] = listContent[i][0];
+        }
         if (!(mG.fileData == null))
         {
             resID = mG.fileData;
@@ -230,6 +240,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             }
             resID = null;
         }
+
+        sortLists(sortType, "Local");
 
         return mG;
     }
@@ -371,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         //Make sure you update Seekbar on UI thread
 
         mainList = (ListView) findViewById(R.id.ListView1);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSongs);
 
         mainList.setAdapter(adapter);
 
@@ -574,7 +586,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
     }
 
-    private void sortLists(String type) {
+    private void sortLists(String type, String list) {
 
         if (type.equals("Default"))
         {
@@ -584,25 +596,32 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             ParallelSorter ps = null;
             Object[] retVal = null;
-            if (spotifyListContent != null && spotifyListContent.length>0) {
-                ps = new ParallelSorter(spotifyListContent, null, spotURIStrings, null, type);
+            if (spotifyListContent != null && spotifyListContent.length>0 && list.equals("Spotify")) {
+                ps = new ParallelSorter(spotifyListContent, null, spotURIStrings, null, null,type);
                 retVal = ps.getRetArr();
                 spotifyListContent = (String[]) retVal[0];
                 spotURIStrings = (String[]) retVal[1];
             }
-            if (listContent != null && listContent.length>0) {
+            if (listContent != null && listContent.length>0 && list.equals("Local")) {
                 if (resID != null)
                 {
-                    ps =new ParallelSorter(listContent, null, null, resID, type);
+                    ps =new ParallelSorter(null, null, null, resID, listContent, type);
                     retVal = ps.getRetArr();
-                    listContent = (String[]) retVal[0];
+                    listContent = (String[][]) retVal[0];
+                    for (int i = 0; i < listContent.length; i++) {
+                        this.listSongs[i] = listContent[i][0];
+                    }
                     resID = (Integer[]) retVal[1];
                 }
                 else if (resURI != null)
                 {
-                    ps = new ParallelSorter(listContent, resURI, null, null, type);
+                    ps = new ParallelSorter(null, resURI, null, null, listContent, type);
                     retVal = ps.getRetArr();
                     resURI = (Uri[]) retVal[1];
+                    listContent = (String[][]) retVal[0];
+                    for (int i = 0; i < listContent.length; i++) {
+                        listSongs[i] = listContent[i][0];
+                    }
                 }
 
             }
@@ -816,7 +835,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 spotURIStrings[i] =  (String) jsonObject.get("uri");
                 spotifyListContent[i] =  (String) jsonObject.get("name");
             }
-            sortLists(sortType);
+            sortLists(sortType, "Spotify");
         } catch (JSONException e) {}
         setupSpotifyAdapter();
     }
