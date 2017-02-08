@@ -1,5 +1,8 @@
 package music.onestream;
 
+import java.util.Arrays;
+import java.util.Arrays.*;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -48,11 +52,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, AsyncResponse, Player.NotificationCallback, ConnectionStateCallback {
 
-    public static final int ACTIVITY_CHANGE_DIR = 6;
+    //Increment this after getting spotify songs. TODO: Implement this functionality
+    private int spotifySongOffset= 0;
+
     private static String directory;
+    private static String sortType;
 
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
     static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
@@ -170,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         playRandomSong();
                     }
                 }});
+
             seekbar.setMax(mp.getDuration());
         }
 
@@ -179,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 spotPlayer.login(CredentialsHandler.getToken(getApplicationContext()));
             }
             spotPlayer.playUri(opCallback, spotURIStrings[songIndex],0,0);
-
             currentSongType = "Spotify";
         }
 
@@ -260,18 +268,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ACTIVITY_CHANGE_DIR) {
-            if (resultCode == RESULT_OK) {
-                Bundle bundle = getIntent().getExtras();
-                this.directory = bundle.getString("dir");
-                this.setMusicDir(mG, directory);
-                mViewPager.setCurrentItem(0);
-            }
-        }
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mNetworkStateReceiver);
@@ -339,8 +335,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         final String directory = settings.getString("dir", "Default");
+        settings = getSharedPreferences("SORT-TYPE", 0);
+        sortType = settings.getString("sortType", "Default");
+
         mG = setMusicDir(mG, directory);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -503,7 +504,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         //Sometimes logged in but player is not. We check length for handling that
-                        if (spotURIStrings.length == 0 && (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn())))
+                        if ((spotURIStrings != null && spotURIStrings.length == 0) &&
+                                (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn())))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
@@ -572,6 +574,42 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
     }
 
+    private void sortLists(String type) {
+
+        if (type.equals("Default"))
+        {
+            return;
+        }
+        else
+        {
+            ParallelSorter ps = null;
+            Object[] retVal = null;
+            if (spotifyListContent != null && spotifyListContent.length>0) {
+                ps = new ParallelSorter(spotifyListContent, null, spotURIStrings, null, type);
+                retVal = ps.getRetArr();
+                spotifyListContent = (String[]) retVal[0];
+                spotURIStrings = (String[]) retVal[1];
+            }
+            if (listContent != null && listContent.length>0) {
+                if (resID != null)
+                {
+                    ps =new ParallelSorter(listContent, null, null, resID, type);
+                    retVal = ps.getRetArr();
+                    listContent = (String[]) retVal[0];
+                    resID = (Integer[]) retVal[1];
+                }
+                else if (resURI != null)
+                {
+                    ps = new ParallelSorter(listContent, resURI, null, null, type);
+                    retVal = ps.getRetArr();
+                    resURI = (Uri[]) retVal[1];
+                }
+
+            }
+            return;
+        }
+    }
+
     public void previousSong() {
 
         int next;
@@ -603,15 +641,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void nextSongInService() {
         int next;
         int totalSongs = -1;
-        if (currentSongType.equals("Local")) {
-            if (resURI == null) {
-                totalSongs = resID.length - 1;
-            }
-            else {
-                totalSongs = resURI.length - 1;
-            }
-        }
-        else if (currentSongType.equals("Spotify"))
+        if (currentSongType.equals("Spotify"))
         {
             totalSongs = spotURIStrings.length-1;
         }
@@ -786,6 +816,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 spotURIStrings[i] =  (String) jsonObject.get("uri");
                 spotifyListContent[i] =  (String) jsonObject.get("name");
             }
+            sortLists(sortType);
         } catch (JSONException e) {}
         setupSpotifyAdapter();
     }

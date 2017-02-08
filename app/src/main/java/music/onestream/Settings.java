@@ -20,7 +20,6 @@ import java.io.File;
 
 public class Settings extends Activity {
 
-    public static final int ACTIVITY_CHANGE_DIR = 6;
     private static final String PREFS_NAME = "dirInfo";
 
     /**
@@ -58,6 +57,15 @@ public class Settings extends Activity {
             public void onClick(View v) {
                 Intent login = new Intent(v.getContext(), LoginActivity.class);
                 startActivityForResult(login, 0);
+            }
+        });
+
+        final Button sortPage = (Button) findViewById(R.id.sortPage);
+        sortPage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent sorting = new Intent(v.getContext(), SortingActivity.class);
+                startActivityForResult(sorting, 0);
             }
         });
 

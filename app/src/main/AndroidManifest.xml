@@ -26,6 +26,11 @@
             android:label="Settings">
         </activity>
 
+        <activity
+            android:name=".SortingActivity"
+            android:label="SortingActivity">
+        </activity>
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
