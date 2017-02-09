@@ -13,38 +13,39 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by ruspe_000 on 2017-02-03.
- */
+    /**
+     * Created by ruspe_000 on 2017-02-03.
+     */
 
-public class SpotifyMusicGetter extends AsyncTask {
-    AsyncResponse SAR;
+    public class SpotifyMusicGetter extends AsyncTask {
+        AsyncResponse SAR;
 
-    @Override
-    protected void onPostExecute(Object result) {
-        SAR.processFinish((String)result);
-    }
-
-    //This is the async process that gets songs. It only gets 50 right now.
-    //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
-    @Override
-    protected String doInBackground(Object[] params) {
-        String result = null;
-        String token = (String) params[0];
-        try {
-            String urlString = "https://api.spotify.com/v1/me/tracks";
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Authorization", "Bearer " + token);
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("accept", "application/json");
-            //Get the songs as an object
-            result = getJSON(conn);
-        } catch (IOException IOE) {
-
+        @Override
+        protected void onPostExecute(Object result) {
+            SAR.processFinish((String)result);
         }
-        return result;
-    }
+
+        //This is the async process that gets songs. It only gets 50 right now.
+        //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
+        @Override
+        protected String doInBackground(Object[] params) {
+            String result = null;
+            String token = (String) params[0];
+            String offset = ((Integer) params[1]).toString();
+            try {
+                String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit=20";
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("accept", "application/json");
+                //Get the songs as an object
+                result = getJSON(conn);
+            } catch (IOException IOE) {
+
+            }
+            return result;
+        }
 
     public String getJSON(HttpURLConnection url) {
         HttpURLConnection c = url;

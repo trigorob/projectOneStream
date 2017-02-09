@@ -16,15 +16,15 @@ import java.util.List;
 
 public class ParallelSorter {
 
-    String[] Array1;
+    ArrayList<String> Array1;
     Uri[] Array2;
-    String[] Array3;
+    ArrayList<String> Array3;
     Integer[] Array4;
     String type;
     String[][] Array5;
     Object[] retArr = null;
 
-    public ParallelSorter(String[] Array1, Uri[] Array2, String[] Array3, Integer[] Array4, String[][] Array5, String type)
+    public ParallelSorter(ArrayList<String> Array1, Uri[] Array2, ArrayList<String> Array3, Integer[] Array4, String[][] Array5, String type)
     {
         //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
         this.Array1 = Array1;
@@ -73,16 +73,16 @@ public class ParallelSorter {
         public void sortUri() {
 
             ArrayList<compUri> metaData= new ArrayList<compUri>();
-            for (int i = 0; i < Array1.length; i++)
+            for (int i = 0; i < Array1.size(); i++)
             {
-                metaData.add(new compUri(Array1[i],Array2[i]));
+                metaData.add(new compUri(Array1.get(i),Array2[i]));
             }
 
                 Collections.sort(metaData, new ResultComparatorURI(type));
                 for(int i =0; i < metaData.size(); i++)
                 {
                     compUri comp = metaData.get(i);
-                    Array1[i] = comp.output;
+                    Array1.set(i, comp.output);
                     Array2[i] = comp.result;
                 }
         }
@@ -126,31 +126,31 @@ public class ParallelSorter {
         public void sortString() {
 
             ArrayList<compString> metaData= new ArrayList<compString>();
-            for (int i = 0; i < Array1.length; i++)
+            for (int i = 0; i < Array1.size(); i++)
             {
-                metaData.add(new compString(Array1[i],Array3[i]));
+                metaData.add(new compString(Array1.get(i),Array3.get(i)));
             }
 
             Collections.sort(metaData, new ResultComparatorString(type));
             for(int i =0; i < metaData.size(); i++) {
                 compString comp = metaData.get(i);
-                Array1[i] = comp.output;
-                Array3[i] = comp.result;
+                Array1.set(i,comp.output);
+                Array3.set(i, comp.result);
             }
         }
 
         public void sortInt() {
 
             ArrayList<compInt> metaData= new ArrayList<compInt>();
-            for (int i = 0; i < Array1.length; i++)
+            for (int i = 0; i < Array1.size(); i++)
             {
-                metaData.add(new compInt(Array1[i], Array4[i]));
+                metaData.add(new compInt(Array1.get(i), Array4[i]));
             }
 
             Collections.sort(metaData, new ResultComparatorInt(type));
             for(int i =0; i < metaData.size(); i++) {
                 compInt comp = metaData.get(i);
-                Array1[i] = comp.output;
+                Array1.set(i,comp.output);
                 Array4[i] = comp.result;
             }
 

@@ -1,5 +1,6 @@
 package music.onestream;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Arrays.*;
 
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -57,7 +59,7 @@ import java.util.Collections;
 public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, AsyncResponse, Player.NotificationCallback, ConnectionStateCallback {
 
     //Increment this after getting spotify songs. TODO: Implement this functionality
-    private int spotifySongOffset= 0;
+    private static int spotifySongOffset= 0;
 
     private static String directory;
     private static String sortType;
@@ -74,10 +76,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private ArrayAdapter<String> spotifyAdapter;
     private static String[][] listContent;
     private static String[] listSongs;
-    private static String[] spotifyListContent = {};
+    private static ArrayList<String> spotifyListContent;
     private static Integer[] resID;
     private static Uri[] resURI;
-    private static String[] spotURIStrings;
+    private static ArrayList<String> spotURIStrings;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
     private SpotifyPlayer spotPlayer;
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         else if (currentSongType.equals("Spotify"))
         {
             spotPlayer.resume(opCallback);
-            spotPlayer.playUri(opCallback, spotURIStrings[currentSongListPosition], 0, currentSongPosition);
+            spotPlayer.playUri(opCallback, spotURIStrings.get(currentSongListPosition), 0, currentSongPosition);
 
             SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
             final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
@@ -188,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             {
                 spotPlayer.login(CredentialsHandler.getToken(getApplicationContext()));
             }
-            spotPlayer.playUri(opCallback, spotURIStrings[songIndex],0,0);
+            spotPlayer.playUri(opCallback, spotURIStrings.get(songIndex),0,0);
             currentSongType = "Spotify";
         }
 
@@ -364,9 +366,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         //this to set listener back to this class
-        sMG = new SpotifyMusicGetter();
-        sMG.SAR = this;
-        getSpotifyLibrary();
+        if (spotifySongOffset == 0) {
+            sMG = new SpotifyMusicGetter();
+            sMG.SAR = this;
+            getSpotifyLibrary();
+        }
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -521,6 +525,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                             loginButton.setVisibility(View.VISIBLE);
                         }
                         mainList.setVisibility(View.VISIBLE);
+                        sortLists(sortType, "Spotify");
                         break;
                     case 2:
                         //Todo: change to soundcloudStrings
@@ -601,11 +606,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             ParallelSorter ps = null;
             Object[] retVal = null;
-            if (spotifyListContent != null && spotifyListContent.length>0 && list.equals("Spotify")) {
+            if (spotifyListContent != null && spotifyListContent.size()>0 && list.equals("Spotify")) {
                 ps = new ParallelSorter(spotifyListContent, null, spotURIStrings, null, null,type);
                 retVal = ps.getRetArr();
-                spotifyListContent = (String[]) retVal[0];
-                spotURIStrings = (String[]) retVal[1];
+                spotifyListContent = (ArrayList<String>) retVal[0];
+                spotURIStrings = (ArrayList<String>) retVal[1];
             }
             if (listContent != null && listContent.length>0 && list.equals("Local")) {
                 if (resID != null)
@@ -667,7 +672,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         int totalSongs = -1;
         if (currentSongType.equals("Spotify"))
         {
-            totalSongs = spotURIStrings.length-1;
+            totalSongs = spotURIStrings.size()-1;
         }
         if (currentSongListPosition == -1)
         {
@@ -725,7 +730,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 currentSongListPosition = choice;
             }
             else if (currentSongType.equals("Spotify")) {
-                int choice = (int) (Math.random() * spotURIStrings.length);
+                int choice = (int) (Math.random() * spotURIStrings.size());
                 View choiceRow = getViewByPosition(mainList, choice);
 
                 if (currentSongListPosition != -1) {
@@ -759,9 +764,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext());
         if (accessToken != null) {
-            sMG = new SpotifyMusicGetter();
-            sMG.SAR = this;
-            sMG.execute(accessToken);
+            while (spotifySongOffset < 500)
+            {
+                Object[] params = new Object[2];
+                params[0] = accessToken;
+                params[1] = spotifySongOffset;
+                sMG = new SpotifyMusicGetter();
+                sMG.SAR = this;
+                sMG.execute(params);
+                spotifySongOffset += 20;
+            }
         }
 
         Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
@@ -832,15 +844,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             JSONObject jsonObject = new JSONObject(output);
             JSONArray jArray = jsonObject.getJSONArray("items");
 
-            spotifyListContent = new String[jArray.length()];
-            spotURIStrings = new String[jArray.length()];
+            if (spotifyListContent == null || spotURIStrings == null) {
+                spotifyListContent = new ArrayList<String>();
+                spotURIStrings = new ArrayList<String>();
+            }
             for (int i = 0; i < jArray.length(); i++)
             {
                 jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
-                spotURIStrings[i] =  (String) jsonObject.get("uri");
-                spotifyListContent[i] =  (String) jsonObject.get("name");
+                spotURIStrings.add((String) jsonObject.get("uri"));
+                spotifyListContent.add((String) jsonObject.get("name"));
             }
-            sortLists(sortType, "Spotify");
         } catch (JSONException e) {}
         setupSpotifyAdapter();
     }
