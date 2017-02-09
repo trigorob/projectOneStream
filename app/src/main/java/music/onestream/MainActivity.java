@@ -516,17 +516,22 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         //Sometimes logged in but player is not. We check length for handling that
-                        if ((spotURIStrings != null && spotURIStrings.length == 0) &&
-                                (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn())))
+                        if ((spotURIStrings == null))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
                         mainList.setVisibility(View.VISIBLE);
                         break;
                     case 2:
+                        //Todo: change to soundcloudStrings
+                        if ((spotURIStrings == null))
+                        {
+                            loginButton.setVisibility(View.VISIBLE);
+                        }
                         mainList.setVisibility(View.INVISIBLE);
                         break;
                     case 3:
+                        loginButton.setVisibility(View.INVISIBLE);
                         mainList.setVisibility(View.INVISIBLE);
                         break;
                 }
