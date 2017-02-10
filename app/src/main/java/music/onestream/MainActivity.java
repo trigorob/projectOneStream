@@ -507,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-            //TODO: Optimize. Also need lists for spotify/soundcloud
+            //TODO: Optimize. Also need lists for spotify/googlemusic
             @Override
             public void onPageSelected(int position) {
                 currentSongListPosition = -1;
@@ -528,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         sortLists(sortType, "Spotify");
                         break;
                     case 2:
-                        //Todo: change to soundcloudStrings
+                        //Todo: change to googlemusicStrings
                         if ((spotURIStrings == null))
                         {
                             loginButton.setVisibility(View.VISIBLE);

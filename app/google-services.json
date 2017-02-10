@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "569034723336",
+    "project_id": "firebase-onestream"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569034723336:android:8c3a029a7e4d49c5",
+        "android_client_info": {
+          "package_name": "music.onestream"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569034723336-ar90qri19lj8oj8ui54pgqhoqfgjhe4u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "music.onestream",
+            "certificate_hash": "33A057805950CD4B55ED9850A112BDD7ECB6C6FF"
+          }
+        },
+        {
+          "client_id": "569034723336-1e7na5qkjd69cff5hoq8sct6cu4nf6pj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1STlEQM3WI7EA-JM5IGk2wt9m0oyOo8s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

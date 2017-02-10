@@ -10,7 +10,7 @@ public class CredentialsHandler {
     private static final String SPOTIFY_TOKEN_NAME = "webapi.credentials.access_token";
     private static final String SOUNDCLOUD_TOKEN_NAME = "webapi.credentials.access_token";
     private static final String SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
-    private static final String SOUNDCLOUD_ACCESS_TOKEN = "soundcloud_access_token";
+    private static final String SOUNDCLOUD_ACCESS_TOKEN = "googlemusic_access_token";
     private static final String EXPIRES_AT = "expires_at";
 
     public static void setToken(Context context, String token, long expiresIn, TimeUnit unit, String service) {
@@ -25,7 +25,7 @@ public class CredentialsHandler {
             editor.putString(SPOTIFY_ACCESS_TOKEN, token);
             editor.putLong(EXPIRES_AT, expiresAt);
         }
-        else if (service.equals("SoundCloud"))
+        else if (service.equals("GoogleMusic"))
         {
             editor.putString(SOUNDCLOUD_ACCESS_TOKEN, token);
             editor.putLong(EXPIRES_AT, expiresAt);
@@ -37,13 +37,13 @@ public class CredentialsHandler {
         return appContext.getSharedPreferences(SPOTIFY_TOKEN_NAME, Context.MODE_PRIVATE);
     }
 
-    private static SharedPreferences getSoundCloudSharedPreferences(Context appContext) {
+    private static SharedPreferences getGoogleMusicSharedPreferences(Context appContext) {
         return appContext.getSharedPreferences(SPOTIFY_TOKEN_NAME, Context.MODE_PRIVATE);
     }
 
     public static String getToken(Context context, String Service) {
         Context appContext = context.getApplicationContext();
-        SharedPreferences sharedPref = getSoundCloudSharedPreferences(appContext);
+        SharedPreferences sharedPref = getGoogleMusicSharedPreferences(appContext);
 
         String token = null;
         long expiresAt = 0;
@@ -51,7 +51,7 @@ public class CredentialsHandler {
             token = sharedPref.getString(SPOTIFY_ACCESS_TOKEN, null);
             expiresAt = sharedPref.getLong(EXPIRES_AT, 0L);
         }
-        else if (Service.equals("SoundCloud")) {
+        else if (Service.equals("GoogleMusic")) {
             token = sharedPref.getString(SOUNDCLOUD_ACCESS_TOKEN, null);
             expiresAt = sharedPref.getLong(EXPIRES_AT, 0L);
         }

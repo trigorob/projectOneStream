@@ -3,21 +3,19 @@ package music.onestream;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-//Authentication tool for SoundCloud
-import com.jlubecki.soundcloud.webapi.android.auth.AuthenticationCallback;
-import com.jlubecki.soundcloud.webapi.android.auth.AuthenticationStrategy;
-import com.jlubecki.soundcloud.webapi.android.auth.SoundCloudAuthenticator;
-
-import com.jlubecki.soundcloud.webapi.android.auth.browser.BrowserSoundCloudAuthenticator;
-import com.jlubecki.soundcloud.webapi.android.auth.chrometabs.ChromeTabsSoundCloudAuthenticator;
-import com.jlubecki.soundcloud.webapi.android.auth.webview.WebViewSoundCloudAuthenticator;
+//Authentication tool for GoogleMusic
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -25,7 +23,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.concurrent.TimeUnit;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends FragmentActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -36,24 +34,15 @@ public class LoginActivity extends Activity {
     @SuppressWarnings("SpellCheckingInspection")
     private static final String SPOTIFY_REDIRECT_URI = "testschema://callback";
     private static final String SOUNDCLOUD_REDIRECT_URI = "http://onestream.local/dashboard/";
-
-    private SoundCloudAuthenticator mAuthenticator;
-    private AuthenticationStrategy strategy;
-    private AuthenticationCallback callback;
-
     private static final int REQUEST_CODE = 1337;
+    private static final int RC_SIGN_IN = 9001;
+
+    private static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        callback = new AuthenticationCallback() {
-            @Override
-            public void onReadyToAuthenticate(SoundCloudAuthenticator authenticator) {
-                mAuthenticator = authenticator;
-            }
-        };
 
         String token = CredentialsHandler.getToken(this, "Spotify");
         Button spotifyLoginButton = (Button) findViewById(R.id.spotifyLoginLauncherButton);
@@ -63,13 +52,21 @@ public class LoginActivity extends Activity {
             spotifyLoginButton.setText(R.string.spotify_logout_button);
         }
 
-        token = CredentialsHandler.getToken(this, "SoundCloud");
-        Button soundCloudLoginButton = (Button) findViewById(R.id.soundCloudLoginLauncherButton);
+        token = CredentialsHandler.getToken(this, "GoogleMusic");
+        Button googleMusicLoginButton = (Button) findViewById(R.id.googleMusicLoginLauncherButton);
         if (token == null) {
-            soundCloudLoginButton.setText(R.string.soundcloud_login_button);
+            googleMusicLoginButton.setText(R.string.googlemusic_login_button);
         } else {
-            soundCloudLoginButton.setText(R.string.soundcloud_logout_button);
+            googleMusicLoginButton.setText(R.string.googlemusic_logout_button);
         }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().requestIdToken("537731552101-21vvqc86rrmso8lddghoscv871ntg55a.apps.googleusercontent.com")
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).enableAutoManage(this,null)
+                .build();
     }
 
     public void onSpotifyLoginButtonClicked(View view) {
@@ -79,17 +76,9 @@ public class LoginActivity extends Activity {
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
-    public void onSoundCloudLoginButtonClicked(View view) {
-        WebViewSoundCloudAuthenticator webViewAuthenticator =
-                new WebViewSoundCloudAuthenticator(SOUNDCLOUD_ID, SOUNDCLOUD_REDIRECT_URI, this, REQUEST_CODE);
-
-        strategy = new AuthenticationStrategy.Builder(this)
-                .addAuthenticator(webViewAuthenticator) // Finally tries this
-                .setCheckNetwork(true) // Makes sure the internet is connected first.
-                .build();
-
-        strategy.beginAuthentication(callback);
-        mAuthenticator.launchAuthenticationFlow();
+    public void onGoogleMusicLoginButtonClicked(View view) {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -115,6 +104,13 @@ public class LoginActivity extends Activity {
                 // Most likely auth flow was cancelled
                 default:
                     logError("Auth result: " + response.getType());
+            }
+        } else if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
+            if (result.isSuccess()) {
+                GoogleSignInAccount acct = result.getSignInAccount();
+                // Get account information
+                return;
             }
         }
     }

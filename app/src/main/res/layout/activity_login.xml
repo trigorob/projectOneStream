@@ -22,11 +22,11 @@
         android:onClick="onSpotifyLoginButtonClicked"
         android:text="@string/spotify_login_button"/>
     <Button
-        android:id="@+id/soundCloudLoginLauncherButton"
+        android:id="@+id/googleMusicLoginLauncherButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onSoundCloudLoginButtonClicked"
-        android:text="Login to SoundCloud"/>
+        android:onClick="onGoogleMusicLoginButtonClicked"
+        android:text="Login to Google Music"/>
     </LinearLayout>
 
 
