@@ -11,12 +11,21 @@
     tools:context=".LoginActivity">
 
     <Button
-        android:id="@+id/loginLauncherButton"
+        android:id="@+id/spotifyLoginLauncherButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:onClick="onLoginButtonClicked"
         android:text="@string/spotify_login_button"/>
+
+    <Button
+        android:id="@+id/soundCloudLoginLauncherButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:onClick="onLoginButtonClicked"
+        android:text="Login to SoundCloud"/>
 
 </RelativeLayout>

@@ -30,15 +30,24 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        String token = CredentialsHandler.getToken(this);
-        Button loginButton = (Button) findViewById(R.id.loginLauncherButton);
+        String token = CredentialsHandler.getToken(this, "Spotify");
+        Button spotifyLoginButton = (Button) findViewById(R.id.spotifyLoginLauncherButton);
         if (token == null) {
-            loginButton.setText(R.string.spotify_login_button);
+            spotifyLoginButton.setText(R.string.spotify_login_button);
         } else {
-            loginButton.setText(R.string.spotify_logout_button);
+            spotifyLoginButton.setText(R.string.spotify_logout_button);
+        }
+
+        token = CredentialsHandler.getToken(this, "SoundCloud");
+        Button soundCloudLoginButton = (Button) findViewById(R.id.soundCloudLoginLauncherButton);
+        if (token == null) {
+            soundCloudLoginButton.setText(R.string.soundcloud_login_button);
+        } else {
+            soundCloudLoginButton.setText(R.string.soundcloud_logout_button);
         }
     }
 
+    //Todo: <Maybe> Change to spotify
     public void onLoginButtonClicked(View view) {
             final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
                     .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read", "playlist-read-private", "streaming"}).setShowDialog(true)
@@ -57,7 +66,7 @@ public class LoginActivity extends Activity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     logMessage("Got token: " + response.getAccessToken());
-                    CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS);
+                    CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS, "Spotify");
                     startMainActivity(response.getAccessToken());
                     break;
 

@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         else if (mainList.getAdapter() == spotifyAdapter && spotPlayer != null) {
             if (!spotPlayer.isLoggedIn())
             {
-                spotPlayer.login(CredentialsHandler.getToken(getApplicationContext()));
+                spotPlayer.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
             }
             spotPlayer.playUri(opCallback, spotURIStrings.get(songIndex),0,0);
             currentSongType = "Spotify";
@@ -762,7 +762,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public void getSpotifyLibrary() {
         CredentialsHandler CH = new CredentialsHandler();
-        final String accessToken = CH.getToken(getBaseContext());
+        final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         if (accessToken != null) {
             while (spotifySongOffset < 500)
             {
