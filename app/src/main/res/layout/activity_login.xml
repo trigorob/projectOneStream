@@ -10,22 +10,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".LoginActivity">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
     <Button
         android:id="@+id/spotifyLoginLauncherButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="onLoginButtonClicked"
+        android:onClick="onSpotifyLoginButtonClicked"
         android:text="@string/spotify_login_button"/>
-
     <Button
         android:id="@+id/soundCloudLoginLauncherButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="onLoginButtonClicked"
+        android:onClick="onSoundCloudLoginButtonClicked"
         android:text="Login to SoundCloud"/>
+    </LinearLayout>
+
 
 </RelativeLayout>

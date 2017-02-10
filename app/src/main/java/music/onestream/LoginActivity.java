@@ -3,14 +3,25 @@ package music.onestream;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+//Authentication tool for SoundCloud
+import com.jlubecki.soundcloud.webapi.android.auth.AuthenticationCallback;
+import com.jlubecki.soundcloud.webapi.android.auth.AuthenticationStrategy;
+import com.jlubecki.soundcloud.webapi.android.auth.SoundCloudAuthenticator;
+
+import com.jlubecki.soundcloud.webapi.android.auth.browser.BrowserSoundCloudAuthenticator;
+import com.jlubecki.soundcloud.webapi.android.auth.chrometabs.ChromeTabsSoundCloudAuthenticator;
+import com.jlubecki.soundcloud.webapi.android.auth.webview.WebViewSoundCloudAuthenticator;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,9 +30,16 @@ public class LoginActivity extends Activity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
+    private static final String SPOTIFY_ID = "0785a1e619c34d11b2f50cb717c27da0";
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String REDIRECT_URI = "testschema://callback";
+    private static final String SOUNDCLOUD_ID = "asNLcGe4DAQ1YHSRKNyCo15sfFnXDbvS";
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String SPOTIFY_REDIRECT_URI = "testschema://callback";
+    private static final String SOUNDCLOUD_REDIRECT_URI = "http://onestream.local/dashboard/";
+
+    private SoundCloudAuthenticator mAuthenticator;
+    private AuthenticationStrategy strategy;
+    private AuthenticationCallback callback;
 
     private static final int REQUEST_CODE = 1337;
 
@@ -29,6 +47,13 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        callback = new AuthenticationCallback() {
+            @Override
+            public void onReadyToAuthenticate(SoundCloudAuthenticator authenticator) {
+                mAuthenticator = authenticator;
+            }
+        };
 
         String token = CredentialsHandler.getToken(this, "Spotify");
         Button spotifyLoginButton = (Button) findViewById(R.id.spotifyLoginLauncherButton);
@@ -47,12 +72,24 @@ public class LoginActivity extends Activity {
         }
     }
 
-    //Todo: <Maybe> Change to spotify
-    public void onLoginButtonClicked(View view) {
-            final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
+    public void onSpotifyLoginButtonClicked(View view) {
+            final AuthenticationRequest request = new AuthenticationRequest.Builder(SPOTIFY_ID, AuthenticationResponse.Type.TOKEN, SPOTIFY_REDIRECT_URI)
                     .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read", "playlist-read-private", "streaming"}).setShowDialog(true)
                     .build();
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+    }
+
+    public void onSoundCloudLoginButtonClicked(View view) {
+        WebViewSoundCloudAuthenticator webViewAuthenticator =
+                new WebViewSoundCloudAuthenticator(SOUNDCLOUD_ID, SOUNDCLOUD_REDIRECT_URI, this, REQUEST_CODE);
+
+        strategy = new AuthenticationStrategy.Builder(this)
+                .addAuthenticator(webViewAuthenticator) // Finally tries this
+                .setCheckNetwork(true) // Makes sure the internet is connected first.
+                .build();
+
+        strategy.beginAuthentication(callback);
+        mAuthenticator.launchAuthenticationFlow();
     }
 
     @Override
@@ -98,4 +135,5 @@ public class LoginActivity extends Activity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         Log.d(TAG, msg);
     }
+
 }
