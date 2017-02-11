@@ -9,6 +9,7 @@ Soundcloud:
 	Redirect URI:  onestream.local/dashboard/
 	
 Google Play:
-	Client ID:     569034723336-1e7na5qkjd69cff5hoq8sct6cu4nf6pj.apps.googleusercontent.com
+	Client ID (Android):     537731552101-geotql19dbpebpo13jlgduvs3ei6t6fu.apps.googleusercontent.com
+	Client ID (Authentication): 537731552101-9ocia7iemi1ssge1572bqrc675p3c8u7.apps.googleusercontent.com
 	Client Secret: pWw4OM5q9vr64XZmVTWCFJSZ
 	SHA1: 

@@ -61,8 +61,8 @@ public class LoginActivity extends FragmentActivity {
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().requestIdToken("537731552101-21vvqc86rrmso8lddghoscv871ntg55a.apps.googleusercontent.com")
-                .build();
+                .requestIdToken(LoginActivity.this.getResources().getString(R.string.server_client_id))
+                .requestEmail().build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso).enableAutoManage(this,null)
