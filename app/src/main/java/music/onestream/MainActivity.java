@@ -322,7 +322,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -366,15 +365,17 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         //this to set listener back to this class
 
-        if (spotifySongOffset == 0) {
-            sMG = new SpotifyMusicGetter();
-            sMG.SAR = this;
-            getSpotifyLibrary();
+        if (spotifyListContent == null)
+        {
+            spotifyListContent = new ArrayList<String>();
+            spotURIStrings = new ArrayList<String>();
         }
+
+        getSpotifyLibrary();
+
         if (spotifyListContent != null && spotifyListContent.size() > 0)
         {
             sortLists(sortType, "Spotify");
-            setupSpotifyAdapter();
         }
 
         // Set up the ViewPager with the sections adapter.
@@ -393,9 +394,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         mainList = (ListView) findViewById(R.id.ListView1);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSongs);
+        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifyListContent);
+
 
         mainList.setAdapter(adapter);
-
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
@@ -525,11 +527,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         //Sometimes logged in but player is not. We check length for handling that
-                        if ((spotURIStrings == null))
+                        if ((spotURIStrings == null || spotifyListContent == null))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
-                        mainList.setVisibility(View.VISIBLE);
+                        else {
+                            mainList.setVisibility(View.VISIBLE);
+                        }
                         break;
                     case 2:
                         //Todo: change to googlemusicStrings
@@ -778,7 +782,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 sMG.execute(params);
                 spotifySongOffset += 20;
             }
-            setupSpotifyAdapter();
+
         }
 
         Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
@@ -849,10 +853,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             JSONObject jsonObject = new JSONObject(output);
             JSONArray jArray = jsonObject.getJSONArray("items");
 
-            if (spotifyListContent == null || spotURIStrings == null) {
-                spotifyListContent = new ArrayList<String>();
-                spotURIStrings = new ArrayList<String>();
-            }
             for (int i = 0; i < jArray.length(); i++)
             {
                 jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
@@ -860,11 +860,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 spotifyListContent.add((String) jsonObject.get("name"));
             }
         } catch (JSONException e) {}
-    }
-
-    public void setupSpotifyAdapter()
-    {
-        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifyListContent);
     }
 
     public static Intent createIntent(Context context) {
