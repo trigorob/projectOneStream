@@ -350,8 +350,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         final String directory = settings.getString("dir", "Default");
         settings = getSharedPreferences("SORT-TYPE", 0);
@@ -367,9 +365,17 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         //this to set listener back to this class
-        sMG = new SpotifyMusicGetter();
-        sMG.SAR = this;
-        getSpotifyLibrary();
+
+        if (spotifySongOffset == 0) {
+            sMG = new SpotifyMusicGetter();
+            sMG.SAR = this;
+            getSpotifyLibrary();
+        }
+        if (spotifyListContent != null && spotifyListContent.size() > 0)
+        {
+            sortLists(sortType, "Spotify");
+            setupSpotifyAdapter();
+        }
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -772,7 +778,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 sMG.execute(params);
                 spotifySongOffset += 20;
             }
-            sortLists(sortType, "Spotify");
             setupSpotifyAdapter();
         }
 
