@@ -2,6 +2,7 @@ package music.onestream;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -30,12 +31,10 @@ public class LoginActivity extends FragmentActivity {
     @SuppressWarnings("SpellCheckingInspection")
     private static final String SPOTIFY_ID = "0785a1e619c34d11b2f50cb717c27da0";
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String SOUNDCLOUD_ID = "asNLcGe4DAQ1YHSRKNyCo15sfFnXDbvS";
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String SPOTIFY_REDIRECT_URI = "testschema://callback";
-    private static final String SOUNDCLOUD_REDIRECT_URI = "http://onestream.local/dashboard/";
     private static final int REQUEST_CODE = 1337;
     private static final int RC_SIGN_IN = 9001;
+    public static final String PREFS_NAME = "GoogleACCT";
 
     private static GoogleApiClient mGoogleApiClient;
 
@@ -52,6 +51,16 @@ public class LoginActivity extends FragmentActivity {
             spotifyLoginButton.setText(R.string.spotify_logout_button);
         }
 
+        Button back = (Button) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent back = new Intent(v.getContext(), Settings.class);
+                startActivityForResult(back, 0);
+            }
+        });
+
+        //Todo: Actually get token/authentication and put it here
         token = CredentialsHandler.getToken(this, "GoogleMusic");
         Button googleMusicLoginButton = (Button) findViewById(R.id.googleMusicLoginLauncherButton);
         if (token == null) {
@@ -109,6 +118,9 @@ public class LoginActivity extends FragmentActivity {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
             if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                //editor.put("GoogleACCT", acct);
                 // Get account information
                 return;
             }

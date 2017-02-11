@@ -42,7 +42,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return "Spotify";
             case 2:
-                return "Soundcloud";
+                return "GoogleMusic";
             case 3:
                 return "Playlists";
         }

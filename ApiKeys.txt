@@ -3,7 +3,7 @@ Spotify:
 	Client Secret: 64cc31d2363943199a9b580db2b1dfcd
 	
 	
-Soundcloud:
+GoogleMusic:
 	Client ID: asNLcGe4DAQ1YHSRKNyCo15sfFnXDbvS
 	Client Secret: 2W7E1oEwhXuAMVx8dL2KAArXw1Kv1NK6
 	Redirect URI:  onestream.local/dashboard/

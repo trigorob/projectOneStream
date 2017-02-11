@@ -330,7 +330,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            if (spotPlayer.getPlaybackState() != null && spotPlayer.getPlaybackState().isPlaying)
+            if (spotPlayer != null  &&  spotPlayer.getPlaybackState() != null
+                    && spotPlayer.getPlaybackState().isPlaying)
             {
                 spotPlayer.pause(opCallback);
             }
@@ -366,11 +367,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         //this to set listener back to this class
-        if (spotifySongOffset == 0) {
-            sMG = new SpotifyMusicGetter();
-            sMG.SAR = this;
-            getSpotifyLibrary();
-        }
+        sMG = new SpotifyMusicGetter();
+        sMG.SAR = this;
+        getSpotifyLibrary();
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -525,7 +524,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                             loginButton.setVisibility(View.VISIBLE);
                         }
                         mainList.setVisibility(View.VISIBLE);
-                        sortLists(sortType, "Spotify");
                         break;
                     case 2:
                         //Todo: change to googlemusicStrings
@@ -764,7 +762,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         if (accessToken != null) {
-            while (spotifySongOffset < 500)
+            while (spotifySongOffset < 250)
             {
                 Object[] params = new Object[2];
                 params[0] = accessToken;
@@ -774,6 +772,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 sMG.execute(params);
                 spotifySongOffset += 20;
             }
+            sortLists(sortType, "Spotify");
+            setupSpotifyAdapter();
         }
 
         Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
@@ -855,7 +855,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 spotifyListContent.add((String) jsonObject.get("name"));
             }
         } catch (JSONException e) {}
-        setupSpotifyAdapter();
     }
 
     public void setupSpotifyAdapter()

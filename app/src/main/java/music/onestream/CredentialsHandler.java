@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 public class CredentialsHandler {
 
     private static final String SPOTIFY_TOKEN_NAME = "webapi.credentials.access_token";
-    private static final String SOUNDCLOUD_TOKEN_NAME = "webapi.credentials.access_token";
+    private static final String GoogleMusic_TOKEN_NAME = "webapi.credentials.access_token";
     private static final String SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
-    private static final String SOUNDCLOUD_ACCESS_TOKEN = "googlemusic_access_token";
+    private static final String GoogleMusic_ACCESS_TOKEN = "googlemusic_access_token";
     private static final String EXPIRES_AT = "expires_at";
 
     public static void setToken(Context context, String token, long expiresIn, TimeUnit unit, String service) {
@@ -27,7 +27,7 @@ public class CredentialsHandler {
         }
         else if (service.equals("GoogleMusic"))
         {
-            editor.putString(SOUNDCLOUD_ACCESS_TOKEN, token);
+            editor.putString(GoogleMusic_ACCESS_TOKEN, token);
             editor.putLong(EXPIRES_AT, expiresAt);
         }
         editor.apply();
@@ -52,7 +52,7 @@ public class CredentialsHandler {
             expiresAt = sharedPref.getLong(EXPIRES_AT, 0L);
         }
         else if (Service.equals("GoogleMusic")) {
-            token = sharedPref.getString(SOUNDCLOUD_ACCESS_TOKEN, null);
+            token = sharedPref.getString(GoogleMusic_ACCESS_TOKEN, null);
             expiresAt = sharedPref.getLong(EXPIRES_AT, 0L);
         }
 
