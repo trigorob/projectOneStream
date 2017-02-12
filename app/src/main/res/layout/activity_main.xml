@@ -63,6 +63,7 @@
             android:id="@+id/ListView1"
             android:choiceMode="singleChoice"
             android:layout_width="match_parent"
+            android:cacheColorHint="#0000"
             android:layout_centerHorizontal="true"
             android:orientation="vertical"
             android:layout_marginTop="105dp"

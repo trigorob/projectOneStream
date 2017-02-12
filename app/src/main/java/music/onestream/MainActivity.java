@@ -18,12 +18,14 @@ import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -411,11 +413,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 playSong(position);
             }});
 
-        for (int i = 0; i < mainList.getChildCount(); i++) {
-            View listItem = mainList.getChildAt(i);
-            listItem.setBackgroundColor(Color.parseColor("#E0ECF8"));
-        }
-
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
         loginButton.setVisibility(View.INVISIBLE);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -531,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
-                        else {
+                        else if (spotifySongOffset <= spotifyListContent.size()) {
                             mainList.setVisibility(View.VISIBLE);
                         }
                         break;
@@ -859,6 +856,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 spotURIStrings.add((String) jsonObject.get("uri"));
                 spotifyListContent.add((String) jsonObject.get("name"));
             }
+            spotifyAdapter.notifyDataSetChanged();
         } catch (JSONException e) {}
     }
 
