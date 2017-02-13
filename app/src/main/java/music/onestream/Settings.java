@@ -38,14 +38,14 @@ public class Settings extends Activity {
                 }
             });
 
-/*        final Button playlist = (Button) findViewById(R.id.playlist);
+        final Button playlist = (Button) findViewById(R.id.playlistPage);
         playlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent playlist = new Intent(v.getContext(), MainActivity.class);
+                Intent playlist = new Intent(v.getContext(), PlaylistActivity.class);
                 startActivityForResult(playlist, 0);
             }
-        });*/
+        });
 
 
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);

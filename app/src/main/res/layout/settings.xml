@@ -36,7 +36,7 @@
         android:layout_width="100dp"
         android:text="Song Sorting Options"
         android:layout_marginLeft="103dp"
-        android:layout_gravity="top | left"
+        android:layout_gravity="top|left"
         android:id="@+id/sortPage"/>
 
     <Button
@@ -44,7 +44,7 @@
         android:layout_width="100dp"
         android:text="New Playlist"
         android:layout_marginLeft="206dp"
-        android:layout_gravity="top | left"
+        android:layout_gravity="top|left"
         android:id="@+id/playlistPage"/>
 
     <TextView
