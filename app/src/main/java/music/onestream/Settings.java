@@ -38,6 +38,16 @@ public class Settings extends Activity {
                 }
             });
 
+/*        final Button playlist = (Button) findViewById(R.id.playlist);
+        playlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent playlist = new Intent(v.getContext(), MainActivity.class);
+                startActivityForResult(playlist, 0);
+            }
+        });*/
+
+
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         String directory = settings.getString("dir", "Default");
         TextView directoryTxt = (TextView) findViewById(R.id.dirName);

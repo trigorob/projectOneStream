@@ -13,14 +13,13 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/back"
-        android:gravity="top"
         android:text="Back"
         android:onClick="goBack" />
 
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="200dp"
         android:id="@+id/resetDir"
         android:text="Reset directory"
         android:onClick="goBack" />
@@ -28,7 +27,7 @@
     <Button
         android:layout_height="100dp"
         android:layout_width="100dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="99dp"
         android:text="User accounts"
         android:id="@+id/accountsPage"/>
 
@@ -36,8 +35,17 @@
         android:layout_height="100dp"
         android:layout_width="100dp"
         android:text="Song Sorting Options"
-        android:layout_gravity="top"
+        android:layout_marginLeft="103dp"
+        android:layout_gravity="top | left"
         android:id="@+id/sortPage"/>
+
+    <Button
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:text="New Playlist"
+        android:layout_marginLeft="206dp"
+        android:layout_gravity="top | left"
+        android:id="@+id/playlistPage"/>
 
     <TextView
         android:visibility="visible"
