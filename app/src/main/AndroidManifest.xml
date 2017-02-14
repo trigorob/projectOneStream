@@ -34,6 +34,11 @@
             android:name=".PlaylistActivity"
             android:label="PlaylistActivity">
         </activity>
+        <activity
+            android:name=".AddSongsActivity"
+            android:label=".AddSongsActivity"
+            ></activity>
+
 
         <activity android:name=".LoginActivity">
             <intent-filter>

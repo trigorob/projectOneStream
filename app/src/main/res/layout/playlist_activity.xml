@@ -8,13 +8,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
-    <EditText android:id="@+id/edit_message"
+    <EditText android:id="@+id/playListName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Playlist Name" />
 
+    <ListView
+        android:background="@drawable/listbackground"
+        android:listSelector="#E0ECF8"
+        android:id="@+id/playListSongs"
+        android:choiceMode="singleChoice"
+        android:layout_width="match_parent"
+        android:cacheColorHint="#0000"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_marginTop="105dp"
+        android:layout_height="380dp">
+    </ListView>
+
     <Button
-        android:id="@+id/btn_mybutton"
+        android:id="@+id/addSongsToPlaylist"
         android:layout_height="wrap_content"
         android:layout_width="124dip"
         android:layout_marginTop="200dip"
