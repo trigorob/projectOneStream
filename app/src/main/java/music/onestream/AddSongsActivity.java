@@ -58,9 +58,15 @@ public class AddSongsActivity extends Activity {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (!playlist.getSongInfo().contains(combinedList.get(position))) {
-                        playlist.addSong(combinedList.get(position));
+                    for (int i = 0; i < playlist.getSongInfo().size(); i++)
+                    {
+                        if ((combinedList.get(position)[1].equals(playlist.getSongInfo().get(i)[1]))) //Compare the file locations
+                        {
+                            return;
+                        }
                     }
+                        playlist.addSong(combinedList.get(position));
+
                 }
             });
 
