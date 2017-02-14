@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ParallelSorter {
 
-    ArrayList<String> Array1;
+    ArrayList<String[]> Array1;
     Uri[] Array2;
     ArrayList<String> Array3;
     Integer[] Array4;
@@ -24,7 +24,7 @@ public class ParallelSorter {
     String[][] Array5;
     Object[] retArr = null;
 
-    public ParallelSorter(ArrayList<String> Array1, Uri[] Array2, ArrayList<String> Array3, Integer[] Array4, String[][] Array5, String type)
+    public ParallelSorter(ArrayList<String[]> Array1, Uri[] Array2, ArrayList<String> Array3, Integer[] Array4, String[][] Array5, String type)
     {
         //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
         this.Array1 = Array1;
@@ -46,19 +46,10 @@ public class ParallelSorter {
                 retArr = new Object[]{Array5 , Array2};
             }
         }
-        else if (this.Array2 != null) {
-            sortUri();
-            retArr = new Object[]{Array1 , Array2};
-        }
         else if (this.Array3 != null)
         {
             sortString();
             retArr = new Object[]{Array1 , Array3};
-        }
-        else if (this.Array4 != null)
-        {
-            sortInt();
-            retArr = new Object[]{Array1 , Array4};
         }
         else
         {
@@ -68,23 +59,6 @@ public class ParallelSorter {
 
         public Object[] getRetArr() {
             return retArr;
-        }
-
-        public void sortUri() {
-
-            ArrayList<compUri> metaData= new ArrayList<compUri>();
-            for (int i = 0; i < Array1.size(); i++)
-            {
-                metaData.add(new compUri(Array1.get(i),Array2[i]));
-            }
-
-                Collections.sort(metaData, new ResultComparatorURI(type));
-                for(int i =0; i < metaData.size(); i++)
-                {
-                    compUri comp = metaData.get(i);
-                    Array1.set(i, comp.output);
-                    Array2[i] = comp.result;
-                }
         }
 
         public void sortUriLocal() {
@@ -128,33 +102,17 @@ public class ParallelSorter {
             ArrayList<compString> metaData= new ArrayList<compString>();
             for (int i = 0; i < Array1.size(); i++)
             {
-                metaData.add(new compString(Array1.get(i),Array3.get(i)));
+                metaData.add(new compString(Array1.get(i)[0], Array1.get(i)[1], Array3.get(i)));
             }
 
             Collections.sort(metaData, new ResultComparatorString(type));
             for(int i =0; i < metaData.size(); i++) {
                 compString comp = metaData.get(i);
-                Array1.set(i,comp.output);
+                Array1.set(i, new String[]{comp.output, comp.uri});
                 Array3.set(i, comp.result);
             }
         }
 
-        public void sortInt() {
-
-            ArrayList<compInt> metaData= new ArrayList<compInt>();
-            for (int i = 0; i < Array1.size(); i++)
-            {
-                metaData.add(new compInt(Array1.get(i), Array4[i]));
-            }
-
-            Collections.sort(metaData, new ResultComparatorInt(type));
-            for(int i =0; i < metaData.size(); i++) {
-                compInt comp = metaData.get(i);
-                Array1.set(i,comp.output);
-                Array4[i] = comp.result;
-            }
-
-        }
     }
 
 
@@ -241,26 +199,6 @@ public class ParallelSorter {
         }
     }
 
-    class ResultComparatorInt implements Comparator<compInt> {
-        String type;
-
-        public ResultComparatorInt(String type) {
-            this.type = type;
-        }
-        @Override
-        public int compare(compInt a, compInt b) {
-            if (type.equals("ALPH-ASC")) {
-                return a.output.compareTo(b.output) < 0 ? -1 : a.output == b.output ? 0 : 1;
-            }
-            else if (type.equals("ALPH-DESC")) {
-                return b.output.compareTo(a.output) < 0 ? -1 : b.output == a.output ? 0 : 1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }
-
     class compUri{
         String output;
         Uri result;
@@ -298,19 +236,11 @@ public class ParallelSorter {
     class compString{
         String output;
         String result;
+        String uri;
 
-        compString(String n, String a) {
+        compString(String n, String a, String URI) {
             output = n;
             result = a;
-        }
-    }
-
-    class compInt {
-        String output;
-        int result;
-
-        compInt(String n, int a) {
-            output = n;
-            result = a;
+            uri = URI;
         }
     }

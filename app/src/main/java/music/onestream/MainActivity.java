@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private ArrayAdapter<String> spotifyAdapter;
     private static String[][] listContent;
     private static String[] listSongs;
-    private static ArrayList<String> spotifyListContent;
+    private static ArrayList<String[]> spotifyListContent;
+    private static ArrayList<String> spotifySongStrings;
     private static Integer[] resID;
     private static Uri[] resURI;
-    private static ArrayList<String> spotURIStrings;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
     private SpotifyPlayer spotPlayer;
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         else if (currentSongType.equals("Spotify"))
         {
             spotPlayer.resume(opCallback);
-            spotPlayer.playUri(opCallback, spotURIStrings.get(currentSongListPosition), 0, currentSongPosition);
+            spotPlayer.playUri(opCallback, spotifyListContent.get(currentSongListPosition)[1], 0, currentSongPosition);
 
             SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
             final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             {
                 spotPlayer.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
             }
-            spotPlayer.playUri(opCallback, spotURIStrings.get(songIndex),0,0);
+            spotPlayer.playUri(opCallback, spotifyListContent.get(songIndex)[1],0,0);
             currentSongType = "Spotify";
         }
 
@@ -369,8 +369,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         if (spotifyListContent == null)
         {
-            spotifyListContent = new ArrayList<String>();
-            spotURIStrings = new ArrayList<String>();
+            spotifyListContent = new ArrayList<String[]>();
+            spotifySongStrings = new ArrayList<String>();
         }
 
         getSpotifyLibrary();
@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         mainList = (ListView) findViewById(R.id.ListView1);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSongs);
-        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifyListContent);
+        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifySongStrings);
 
 
         mainList.setAdapter(adapter);
@@ -524,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         //Sometimes logged in but player is not. We check length for handling that
-                        if ((spotURIStrings == null || spotifyListContent == null))
+                        if (spotifyListContent == null)
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
@@ -534,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         break;
                     case 2:
                         //Todo: change to googlemusicStrings
-                        if ((spotURIStrings == null))
+                        if ((spotifyListContent == null))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
@@ -612,10 +612,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             ParallelSorter ps = null;
             Object[] retVal = null;
             if (spotifyListContent != null && spotifyListContent.size()>0 && list.equals("Spotify")) {
-                ps = new ParallelSorter(spotifyListContent, null, spotURIStrings, null, null,type);
+                ps = new ParallelSorter(spotifyListContent, null, spotifySongStrings, null, null,type);
                 retVal = ps.getRetArr();
-                spotifyListContent = (ArrayList<String>) retVal[0];
-                spotURIStrings = (ArrayList<String>) retVal[1];
+                spotifyListContent = (ArrayList<String[]>) retVal[0];
             }
             if (listContent != null && listContent.length>0 && list.equals("Local")) {
                 if (resID != null)
@@ -677,7 +676,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         int totalSongs = -1;
         if (currentSongType.equals("Spotify"))
         {
-            totalSongs = spotURIStrings.size()-1;
+            totalSongs = spotifyListContent.size()-1;
         }
         if (currentSongListPosition == -1)
         {
@@ -735,7 +734,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 currentSongListPosition = choice;
             }
             else if (currentSongType.equals("Spotify")) {
-                int choice = (int) (Math.random() * spotURIStrings.size());
+                int choice = (int) (Math.random() * spotifyListContent.size());
                 View choiceRow = getViewByPosition(mainList, choice);
 
                 if (currentSongListPosition != -1) {
@@ -853,8 +852,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             for (int i = 0; i < jArray.length(); i++)
             {
                 jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
-                spotURIStrings.add((String) jsonObject.get("uri"));
-                spotifyListContent.add((String) jsonObject.get("name"));
+                spotifyListContent.add(new String[]{(String) jsonObject.get("name"), (String) jsonObject.get("uri")});
+                spotifySongStrings.add((String) jsonObject.get("name")); //Need this for adapter
             }
             spotifyAdapter.notifyDataSetChanged();
         } catch (JSONException e) {}

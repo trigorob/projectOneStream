@@ -30,6 +30,11 @@
             android:label="SortingActivity">
         </activity>
 
+        <activity
+            android:name=".PlaylistActivity"
+            android:label="PlaylistActivity">
+        </activity>
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
