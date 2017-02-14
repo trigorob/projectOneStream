@@ -14,7 +14,6 @@ import java.util.*;
 public class MusicGetter {
     String[][] files;
     Integer[] fileData;
-    URI[] fileURI;
     static String testDirectory = "./app/src/main/res/raw/";
     String directory = "R.raw";
 
@@ -39,7 +38,7 @@ public class MusicGetter {
         {
             fileData[i] = tempFiles.get(i);
             files[i][0] = tempNames.get(i);
-            files[i][1] = "<Unknown>";
+            files[i][2] = "<Unknown>";
         }
 
         return;
@@ -47,7 +46,6 @@ public class MusicGetter {
 
     public MusicGetter() {
         this.getRawFiles();
-        this.fileURI = null;
     }
 
     public Integer[] getFileData() {
@@ -58,7 +56,7 @@ public class MusicGetter {
     {
         if (!directory.equals("Default")) {
             this.files = fileNames(directory);
-            this.fileURI = getFiles(directory);
+            getFiles(directory);
             this.fileData = null;
         }
         else this.getRawFiles();
@@ -114,7 +112,6 @@ public class MusicGetter {
                 }
             }
 
-            //4 size just incase we add more things
             this.files = new String[filess.size()][4];
             for (int i = 0; i < files.length; i++) {
                 this.files[i][0] = filess.get(i);
@@ -124,7 +121,7 @@ public class MusicGetter {
         return this.files;
     }
 
-    public URI[] getFiles(String directoryPath) {
+    public void getFiles(String directoryPath) {
         File dir = new File(directoryPath);
         ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()){
@@ -139,10 +136,8 @@ public class MusicGetter {
         URI[] fileInts = new URI[files.size()];
         for (int i = 0; i < files.size(); i++)
         {
-            fileInts[i] = files.get(i).toURI();
+            this.files[i][1] = files.get(i).toURI().toString();
         }
-        this.fileURI = fileInts;
-        return this.fileURI;
     }
 
     public File selectSong(int numItems) throws IOException{

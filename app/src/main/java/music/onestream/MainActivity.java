@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static ArrayList<String[]> spotifyListContent;
     private static ArrayList<String> spotifySongStrings;
     private static Integer[] resID;
-    private static Uri[] resURI;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
     private SpotifyPlayer spotPlayer;
@@ -166,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         if (mainList.getAdapter() == adapter) {
             mp.reset();
-            if (resURI != null) {
-                mp = MediaPlayer.create(getApplicationContext(), resURI[songIndex]);// creates new mediaplayer with song.
+            if (resID == null) {
+                mp = MediaPlayer.create(getApplicationContext(), Uri.parse(listContent[songIndex][1]));// creates new mediaplayer with song.
             } else {
                 mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
             }
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         mG = new MusicGetter(dir);
         listContent = mG.files;
 
-        if (listSongs == null)
+        if (listSongs == null  || (listSongs != null && (listSongs.length != listContent.length)))
         {
             listSongs = new String[listContent.length];
         }
@@ -235,15 +234,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         if (!(mG.fileData == null))
         {
             resID = mG.fileData;
-            resURI = null;
-        }
-        else
-        {
-            resURI = new Uri[mG.fileURI.length];
-            for (int i = 0; i < mG.fileURI.length; i++) {
-                resURI[i] = android.net.Uri.parse(mG.fileURI[i].toString());
-            }
-            resID = null;
         }
         //If we change the dir we MUST create a new list to avoid linking things that should not be there
         //Also this is called on boot, which ensures we have local songs when we go into playlists
@@ -643,14 +633,14 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             ParallelSorter ps = null;
             Object[] retVal = null;
             if (spotifyListContent != null && spotifyListContent.size()>0 && list.equals("Spotify")) {
-                ps = new ParallelSorter(spotifyListContent, null, spotifySongStrings, null, null,type);
+                ps = new ParallelSorter(spotifyListContent, spotifySongStrings, null, null,type);
                 retVal = ps.getRetArr();
                 spotifyListContent = (ArrayList<String[]>) retVal[0];
             }
             if (listContent != null && listContent.length>0 && list.equals("Local")) {
                 if (resID != null)
                 {
-                    ps =new ParallelSorter(null, null, null, resID, listContent, type);
+                    ps =new ParallelSorter(null, null, resID, listContent, type);
                     retVal = ps.getRetArr();
                     listContent = (String[][]) retVal[0];
                     for (int i = 0; i < listContent.length; i++) {
@@ -658,17 +648,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     }
                     resID = (Integer[]) retVal[1];
                 }
-                else if (resURI != null)
-                {
-                    ps = new ParallelSorter(null, resURI, null, null, listContent, type);
-                    retVal = ps.getRetArr();
-                    resURI = (Uri[]) retVal[1];
-                    listContent = (String[][]) retVal[0];
-                    for (int i = 0; i < listContent.length; i++) {
-                        listSongs[i] = listContent[i][0];
-                    }
-                }
-
             }
             return;
         }
