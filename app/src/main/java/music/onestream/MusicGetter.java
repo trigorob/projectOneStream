@@ -34,7 +34,7 @@ public class MusicGetter {
             } catch (IllegalAccessException e) { }
 
         fileData = new Integer[tempFiles.size()];
-        files = new String[tempFiles.size()][2];
+        files = new String[tempFiles.size()][4];
         for (int i = 0; i < tempFiles.size(); i++)
         {
             fileData[i] = tempFiles.get(i);
@@ -114,7 +114,8 @@ public class MusicGetter {
                 }
             }
 
-            this.files = new String[filess.size()][2];
+            //4 size just incase we add more things
+            this.files = new String[filess.size()][4];
             for (int i = 0; i < files.length; i++) {
                 this.files[i][0] = filess.get(i);
                 this.files[i][1] = artists.get(i);

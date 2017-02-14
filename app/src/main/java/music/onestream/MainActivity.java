@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     boolean randomNext = false;
     private String currentSongType = "Local";
     private BroadcastReceiver mNetworkStateReceiver;
+    private static ArrayList<String[]> combinedList;
 
 
     //Todo: Make service (So next song happens when phone screen off)
@@ -244,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             }
             resID = null;
         }
+        //If we change the dir we MUST create a new list to avoid linking things that should not be there
+        //Also this is called on boot, which ensures we have local songs when we go into playlists
+        createCombinedList();
 
         sortLists(sortType, "Local");
 
@@ -281,6 +285,29 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    //Only call this when we need to remake the list. Other than that, add things as they come
+    private void createCombinedList() {
+        //Always create from scratch incase new data loaded && avoid duplicates.
+        combinedList = new ArrayList<String[]>();
+
+        if (listContent != null) {
+            for (int i = 0; i < listContent.length; i++)
+            {
+                combinedList.add(listContent[i]);
+            }
+        }
+        if (spotifyListContent != null) {
+            for (int i = 0; i < spotifyListContent.size(); i++)
+            {
+                combinedList.add(spotifyListContent.get(i));
+            }
+        }
+    }
+
+    public static ArrayList<String[]> getCombinedList() {
+        return combinedList;
     }
 
     @Override
@@ -373,6 +400,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             spotifySongStrings = new ArrayList<String>();
         }
 
+        if (combinedList == null)
+        {
+            combinedList = new ArrayList<String[]>();
+        }
         getSpotifyLibrary();
 
         if (spotifyListContent != null && spotifyListContent.size() > 0)
@@ -524,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         //Sometimes logged in but player is not. We check length for handling that
-                        if (spotifyListContent == null)
+                        if (spotifyListContent == null || (spotifyListContent == null && spotifyListContent.size() == 0))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
@@ -778,7 +809,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 sMG.execute(params);
                 spotifySongOffset += 20;
             }
-
         }
 
         Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
@@ -854,6 +884,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
                 spotifyListContent.add(new String[]{(String) jsonObject.get("name"), (String) jsonObject.get("uri")});
                 spotifySongStrings.add((String) jsonObject.get("name")); //Need this for adapter
+                combinedList.add(spotifyListContent.get(i));
             }
             spotifyAdapter.notifyDataSetChanged();
         } catch (JSONException e) {}
