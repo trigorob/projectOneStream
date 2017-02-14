@@ -13,10 +13,13 @@ import java.util.*;
 
 public class MusicGetter {
     String[][] files;
-    Integer[] fileData;
     static String testDirectory = "./app/src/main/res/raw/";
     String directory = "R.raw";
+    private int type; //0 => Integer files, 1 => Uri
 
+    public int getType() {
+        return type;
+    }
 
     public void getRawFiles() {
         Field[] fields = R.raw.class.getFields();
@@ -32,12 +35,11 @@ public class MusicGetter {
             } catch (IllegalArgumentException e) {
             } catch (IllegalAccessException e) { }
 
-        fileData = new Integer[tempFiles.size()];
         files = new String[tempFiles.size()][4];
         for (int i = 0; i < tempFiles.size(); i++)
         {
-            fileData[i] = tempFiles.get(i);
             files[i][0] = tempNames.get(i);
+            files[i][1] = tempFiles.get(i).toString();
             files[i][2] = "<Unknown>";
         }
 
@@ -48,18 +50,18 @@ public class MusicGetter {
         this.getRawFiles();
     }
 
-    public Integer[] getFileData() {
-        return this.fileData;
-    }
-
     public MusicGetter(String directory)
     {
         if (!directory.equals("Default")) {
             this.files = fileNames(directory);
             getFiles(directory);
-            this.fileData = null;
+            this.type = 1;
         }
-        else this.getRawFiles();
+        else
+        {
+            this.getRawFiles();
+            this.type = 0;
+        }
     }
 
     public String[][] getFileStrings() {
@@ -115,7 +117,7 @@ public class MusicGetter {
             this.files = new String[filess.size()][4];
             for (int i = 0; i < files.length; i++) {
                 this.files[i][0] = filess.get(i);
-                this.files[i][1] = artists.get(i);
+                this.files[i][2] = artists.get(i);
             }
         }
         return this.files;

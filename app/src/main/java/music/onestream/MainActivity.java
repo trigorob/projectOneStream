@@ -1,8 +1,6 @@
 package music.onestream;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Arrays.*;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,25 +12,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -80,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static String[] listSongs;
     private static ArrayList<String[]> spotifyListContent;
     private static ArrayList<String> spotifySongStrings;
-    private static Integer[] resID;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
     private SpotifyPlayer spotPlayer;
@@ -165,10 +158,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         if (mainList.getAdapter() == adapter) {
             mp.reset();
-            if (resID == null) {
+            if (mG.getType() == 1) {
                 mp = MediaPlayer.create(getApplicationContext(), Uri.parse(listContent[songIndex][1]));// creates new mediaplayer with song.
             } else {
-                mp = MediaPlayer.create(getApplicationContext(), resID[songIndex]);// creates new mediaplayer with song.
+                mp = MediaPlayer.create(getApplicationContext(), Integer.parseInt(listContent[songIndex][1]));// creates new mediaplayer with song.
             }
             mp.start();
             currentSongType = "Local";
@@ -230,10 +223,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         for (int i = 0; i < listContent.length; i++)
         {
             this.listSongs[i] = listContent[i][0];
-        }
-        if (!(mG.fileData == null))
-        {
-            resID = mG.fileData;
         }
         //If we change the dir we MUST create a new list to avoid linking things that should not be there
         //Also this is called on boot, which ensures we have local songs when we go into playlists
@@ -624,32 +613,25 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     private void sortLists(String type, String list) {
 
+        ParallelSorter ps = null;
+        Object[] retVal = null;
         if (type.equals("Default"))
         {
             return;
         }
-        else
+        else if (list.equals("Local") && listContent != null && listSongs != null)
         {
-            ParallelSorter ps = null;
-            Object[] retVal = null;
-            if (spotifyListContent != null && spotifyListContent.size()>0 && list.equals("Spotify")) {
-                ps = new ParallelSorter(spotifyListContent, spotifySongStrings, null, null,type);
-                retVal = ps.getRetArr();
-                spotifyListContent = (ArrayList<String[]>) retVal[0];
-            }
-            if (listContent != null && listContent.length>0 && list.equals("Local")) {
-                if (resID != null)
-                {
-                    ps =new ParallelSorter(null, null, resID, listContent, type);
-                    retVal = ps.getRetArr();
-                    listContent = (String[][]) retVal[0];
-                    for (int i = 0; i < listContent.length; i++) {
-                        this.listSongs[i] = listContent[i][0];
-                    }
-                    resID = (Integer[]) retVal[1];
-                }
-            }
-            return;
+            ps = new ParallelSorter(null, null, listContent, listSongs, type);
+            retVal = ps.getRetArr();
+            listContent = (String[][]) retVal[0];
+            listSongs = (String[]) retVal[1];
+        }
+        else if (spotifyListContent != null && spotifyListContent.size()>0 && list.equals("Spotify")) {
+
+            ps = new ParallelSorter(spotifyListContent, spotifySongStrings, listContent, listSongs, type);
+            retVal = ps.getRetArr();
+            spotifyListContent = (ArrayList<String[]>) retVal[0];
+            spotifySongStrings = (ArrayList<String>) retVal[1];
         }
     }
 

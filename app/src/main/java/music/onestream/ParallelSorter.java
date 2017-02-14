@@ -18,21 +18,21 @@ public class ParallelSorter {
 
     ArrayList<String[]> Array1;
     ArrayList<String> Array2;
-    Integer[] Array3;
+    String[] Array3;
     String type;
     String[][] Array4;
     Object[] retArr = null;
 
-    public ParallelSorter(ArrayList<String[]> Array1, ArrayList<String> Array2, Integer[] Array3, String[][] Array4, String type) {
+    public ParallelSorter(ArrayList<String[]> SpotifyListContent, ArrayList<String> SpotifySongs, String[][] listContent, String[] listSongs, String type) {
         //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
-        this.Array1 = Array1;
-        this.Array2 = Array2;
-        this.Array3 = Array3;
-        this.Array4 = Array4;
+        this.Array1 = SpotifyListContent;
+        this.Array2 = SpotifySongs;
+        this.Array3 = listSongs;
+        this.Array4 = listContent;
         this.type = type;
 
         if (this.Array4 != null) {
-            sortIntLocal();
+            sortLocal();
             retArr = new Object[]{Array4, Array3};
         }
 
@@ -49,18 +49,19 @@ public class ParallelSorter {
         return retArr;
     }
 
-    public void sortIntLocal() {
+    public void sortLocal() {
 
-        ArrayList<LocalCompInt> metaData = new ArrayList<LocalCompInt>();
+        ArrayList<LocalComp> metaData = new ArrayList<LocalComp>();
         for (int i = 0; i < Array4.length; i++) {
-            metaData.add(new LocalCompInt(Array4[i][0], Array4[i][1], Array3[i]));
+            metaData.add(new LocalComp(Array4[i][0], Array4[i][1], Array4[i][2], Array3[i]));
         }
 
-        Collections.sort(metaData, new LocalResultComparatorInt(type));
+        Collections.sort(metaData, new LocalResultComparator(type));
         for (int i = 0; i < metaData.size(); i++) {
-            LocalCompInt comp = metaData.get(i);
+            LocalComp comp = metaData.get(i);
             Array4[i][0] = comp.output;
-            Array4[i][1] = comp.artist;
+            Array4[i][1] = comp.songData;
+            Array4[i][2] = comp.artist;
             Array3[i] = comp.result;
         }
     }
@@ -102,14 +103,14 @@ public class ParallelSorter {
         }
     }
 
-    class LocalResultComparatorInt implements Comparator<LocalCompInt> {
+    class LocalResultComparator implements Comparator<LocalComp> {
         String type;
 
-        public LocalResultComparatorInt(String type) {
+        public LocalResultComparator(String type) {
             this.type = type;
         }
         @Override
-        public int compare(LocalCompInt a, LocalCompInt b) {
+        public int compare(LocalComp a, LocalComp b) {
             if (type.equals("ALPH-ASC")) {
                 return a.output.compareTo(b.output) < 0 ? -1 : a.output == b.output ? 0 : 1;
             }
@@ -122,15 +123,17 @@ public class ParallelSorter {
         }
     }
 
-    class LocalCompInt{
+    class LocalComp{
         String output;
-        int result;
+        String songData;
         String artist;
+        String result;
 
-        LocalCompInt(String n, String art, int a) {
+        LocalComp(String n, String songD, String art, String a) {
             output = n;
-            result = a;
+            songData = songD;
             artist = art;
+            result = a;
         }
     }
 
