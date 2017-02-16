@@ -619,19 +619,29 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             return;
         }
-        else if (list.equals("Local") && listContent != null && listSongs != null)
-        {
+         if (list.equals("Local") && listContent != null && listSongs != null)
+         {
             ps = new ParallelSorter(null, null, listContent, listSongs, type);
             retVal = ps.getRetArr();
             listContent = (String[][]) retVal[0];
             listSongs = (String[]) retVal[1];
-        }
-        else if (spotifyListContent != null && spotifyListContent.size()>0 && list.equals("Spotify")) {
 
+             if (adapter != null) {
+                 mainList.invalidateViews();
+                 adapter.notifyDataSetChanged();
+             }
+         }
+         else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
+         {
             ps = new ParallelSorter(spotifyListContent, spotifySongStrings, listContent, listSongs, type);
             retVal = ps.getRetArr();
             spotifyListContent = (ArrayList<String[]>) retVal[0];
             spotifySongStrings = (ArrayList<String>) retVal[1];
+
+             if (spotifyAdapter != null) {
+                 mainList.invalidateViews();
+                 spotifyAdapter.notifyDataSetChanged();
+             }
         }
     }
 
@@ -848,6 +858,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 combinedList.add(spotifyListContent.get(i));
             }
             spotifyAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+            spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifySongStrings);
         } catch (JSONException e) {}
     }
 

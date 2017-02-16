@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,9 +44,25 @@ public class PlaylistActivity extends Activity {
             }
         }
 
-        ListView playSongs = (ListView) findViewById(R.id.playListSongs);
+        final ListView playSongs = (ListView) findViewById(R.id.playListSongs);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, songNames);
         playSongs.setAdapter(adapter);
+
+        playSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                playlist.removeSong(position);
+                songNames = new String[playlist.getSongInfo().size()];
+                for (int i = 0; i < playlist.getSongInfo().size(); i++)
+                {
+                    songNames[i] = playlist.getSongInfo().get(i)[0];
+                }
+                playSongs.invalidateViews();
+                playSongs.setAdapter(new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, songNames));
+
+            }
+        });
 
         EditText playlistTitle = (EditText) findViewById(R.id.playListName);
         if (playlist.getName() == null || playlist.getName().equals("")) {
@@ -81,6 +98,30 @@ public class PlaylistActivity extends Activity {
                 b.putSerializable("Playlist", playlist);
                 addSongs.putExtras(b);
                 startActivityForResult(addSongs, 0);
+            }
+        });
+
+        Button discardChangesButton = (Button) findViewById(R.id.discardNewPlaylist);
+        discardChangesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settings = new Intent(v.getContext(), Settings.class);
+                Bundle b = new Bundle();
+                b.putSerializable("Playlist", null);
+                settings.putExtras(b);
+                startActivityForResult(settings, 0);
+            }
+        });
+
+        Button saveChangesButton = (Button) findViewById(R.id.saveNewPlaylist);
+        saveChangesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settings = new Intent(v.getContext(), Settings.class);
+                Bundle b = new Bundle();
+                b.putSerializable("Playlist", playlist);
+                settings.putExtras(b);
+                startActivityForResult(settings, 0);
             }
         });
     }

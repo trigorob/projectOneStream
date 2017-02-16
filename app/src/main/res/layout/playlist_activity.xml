@@ -13,6 +13,36 @@
         android:layout_height="wrap_content"
         android:hint="Playlist Name" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/addPlaylistButtons"
+        android:layout_below="@id/playListName">
+    <Button
+        android:id="@+id/addSongsToPlaylist"
+        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:text="Add New Tracks" />
+
+    <Button
+        android:id="@+id/saveNewPlaylist"
+        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:text="Save Playlist" />
+
+    <Button
+        android:id="@+id/discardNewPlaylist"
+        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:text="Delete Playlist" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="Click song to remove from playlist"
+        android:id="@+id/playlistAddInfo"
+        android:layout_below="@id/addPlaylistButtons"/>
+
     <ListView
         android:background="@drawable/listbackground"
         android:listSelector="#E0ECF8"
@@ -22,16 +52,8 @@
         android:cacheColorHint="#0000"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:layout_marginTop="105dp"
-        android:layout_height="380dp">
+        android:layout_below="@id/playlistAddInfo"
+        android:layout_height="match_parent">
     </ListView>
-
-    <Button
-        android:id="@+id/addSongsToPlaylist"
-        android:layout_height="wrap_content"
-        android:layout_width="124dip"
-        android:layout_marginTop="200dip"
-        android:layout_centerHorizontal="true"
-        android:text="Add Tracks" />
 
 </RelativeLayout>

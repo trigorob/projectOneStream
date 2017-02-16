@@ -38,4 +38,8 @@ public class Playlist implements Serializable {
     {
         songInfo.add(song);
     }
+    public void removeSong(int position)
+    {
+        songInfo.remove(position);
+    }
 }
