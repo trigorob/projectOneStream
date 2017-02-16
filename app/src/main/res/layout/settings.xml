@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="music.onestream.Settings">
+    tools:context="music.onestream.Settings"
+    >
 
     <Button
         android:layout_width="100dp"
@@ -19,32 +20,30 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="200dp"
         android:id="@+id/resetDir"
+        android:layout_gravity="right"
         android:text="Reset directory"
         android:onClick="goBack" />
 
     <Button
         android:layout_height="100dp"
         android:layout_width="100dp"
-        android:layout_marginTop="99dp"
         android:text="User accounts"
+        android:layout_gravity="left"
         android:id="@+id/accountsPage"/>
 
     <Button
         android:layout_height="100dp"
         android:layout_width="100dp"
         android:text="Song Sorting Options"
-        android:layout_marginLeft="103dp"
-        android:layout_gravity="top|left"
+        android:layout_gravity="top"
         android:id="@+id/sortPage"/>
 
     <Button
         android:layout_height="100dp"
         android:layout_width="100dp"
         android:text="New Playlist"
-        android:layout_marginLeft="206dp"
-        android:layout_gravity="top|left"
+        android:layout_gravity="top|right"
         android:id="@+id/playlistPage"/>
 
     <TextView
