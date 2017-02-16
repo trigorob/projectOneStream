@@ -615,10 +615,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         ParallelSorter ps = null;
         Object[] retVal = null;
-        if (type.equals("Default"))
-        {
-            return;
-        }
          if (list.equals("Local") && listContent != null && listSongs != null)
          {
             ps = new ParallelSorter(null, null, listContent, listSongs, type);
@@ -633,7 +629,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
          }
          else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
          {
-            ps = new ParallelSorter(spotifyListContent, spotifySongStrings, listContent, listSongs, type);
+            ps = new ParallelSorter(spotifyListContent, spotifySongStrings, null, null, type);
             retVal = ps.getRetArr();
             spotifyListContent = (ArrayList<String[]>) retVal[0];
             spotifySongStrings = (ArrayList<String>) retVal[1];

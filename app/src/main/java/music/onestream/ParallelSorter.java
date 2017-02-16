@@ -77,7 +77,7 @@ public class ParallelSorter {
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
             Array1.set(i, new String[]{comp.output, comp.uri});
-            Array2.set(i, comp.result);
+            Array2.set(i, comp.output);
         }
     }
 
