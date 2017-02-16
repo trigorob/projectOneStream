@@ -27,10 +27,10 @@ public class MusicGetter {
         ArrayList<String> tempNames = new ArrayList<String>();
         for(Field f : fields)
             try {
-                tempFiles.add(f.getInt(null));
-                if (f!= null && f.getName() != null) {
-                    tempNames.add(f.getName());
-                }
+                    tempFiles.add(f.getInt(null));
+                    if (f != null && f.getName() != null) {
+                        tempNames.add(f.getName());
+                    }
                 //Resource files dont have this data, so we dont need to look for it
             } catch (IllegalArgumentException e) {
             } catch (IllegalAccessException e) { }
