@@ -23,7 +23,7 @@ public class AddSongsActivity extends Activity {
 
         private static Playlist playlist;
         private static String[] songNames;
-        public static ArrayList<String[]> combinedList; //Contains song info
+        public static ArrayList<Song> combinedList; //Contains song info
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -34,14 +34,14 @@ public class AddSongsActivity extends Activity {
 
             if (combinedList == null)
             {
-                combinedList = new ArrayList<String[]>(); //Will almost never happen, but just incase
+                combinedList = new ArrayList<Song>(); //Will almost never happen, but just incase
             }
             if (songNames == null && combinedList != null || (songNames.length != combinedList.size()))
             {
                 songNames = new String[combinedList.size()];
                 for (int i = 0; i < songNames.length; i++)
                 {
-                    songNames[i] = combinedList.get(i)[0];
+                    songNames[i] = combinedList.get(i).getName();
                 }
             }
 
@@ -60,7 +60,7 @@ public class AddSongsActivity extends Activity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     for (int i = 0; i < playlist.getSongInfo().size(); i++)
                     {
-                        if ((combinedList.get(position)[1].equals(playlist.getSongInfo().get(i)[1]))) //Compare the file locations
+                        if ((combinedList.get(position).getUri().equals(playlist.getSongInfo().get(i).getName()))) //Compare the file locations
                         {
                             return;
                         }

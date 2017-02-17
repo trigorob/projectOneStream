@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Playlist implements Serializable {
     private String name;
-    private ArrayList<String[]> songInfo;
+    private ArrayList<Song> songInfo;
 
     public String getName() {
         return name;
@@ -17,7 +17,7 @@ public class Playlist implements Serializable {
 
     public Playlist() {
         name = "";
-        songInfo = new ArrayList<String[]>();
+        songInfo = new ArrayList<Song>();
     }
 
     /* Format of song info should be:
@@ -28,13 +28,13 @@ public class Playlist implements Serializable {
     songInfo[4] = Type: One of "Spotify", "GooglePlay", "Local"
     songInfo[5] = Position: "0" indicates 0th position in list
      */
-    public ArrayList<String[]> getSongInfo() {
+    public ArrayList<Song> getSongInfo() {
         return songInfo;
     }
     public void setName(String name) {
         this.name = name;
     }
-    public void addSong(String[] song)
+    public void addSong(Song song)
     {
         songInfo.add(song);
     }

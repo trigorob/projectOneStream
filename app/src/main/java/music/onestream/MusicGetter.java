@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.*;
 
 public class MusicGetter {
-    String[][] files;
+    ArrayList<Song> songs;
     static String testDirectory = "./app/src/main/res/raw/";
     String directory = "R.raw";
     private int type; //0 => Integer files, 1 => Uri
@@ -35,12 +35,11 @@ public class MusicGetter {
             } catch (IllegalArgumentException e) {
             } catch (IllegalAccessException e) { }
 
-        files = new String[tempFiles.size()][4];
+        songs = new ArrayList<Song>();
         for (int i = 0; i < tempFiles.size(); i++)
         {
-            files[i][0] = tempNames.get(i);
-            files[i][1] = tempFiles.get(i).toString();
-            files[i][2] = "<Unknown>";
+            Song song = new Song(tempNames.get(i), tempFiles.get(i).toString(), "<Unknown>", "<Unknown>", "LocalRaw", i);
+            songs.add(song);
         }
 
         return;
@@ -53,8 +52,7 @@ public class MusicGetter {
     public MusicGetter(String directory)
     {
         if (!directory.equals("Default")) {
-            this.files = fileNames(directory);
-            getFiles(directory);
+            this.songs = fileNames(directory);
             this.type = 1;
         }
         else
@@ -64,8 +62,8 @@ public class MusicGetter {
         }
     }
 
-    public String[][] getFileStrings() {
-        return this.files;
+    public ArrayList<Song> getFileStrings() {
+        return this.songs;
     }
 
     public String getDirectory()
@@ -92,11 +90,13 @@ public class MusicGetter {
         return null;
     }
 
-    public String[][] fileNames(String directoryPath) {
+    public ArrayList<Song> fileNames(String directoryPath) {
 
         File dir = new File(directoryPath);
         ArrayList<String> filess = new ArrayList<String>();
         ArrayList<String> artists = new ArrayList<String>();
+        ArrayList<String> albums = new ArrayList<String>();
+        ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()) {
             File[] listFiles = dir.listFiles();
             for (File file : listFiles) {
@@ -104,65 +104,26 @@ public class MusicGetter {
                     String fname = file.getName();
                     fname = getFileIfValid(fname);
                     if (fname != null) {
-                        filess.add(fname);
 
+                        files.add(file);
+                        filess.add(fname);
                         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                         mmr.setDataSource(file.getPath());
-                        String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                        artists.add(albumName);
+                        String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                        String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                        artists.add(artistName);
+                        albums.add(albumName);
                     }
                 }
             }
 
-            this.files = new String[filess.size()][4];
-            for (int i = 0; i < files.length; i++) {
-                this.files[i][0] = filess.get(i);
-                this.files[i][2] = artists.get(i);
+            this.songs = new ArrayList<Song>();
+            for (int i = 0; i < files.size(); i++) {
+                Song song = new Song(filess.get(i), files.get(i).toURI().toString(), "<Unknown>", "<Unknown>", "Local", i);
+                songs.add(song);
             }
         }
-        return this.files;
-    }
-
-    public void getFiles(String directoryPath) {
-        File dir = new File(directoryPath);
-        ArrayList<File> files = new ArrayList<File>();
-        if(dir.isDirectory()){
-            File[] listFiles = dir.listFiles();
-            for(File file : listFiles){
-                if(file.isFile() && (getFileIfValid(file.getName()) != null)) {
-                    files.add(file);
-                }
-            }
-        }
-
-        URI[] fileInts = new URI[files.size()];
-        for (int i = 0; i < files.size(); i++)
-        {
-            this.files[i][1] = files.get(i).toURI().toString();
-        }
-    }
-
-    public File selectSong(int numItems) throws IOException{
-
-        File f = new File(files[numItems][0]);
-        return f;
-    }
-
-    public int selectRandomSongAsInt() throws IOException{
-        return (int)(Math.random()*files.length);
-    }
-
-    public File selectRandomSong() throws IOException{
-        File f = new File(files[(int)(Math.random()*files.length)][0]);
-        return f;
-    }
-
-    public static void main(String[] args) throws IOException {
-        MusicGetter fs = new MusicGetter(testDirectory);
-        System.out.println(fs.fileNames(fs.getTestDirectory())[1]);
-        System.out.println(fs.selectSong(0));
-        System.out.println(fs.selectRandomSong());
-
+        return this.songs;
     }
 
 }

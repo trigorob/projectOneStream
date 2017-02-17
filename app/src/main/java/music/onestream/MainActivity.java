@@ -70,9 +70,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private MediaPlayer mp;
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> spotifyAdapter;
-    private static String[][] listContent;
-    private static String[] listSongs;
-    private static ArrayList<String[]> spotifyListContent;
+    private static ArrayList<Song> listContent;
+    private static ArrayList<String> listSongs;
+    private static ArrayList<Song> spotifyListContent;
     private static ArrayList<String> spotifySongStrings;
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     boolean randomNext = false;
     private String currentSongType = "Local";
     private BroadcastReceiver mNetworkStateReceiver;
-    private static ArrayList<String[]> combinedList;
+    private static ArrayList<Song> combinedList;
 
 
     //Todo: Make service (So next song happens when phone screen off)
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         else if (currentSongType.equals("Spotify"))
         {
             spotPlayer.resume(opCallback);
-            spotPlayer.playUri(opCallback, spotifyListContent.get(currentSongListPosition)[1], 0, currentSongPosition);
+            spotPlayer.playUri(opCallback, spotifyListContent.get(currentSongListPosition).getUri(), 0, currentSongPosition);
 
             SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
             final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
@@ -159,9 +159,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         if (mainList.getAdapter() == adapter) {
             mp.reset();
             if (mG.getType() == 1) {
-                mp = MediaPlayer.create(getApplicationContext(), Uri.parse(listContent[songIndex][1]));// creates new mediaplayer with song.
+                mp = MediaPlayer.create(getApplicationContext(), Uri.parse(listContent.get(songIndex).getUri()));// creates new mediaplayer with song.
             } else {
-                mp = MediaPlayer.create(getApplicationContext(), Integer.parseInt(listContent[songIndex][1]));// creates new mediaplayer with song.
+                mp = MediaPlayer.create(getApplicationContext(), Integer.parseInt(listContent.get(songIndex).getUri()));// creates new mediaplayer with song.
             }
             mp.start();
             currentSongType = "Local";
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             {
                 spotPlayer.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
             }
-            spotPlayer.playUri(opCallback, spotifyListContent.get(songIndex)[1],0,0);
+            spotPlayer.playUri(opCallback, spotifyListContent.get(songIndex).getUri(),0,0);
             currentSongType = "Spotify";
         }
 
@@ -214,15 +214,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public MusicGetter setMusicDir(MusicGetter mG, String dir)
     {
         mG = new MusicGetter(dir);
-        listContent = mG.files;
+        listContent = mG.songs;
 
-        if (listSongs == null  || (listSongs != null && (listSongs.length != listContent.length)))
+        if (listSongs == null  || (listSongs != null && (listSongs.size() != listContent.size())))
         {
-            listSongs = new String[listContent.length];
-        }
-        for (int i = 0; i < listContent.length; i++)
-        {
-            this.listSongs[i] = listContent[i][0];
+            listSongs = new ArrayList<String>();
+            for (int i = 0; i < listContent.size(); i++)
+            {
+                listSongs.add(listContent.get(i).getName());
+            }
         }
         //If we change the dir we MUST create a new list to avoid linking things that should not be there
         //Also this is called on boot, which ensures we have local songs when we go into playlists
@@ -269,12 +269,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     //Only call this when we need to remake the list. Other than that, add things as they come
     private void createCombinedList() {
         //Always create from scratch incase new data loaded && avoid duplicates.
-        combinedList = new ArrayList<String[]>();
+        combinedList = new ArrayList<Song>();
 
         if (listContent != null) {
-            for (int i = 0; i < listContent.length; i++)
+            for (int i = 0; i < listContent.size(); i++)
             {
-                combinedList.add(listContent[i]);
+                combinedList.add(listContent.get(i));
             }
         }
         if (spotifyListContent != null) {
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
     }
 
-    public static ArrayList<String[]> getCombinedList() {
+    public static ArrayList<Song> getCombinedList() {
         return combinedList;
     }
 
@@ -375,13 +375,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         if (spotifyListContent == null)
         {
-            spotifyListContent = new ArrayList<String[]>();
+            spotifyListContent = new ArrayList<Song>();
             spotifySongStrings = new ArrayList<String>();
         }
 
         if (combinedList == null)
         {
-            combinedList = new ArrayList<String[]>();
+            combinedList = new ArrayList<Song>();
         }
         getSpotifyLibrary();
 
@@ -617,10 +617,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         Object[] retVal = null;
          if (list.equals("Local") && listContent != null && listSongs != null)
          {
-            ps = new ParallelSorter(null, null, listContent, listSongs, type);
+            ps = new ParallelSorter(listContent, listSongs, type);
             retVal = ps.getRetArr();
-            listContent = (String[][]) retVal[0];
-            listSongs = (String[]) retVal[1];
+            listContent = (ArrayList<Song>) retVal[0];
+            listSongs = (ArrayList<String>) retVal[1];
 
              if (adapter != null) {
                  mainList.invalidateViews();
@@ -629,9 +629,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
          }
          else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
          {
-            ps = new ParallelSorter(spotifyListContent, spotifySongStrings, null, null, type);
+            ps = new ParallelSorter(spotifyListContent, spotifySongStrings, type);
             retVal = ps.getRetArr();
-            spotifyListContent = (ArrayList<String[]>) retVal[0];
+            spotifyListContent = (ArrayList<Song>) retVal[0];
             spotifySongStrings = (ArrayList<String>) retVal[1];
 
              if (spotifyAdapter != null) {
@@ -717,35 +717,32 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
 
     public void playRandomSong() {
-        try {
-            if (currentSongType.equals("Local")) {
-                int choice = mG.selectRandomSongAsInt();
-                View choiceRow = getViewByPosition(mainList, choice);
+        if (currentSongType.equals("Local") && listSongs.size() > 0) {
+            int choice = (int) Math.round((Math.random() * listSongs.size()-1));
+            View choiceRow = getViewByPosition(mainList, choice);
 
-                if (currentSongListPosition != -1) {
-                    View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                    oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-                }
-                mainList.requestFocusFromTouch();
-                mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
-                choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                currentSongListPosition = choice;
+            if (currentSongListPosition != -1) {
+                View oldRow = getViewByPosition(mainList, currentSongListPosition);
+                oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
             }
-            else if (currentSongType.equals("Spotify")) {
-                int choice = (int) (Math.random() * spotifyListContent.size());
-                View choiceRow = getViewByPosition(mainList, choice);
-
-                if (currentSongListPosition != -1) {
-                    View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                    oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-                }
-                mainList.requestFocusFromTouch();
-                mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
-                choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
-                currentSongListPosition = choice;
-            }
+            mainList.requestFocusFromTouch();
+            mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+            choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+            currentSongListPosition = choice;
         }
-        catch (IOException e) {}
+        else if (currentSongType.equals("Spotify")) {
+            int choice = (int) (Math.random() * spotifyListContent.size());
+            View choiceRow = getViewByPosition(mainList, choice);
+
+            if (currentSongListPosition != -1) {
+                View oldRow = getViewByPosition(mainList, currentSongListPosition);
+                oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
+            }
+            mainList.requestFocusFromTouch();
+            mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+            choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
+            currentSongListPosition = choice;
+        }
     }
 
 
@@ -791,6 +788,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     player.setConnectivityStatus(opCallback, getNetworkConnectivity(MainActivity.this));
                     player.addNotificationCallback(MainActivity.this);
                     player.addConnectionStateCallback(MainActivity.this);
+                    player.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
             }
 
             @Override
@@ -845,13 +843,36 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         try {
             JSONObject jsonObject = new JSONObject(output);
             JSONArray jArray = jsonObject.getJSONArray("items");
+            JSONArray artArray = null;
+            JSONArray albumArray = null;
+            String album = "";
+            String artist = "";
 
             for (int i = 0; i < jArray.length(); i++)
             {
                 jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
-                spotifyListContent.add(new String[]{(String) jsonObject.get("name"), (String) jsonObject.get("uri")});
-                spotifySongStrings.add((String) jsonObject.get("name")); //Need this for adapter
-                combinedList.add(spotifyListContent.get(i));
+                try {
+                    artist = (String) jsonObject.getJSONArray("artists").getJSONObject(0).get("name");
+                    album = (String) jsonObject.getJSONObject("album").get("name");
+                }
+                catch (JSONException je)
+                {
+                    artist = "<Unknown>";
+                    album = "<Unknown>";
+                }
+                if (artist == null || artist.equals(""))
+                {
+                    artist = "<Unknown>";
+                }
+                if (album == null || album.equals(""))
+                {
+                    album = "<Unknown>";
+                }
+                Song song = new Song ((String) jsonObject.get("name"),
+                        (String) jsonObject.get("uri"), artist, album, "Spotify", i);
+                spotifyListContent.add(song);
+                spotifySongStrings.add(song.getName()); //Need this for adapter
+                combinedList.add(song);
             }
             spotifyAdapter.notifyDataSetChanged();
             mainList.invalidateViews();

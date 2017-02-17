@@ -16,28 +16,19 @@ import java.util.List;
 
 public class ParallelSorter {
 
-    ArrayList<String[]> Array1;
+    ArrayList<Song> Array1;
     ArrayList<String> Array2;
-    String[] Array3;
     String type;
-    String[][] Array4;
     Object[] retArr = null;
 
-    public ParallelSorter(ArrayList<String[]> SpotifyListContent, ArrayList<String> SpotifySongs, String[][] listContent, String[] listSongs, String type) {
+    public ParallelSorter(ArrayList<Song> listContent, ArrayList<String> songNames, String type) {
         //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
-        this.Array1 = SpotifyListContent;
-        this.Array2 = SpotifySongs;
-        this.Array3 = listSongs;
-        this.Array4 = listContent;
+        this.Array1 = listContent;
+        this.Array2 = songNames;
         this.type = type;
 
-        if (this.Array4 != null) {
-            sortLocal();
-            retArr = new Object[]{Array4, Array3};
-        }
-
-        else if (this.Array2 != null) {
-            sortString();
+        if (this.Array2 != null) {
+            sort();
             retArr = new Object[]{Array1, Array2};
         }
          else {
@@ -49,35 +40,21 @@ public class ParallelSorter {
         return retArr;
     }
 
-    public void sortLocal() {
 
-        ArrayList<LocalComp> metaData = new ArrayList<LocalComp>();
-        for (int i = 0; i < Array4.length; i++) {
-            metaData.add(new LocalComp(Array4[i][0], Array4[i][1], Array4[i][2], Array3[i]));
-        }
-
-        Collections.sort(metaData, new LocalResultComparator(type));
-        for (int i = 0; i < metaData.size(); i++) {
-            LocalComp comp = metaData.get(i);
-            Array4[i][0] = comp.output;
-            Array4[i][1] = comp.songData;
-            Array4[i][2] = comp.artist;
-            Array3[i] = comp.result;
-        }
-    }
-
-    public void sortString() {
+    public void sort() {
 
         ArrayList<compString> metaData = new ArrayList<compString>();
         for (int i = 0; i < Array1.size(); i++) {
-            metaData.add(new compString(Array1.get(i)[0], Array1.get(i)[1], Array2.get(i)));
+            metaData.add(new compString(Array1.get(i).getName(), Array1.get(i).getUri(),
+                    Array1.get(i).getArtist(),
+                    Array1.get(i).getAlbum(), Array1.get(i).getType(), Array2.get(i)));
         }
 
         Collections.sort(metaData, new ResultComparatorString(type));
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
-            Array1.set(i, new String[]{comp.output, comp.uri});
-            Array2.set(i, comp.output);
+            Array1.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album, comp.type, i));
+            Array2.set(i, comp.oname);
         }
     }
 
@@ -92,59 +69,31 @@ public class ParallelSorter {
         @Override
         public int compare(compString a, compString b) {
             if (type.equals("ALPH-ASC")) {
-                return a.output.compareTo(b.output) < 0 ? -1 : a.output == b.output ? 0 : 1;
+                return a.name.compareTo(b.name) < 0 ? -1 : a.name == b.name ? 0 : 1;
             }
             else if (type.equals("ALPH-DESC")) {
-                return b.output.compareTo(a.output) < 0 ? -1 : b.output == a.output ? 0 : 1;
+                return b.name.compareTo(a.name) < 0 ? -1 : b.name == a.name ? 0 : 1;
             }
             else {
                 return 0;
             }
-        }
-    }
-
-    class LocalResultComparator implements Comparator<LocalComp> {
-        String type;
-
-        public LocalResultComparator(String type) {
-            this.type = type;
-        }
-        @Override
-        public int compare(LocalComp a, LocalComp b) {
-            if (type.equals("ALPH-ASC")) {
-                return a.output.compareTo(b.output) < 0 ? -1 : a.output == b.output ? 0 : 1;
-            }
-            else if (type.equals("ALPH-DESC")) {
-                return b.output.compareTo(a.output) < 0 ? -1 : b.output == a.output ? 0 : 1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }
-
-    class LocalComp{
-        String output;
-        String songData;
-        String artist;
-        String result;
-
-        LocalComp(String n, String songD, String art, String a) {
-            output = n;
-            songData = songD;
-            artist = art;
-            result = a;
         }
     }
 
     class compString{
-        String output;
-        String result;
+        String name;
         String uri;
+        String artist;
+        String album;
+        String type;
+        String oname;
 
-        compString(String n, String a, String URI) {
-            output = n;
-            result = a;
-            uri = URI;
+        compString(String n, String u, String a, String a2, String t, String nm) {
+            name = n;
+            uri = u;
+            artist = a;
+            album = a2;
+            type = t;
+            oname = nm;
         }
     }

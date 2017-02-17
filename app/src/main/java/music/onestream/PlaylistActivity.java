@@ -40,7 +40,7 @@ public class PlaylistActivity extends Activity {
             songNames = new String[playlist.getSongInfo().size()];
             for (int i = 0; i < playlist.getSongInfo().size(); i++)
             {
-                songNames[i] = playlist.getSongInfo().get(i)[0];
+                songNames[i] = playlist.getSongInfo().get(i).getName();
             }
         }
 
@@ -56,7 +56,7 @@ public class PlaylistActivity extends Activity {
                 songNames = new String[playlist.getSongInfo().size()];
                 for (int i = 0; i < playlist.getSongInfo().size(); i++)
                 {
-                    songNames[i] = playlist.getSongInfo().get(i)[0];
+                    songNames[i] = playlist.getSongInfo().get(i).getName();
                 }
                 playSongs.invalidateViews();
                 playSongs.setAdapter(new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, songNames));
