@@ -215,20 +215,24 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     {
         mG = new MusicGetter(dir);
         listContent = mG.songs;
-
-        if (listSongs == null  || (listSongs != null && (listSongs.size() != listContent.size())))
+        if (listSongs == null)
         {
             listSongs = new ArrayList<String>();
-            for (int i = 0; i < listContent.size(); i++)
-            {
-                listSongs.add(listContent.get(i).getName());
-            }
+        }
+        int localSongOffset= 0;
+        while (localSongOffset < listContent.size()) {
+            Object[] params = new Object[3];
+            params[0] = listContent;
+            params[1] = listSongs;
+            params[2] = localSongOffset;
+            MusicLoaderService mls = new MusicLoaderService();
+            mls.SAR = this;
+            mls.execute(params);
+            localSongOffset+=20;
         }
         //If we change the dir we MUST create a new list to avoid linking things that should not be there
         //Also this is called on boot, which ensures we have local songs when we go into playlists
         createCombinedList();
-
-        sortLists(sortType, "Local");
 
         return mG;
     }
@@ -408,8 +412,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSongs);
         spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifySongStrings);
 
+        if (listSongs != null && listSongs.size() > 0) {
+            mainList.setAdapter(adapter);
+        }
 
-        mainList.setAdapter(adapter);
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
@@ -534,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         //Sometimes logged in but player is not. We check length for handling that
-                        if (spotifyListContent == null || (spotifyListContent == null && spotifyListContent.size() == 0))
+                        if (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()))
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
@@ -831,6 +837,19 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         //AutogenStub
+    }
+
+    public ArrayList<String> processFinish (ArrayList<String> output) {
+        listSongs = output;
+        adapter.notifyDataSetChanged();
+        mainList.invalidateViews();
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSongs);
+        mainList.setAdapter(adapter);
+        if (listContent.size() == listSongs.size())
+        {
+            sortLists(sortType, "Local");
+        }
+        return listSongs;
     }
 
     //Called when spotifyMusicGetter gets music
