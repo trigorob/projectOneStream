@@ -544,9 +544,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
-                        else if (spotifySongOffset <= spotifyListContent.size()) {
-                            mainList.setVisibility(View.VISIBLE);
-                        }
+                        mainList.setVisibility(View.VISIBLE);
                         break;
                     case 2:
                         //Todo: change to googlemusicStrings
@@ -769,7 +767,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         if (accessToken != null) {
-            while (spotifySongOffset < 250)
+            while (spotifySongOffset < 1000)
             {
                 Object[] params = new Object[2];
                 params[0] = accessToken;
