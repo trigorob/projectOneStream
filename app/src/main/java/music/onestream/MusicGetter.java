@@ -52,7 +52,7 @@ public class MusicGetter {
     public MusicGetter(String directory)
     {
         if (!directory.equals("Default")) {
-            this.songs = fileNames(directory);
+            this.songs = fileNames(directory, true);
             this.type = 1;
         }
         else
@@ -90,8 +90,13 @@ public class MusicGetter {
         return null;
     }
 
-    public ArrayList<Song> fileNames(String directoryPath) {
+    public ArrayList<Song> fileNames(String directoryPath, Boolean root) {
 
+        if (root)
+        {
+            this.songs = new ArrayList<Song>();
+        }
+        
         File dir = new File(directoryPath);
         ArrayList<String> filess = new ArrayList<String>();
         ArrayList<String> artists = new ArrayList<String>();
@@ -115,9 +120,11 @@ public class MusicGetter {
                         albums.add(albumName);
                     }
                 }
+                else if (file.isDirectory())
+                {
+                    fileNames(file.getPath(), false);
+                }
             }
-
-            this.songs = new ArrayList<Song>();
             for (int i = 0; i < files.size(); i++) {
                 Song song = new Song(filess.get(i), files.get(i).toURI().toString(), "<Unknown>", "<Unknown>", "Local", i);
                 songs.add(song);
