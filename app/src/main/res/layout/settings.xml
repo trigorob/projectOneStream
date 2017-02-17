@@ -7,15 +7,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="music.onestream.Settings"
-    >
+    tools:context="music.onestream.Settings">
 
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/back"
         android:text="Back"
-        android:onClick="goBack" />
+        android:onClick="goBack"
+        android:drawableTop="@drawable/back"
+        />
 
     <Button
         android:layout_width="100dp"
@@ -23,6 +24,7 @@
         android:id="@+id/resetDir"
         android:layout_gravity="right"
         android:text="Reset directory"
+        android:drawableTop="@drawable/folder"
         android:onClick="goBack" />
 
     <Button
@@ -30,6 +32,7 @@
         android:layout_width="100dp"
         android:text="User accounts"
         android:layout_gravity="left"
+        android:drawableTop="@drawable/accounts"
         android:id="@+id/accountsPage"/>
 
     <Button
