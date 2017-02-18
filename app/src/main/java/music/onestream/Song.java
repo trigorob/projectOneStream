@@ -50,4 +50,10 @@ public class Song {
         return type;
     }
 
+    @Override
+    public String toString()
+    {
+        return this.name;
+    }
+
 }

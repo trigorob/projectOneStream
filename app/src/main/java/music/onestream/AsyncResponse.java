@@ -10,5 +10,5 @@ import java.util.ArrayList;
 
 public interface AsyncResponse {
     void processFinish(String output);
-    ArrayList<String> processFinish(ArrayList<String> output);
+    ArrayList<Song> processFinish(ArrayList<Song> output);
 }

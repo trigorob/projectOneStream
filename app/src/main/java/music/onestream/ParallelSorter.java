@@ -17,19 +17,17 @@ import java.util.List;
 public class ParallelSorter {
 
     ArrayList<Song> Array1;
-    ArrayList<String> Array2;
     String type;
     Object[] retArr = null;
 
-    public ParallelSorter(ArrayList<Song> listContent, ArrayList<String> songNames, String type) {
+    public ParallelSorter(ArrayList<Song> listContent, String type) {
         //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
         this.Array1 = listContent;
-        this.Array2 = songNames;
         this.type = type;
 
-        if (this.Array2 != null) {
+        if (this.Array1 != null) {
             sort();
-            retArr = new Object[]{Array1, Array2};
+            retArr = new Object[]{Array1};
         }
          else {
             return;
@@ -47,14 +45,13 @@ public class ParallelSorter {
         for (int i = 0; i < Array1.size(); i++) {
             metaData.add(new compString(Array1.get(i).getName(), Array1.get(i).getUri(),
                     Array1.get(i).getArtist(),
-                    Array1.get(i).getAlbum(), Array1.get(i).getType(), Array2.get(i)));
+                    Array1.get(i).getAlbum(), Array1.get(i).getType()));
         }
 
         Collections.sort(metaData, new ResultComparatorString(type));
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
             Array1.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album, comp.type, i));
-            Array2.set(i, comp.oname);
         }
     }
 
@@ -86,14 +83,12 @@ public class ParallelSorter {
         String artist;
         String album;
         String type;
-        String oname;
 
-        compString(String n, String u, String a, String a2, String t, String nm) {
+        compString(String n, String u, String a, String a2, String t) {
             name = n;
             uri = u;
             artist = a;
             album = a2;
             type = t;
-            oname = nm;
         }
     }
