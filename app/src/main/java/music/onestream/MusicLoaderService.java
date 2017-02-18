@@ -30,21 +30,22 @@ public class MusicLoaderService extends AsyncTask {
     //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
     @Override
     protected ArrayList<Song> doInBackground(Object[] params) {
-        ArrayList<Song> listContent = (ArrayList<Song>) params[0];
-        int offset = (int) params[1];
-        /*
-        if (listSongs.size() < listContent.size())
+        ArrayList<Song> totalListContent = (ArrayList<Song>) params[0];
+        ArrayList<Song> listContent = (ArrayList<Song>) params[1];
+        int offset = (int) params[2];
+
+        if (listContent.size() < totalListContent.size())
         {
             for (int i = offset; i < 20+offset; i++)
             {
-                if (listSongs.size() == listContent.size())
+                if (listContent.size() == totalListContent.size())
                 {
-                    return listSongs;
+                    return listContent;
                 }
-                listSongs.add(listContent.get(i).getName());
+                listContent.add(totalListContent.get(i));
             }
         }
-        */
+
         return listContent;
     }
 }

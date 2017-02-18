@@ -80,9 +80,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private BroadcastReceiver mNetworkStateReceiver;
     private static ArrayList<Song> combinedList;
 
-
-    //Todo: Make service (So next song happens when phone screen off)
-
     //Callback for spotify player
     private final Player.OperationCallback opCallback = new Player.OperationCallback() {
         @Override
@@ -196,15 +193,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
 
 
-    public MusicGetter setMusicDir(MusicGetter mG, String dir)
+    public MusicGetter setMusicDir(String dir)
     {
         mG = new MusicGetter(dir);
-        listContent = mG.songs;
+        ArrayList<Song> totalListContent = mG.songs;
         int localSongOffset= 0;
-        while (localSongOffset < listContent.size()) {
+        while (localSongOffset < totalListContent.size()) {
             Object[] params = new Object[3];
-            params[0] = listContent;
-            params[1] = localSongOffset;
+            params[0] = totalListContent;
+            params[1] = listContent;
+            params[2] = localSongOffset;
             MusicLoaderService mls = new MusicLoaderService();
             mls.SAR = this;
             mls.execute(params);
@@ -359,11 +357,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         setContentView(R.layout.activity_main);
 
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
-        final String directory = settings.getString("dir", "Default");
+        directory = settings.getString("dir", "Default");
         settings = getSharedPreferences("SORT-TYPE", 0);
         sortType = settings.getString("sortType", "Default");
 
-        mG = setMusicDir(mG, directory);
+        initSongLists();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -371,8 +369,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         // primary sections of the activity.
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        initSongLists();
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -444,6 +440,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     public void initSongLists() {
+        if (listContent == null)
+        {
+            listContent = new ArrayList<Song>();
+        }
+
         if (spotifyListContent == null)
         {
             spotifyListContent = new ArrayList<Song>();
@@ -453,6 +454,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             combinedList = new ArrayList<Song>();
         }
+
+        mG = setMusicDir(directory);
         getSpotifyLibrary();
 
         if (spotifyListContent != null && spotifyListContent.size() > 0)
@@ -812,17 +815,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     public ArrayList<Song> processFinish (ArrayList<Song> output) {
-        /*
         listContent = output;
         adapter.notifyDataSetChanged();
         mainList.invalidateViews();
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent);
+        adapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, listContent);
         mainList.setAdapter(adapter);
         if (listContent.size() == listContent.size())
         {
             sortLists(sortType, "Local");
         }
-        */
         return output;
     }
 
