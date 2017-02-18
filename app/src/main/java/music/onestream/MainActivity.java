@@ -496,6 +496,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                destroyPlayers();
                 Intent settings = new Intent(mViewPager.getContext(), LoginActivity.class);
                 startActivityForResult(settings, 0);
             }
