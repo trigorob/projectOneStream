@@ -817,9 +817,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public ArrayList<Song> processFinish (ArrayList<Song> output) {
         listContent = output;
-        adapter.notifyDataSetChanged();
-        mainList.invalidateViews();
         adapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, listContent);
+        mainList.invalidateViews();
+        adapter.notifyDataSetChanged();
         mainList.setAdapter(adapter);
         if (listContent.size() == listContent.size())
         {
@@ -843,6 +843,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             String album = "";
             String artist = "";
 
+            ArrayList<Song> tempList = spotifyListContent;
+
             for (int i = 0; i < jArray.length(); i++)
             {
                 jsonObject =  (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
@@ -865,11 +867,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 }
                 Song song = new Song ((String) jsonObject.get("name"),
                         (String) jsonObject.get("uri"), artist, album, "Spotify", i);
-                spotifyListContent.add(song);
+                tempList.add(song);
                 combinedList.add(song);
             }
-            spotifyAdapter.notifyDataSetChanged();
+            spotifyListContent = tempList;
             mainList.invalidateViews();
+            spotifyAdapter.notifyDataSetChanged();
             spotifyAdapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, spotifyListContent);
         } catch (JSONException e) {}
     }
