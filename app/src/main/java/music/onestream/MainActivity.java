@@ -753,7 +753,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 sMG = new SpotifyMusicGetter();
                 sMG.SAR = this;
                 sMG.execute(params);
-                spotifySongOffset += 20;
+                spotifySongOffset += 50;
             }
         }
 
@@ -869,6 +869,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         (String) jsonObject.get("uri"), artist, album, "Spotify", i);
                 tempList.add(song);
                 combinedList.add(song);
+            }
+            if (tempList.size() < 20)
+            {
+                spotifySongOffset = 1000;
             }
             spotifyListContent = tempList;
             mainList.invalidateViews();

@@ -33,7 +33,7 @@ import java.util.logging.Logger;
             String token = (String) params[0];
             String offset = ((Integer) params[1]).toString();
             try {
-                String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit=20";
+                String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit=50";
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Authorization", "Bearer " + token);
