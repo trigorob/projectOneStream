@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static int spotifySongOffset= 0;
 
     private static String directory;
+    private static Boolean directoryChanged = false;
     private static String sortType;
 
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
@@ -197,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     {
         mG = new MusicGetter(dir);
         ArrayList<Song> totalListContent = mG.songs;
+        ArrayList<Song> listContent = new ArrayList<Song>();
         int localSongOffset= 0;
         while (localSongOffset < totalListContent.size()) {
             Object[] params = new Object[3];
@@ -358,6 +360,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         directory = settings.getString("dir", "Default");
+        directoryChanged = settings.getBoolean("directoryChanged", false);
+        if (directoryChanged)
+        {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.remove("directoryChanged");
+            editor.commit();
+        }
         settings = getSharedPreferences("SORT-TYPE", 0);
         sortType = settings.getString("sortType", "Default");
 
@@ -455,13 +464,28 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             combinedList = new ArrayList<Song>();
         }
 
-        mG = setMusicDir(directory);
+        if (listContent.size() == 0 || isDirectoryChanged()) {
+            mG = setMusicDir(directory);
+            directoryChanged();
+        }
         getSpotifyLibrary();
 
         if (spotifyListContent != null && spotifyListContent.size() > 0)
         {
             sortLists(sortType, "Spotify");
         }
+    }
+
+    public Boolean isDirectoryChanged() {
+        return directoryChanged;
+    }
+
+    public void directoryChanged() {
+        if (directoryChanged) {
+            directoryChanged = false;
+            return;
+        }
+        directoryChanged = true;
     }
 
     public void initListDisplay() {

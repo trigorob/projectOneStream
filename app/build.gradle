@@ -51,7 +51,10 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.google.android.gms:play-services-auth:10.0.1'
-    // Change to the API you want to access:
+    // Amazon Web Services
+    compile 'com.amazonaws:aws-android-sdk-core:2.3.9'
+    compile('com.amazonaws:aws-android-sdk-ddb:2.3.9')
+    compile('com.amazonaws:aws-android-sdk-ddb-mapper:2.3.9')
     // TODO: Add play/music api here
     testCompile 'junit:junit:4.12'
 }
