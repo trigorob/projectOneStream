@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private String currentSongType = "Local";
     private BroadcastReceiver mNetworkStateReceiver;
     private static Playlist combinedList;
-    private int threadCount; //Use this to prevent too many threads when getting songs
+    private int threadCount; //Use this to prevent too many threads when getting songs. Not implemented yet
 
     //Callback for spotify player
     private final Player.OperationCallback opCallback = new Player.OperationCallback() {
@@ -211,12 +211,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
         //If we change the dir we MUST create a new list to avoid linking things that should not be there
         //Also this is called on boot, which ensures we have local songs when we go into playlists
-        if (combinedList == null)
-        {
-            createCombinedList();
-        }
-        combinedList.addSongs(listContent.getSongInfo());
-
         return mG;
     }
 
@@ -251,25 +245,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    //Only call this when we need to remake the list. Other than that, add things as they come
-    private void createCombinedList() {
-        //Always create from scratch incase new data loaded && avoid duplicates.
-        combinedList = new Playlist();
-
-        if (listContent != null) {
-            for (int i = 0; i < listContent.size(); i++)
-            {
-                combinedList.addSong(listContent.getSongInfo().get(i));
-            }
-        }
-        if (spotifyListContent != null) {
-            for (int i = 0; i < spotifyListContent.size(); i++)
-            {
-                combinedList.addSong(spotifyListContent.getSongInfo().get(i));
-            }
-        }
     }
 
     public static Playlist getCombinedList() {
@@ -462,6 +437,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             spotifyListContent = new Playlist();
         }
 
+        if (combinedList == null)
+        {
+            combinedList = new Playlist();
+        }
+
         if (listContent.size() == 0 || isDirectoryChanged()) {
             mG = setMusicDir(directory);
             directoryChanged();
@@ -488,12 +468,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public void initListDisplay() {
         mainList = (ListView) findViewById(R.id.ListView1);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent.getAdapterList());
-        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, spotifyListContent.getAdapterList());
-
-        if (listContent != null && listContent.size() > 0) {
-            mainList.setAdapter(adapter);
-        }
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                listContent.getAdapterList());
+        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                spotifyListContent.getAdapterList());
+        mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -846,27 +825,24 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             return;
         }
         if (result.getClass().getName().equals("music.onestream.Playlist")) {
-            listContent.setSongInfo(((Playlist) result).getSongInfo());
-            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent.getAdapterList());
-            mainList.invalidateViews();
-            adapter.notifyDataSetChanged();
-            mainList.setAdapter(adapter);
+            listContent.addSongs(((Playlist) result).getSongInfo());
+            combinedList.addSongs(((Playlist) result).getSongInfo());
             if (listContent.size() == listContent.size()) {
                 sortLists(sortType, "Local");
             }
+            adapter.notifyDataSetChanged();
+            mainList.invalidateViews();
         } else {
             ArrayList<Song> tempList = (ArrayList<Song>) result;
             if (tempList.size() < 20) {
                 spotifySongOffset = 1000;
             }
-            for (int i = 0; i < tempList.size(); i++) {
-                spotifyListContent.addSong(tempList.get(i));
-                combinedList.addSong(tempList.get(i));
-            }
-            mainList.invalidateViews();
+
+            spotifyListContent.addSongs(tempList);
+            combinedList.addSongs(tempList);
             spotifyAdapter.notifyDataSetChanged();
-            spotifyAdapter = new ArrayAdapter<String>
-                    (this, android.R.layout.simple_list_item_1, spotifyListContent.getAdapterList());
+            mainList.invalidateViews();
+
         }
         threadCount--;
     }
