@@ -3,6 +3,8 @@ package music.onestream;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,14 +25,14 @@ import java.util.logging.Logger;
 
         @Override
         protected void onPostExecute(Object result) {
-            SAR.processFinish((String)result);
+            SAR.processFinish((ArrayList<Song>) result);
         }
 
         //This is the async process that gets songs. It only gets 50 right now.
         //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
         @Override
-        protected String doInBackground(Object[] params) {
-            String result = null;
+        protected ArrayList<Song> doInBackground(Object[] params) {
+            ArrayList<Song> result = null;
             String token = (String) params[0];
             String offset = ((Integer) params[1]).toString();
             try {
@@ -40,46 +43,88 @@ import java.util.logging.Logger;
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("accept", "application/json");
                 //Get the songs as an object
-                result = getJSON(conn);
+                result = extractJSON(conn, (Integer) params[1]);
             } catch (IOException IOE) {
 
             }
             return result;
         }
 
-    public String getJSON(HttpURLConnection url) {
-        HttpURLConnection c = url;
-        try {
-            c.connect();
-            int status = c.getResponseCode();
+        public ArrayList<Song> extractJSON(HttpURLConnection url, Integer offset) {
+            HttpURLConnection c = url;
+            ArrayList<Song> result = null;
+            try {
+                c.connect();
+                int status = c.getResponseCode();
 
-            switch (status) {
-                case 200:
-                case 201:
-                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line+"\n");
+                switch (status) {
+                    case 200:
+                    case 201:
+                        BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        br.close();
+                        result = processJSON(sb.toString(), offset);
+                }
+
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                if (c != null) {
+                    try {
+                        c.disconnect();
+                    } catch (Exception ex) {
+                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
                     }
-                    br.close();
-                    return sb.toString();
-            }
-
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (c != null) {
-                try {
-                    c.disconnect();
-                } catch (Exception ex) {
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            return result;
         }
-        return null;
-    }
 
-}
+        public ArrayList<Song> processJSON(String output, int spotifySongOffset) {
+            try {
+                JSONObject jsonObject = new JSONObject(output);
+                JSONArray jArray = jsonObject.getJSONArray("items");
+                JSONArray artArray = null;
+                JSONArray albumArray = null;
+                String album = "";
+                String artist = "";
+
+                ArrayList<Song> tempList = new ArrayList<Song>();
+
+                for (int i = 0; i < jArray.length(); i++) {
+                    try {
+                        jsonObject = (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
+                        artist = (String) jsonObject.getJSONArray("artists").getJSONObject(0).get("name");
+                        album = (String) jsonObject.getJSONObject("album").get("name");
+                    } catch (JSONException je) {
+                        if (jsonObject == null)
+                            artist = "<Unknown>";
+                        album = "<Unknown>";
+                    } catch (NullPointerException NE) {
+                        artist = "<Unknown>";
+                        album = "<Unknown>";
+                    }
+                    if (artist == null || artist.equals("")) {
+                        artist = "<Unknown>";
+                    }
+                    if (album == null || album.equals("")) {
+                        album = "<Unknown>";
+                    }
+                    Song song = new Song((String) jsonObject.get("name"),
+                            (String) jsonObject.get("uri"),
+                            artist, album, "Spotify", spotifySongOffset + i);
+                    tempList.add(song);
+
+                }
+                return tempList;
+            } catch (JSONException e) {
+            }
+            return null;
+        }
+    }

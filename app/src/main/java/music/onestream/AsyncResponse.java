@@ -9,6 +9,5 @@ import java.util.ArrayList;
  */
 
 public interface AsyncResponse {
-    void processFinish(String output);
-    ArrayList<Song> processFinish(ArrayList<Song> output);
+    void processFinish(Object result);
 }

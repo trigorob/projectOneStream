@@ -23,15 +23,15 @@ public class MusicLoaderService extends AsyncTask {
 
     @Override
     protected void onPostExecute(Object result) {
-        SAR.processFinish((ArrayList<Song>) result);
+        SAR.processFinish((Playlist) result);
     }
 
     //This is the async process that gets songs. It only gets 50 right now.
     //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
     @Override
-    protected ArrayList<Song> doInBackground(Object[] params) {
+    protected Playlist doInBackground(Object[] params) {
         ArrayList<Song> totalListContent = (ArrayList<Song>) params[0];
-        ArrayList<Song> listContent = (ArrayList<Song>) params[1];
+        Playlist listContent = (Playlist) params[1];
         int offset = (int) params[2];
 
         if (listContent.size() < totalListContent.size())
@@ -42,7 +42,7 @@ public class MusicLoaderService extends AsyncTask {
                 {
                     return listContent;
                 }
-                listContent.add(totalListContent.get(i));
+                listContent.addSong(totalListContent.get(i));
             }
         }
 
