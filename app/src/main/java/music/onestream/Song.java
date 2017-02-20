@@ -1,5 +1,6 @@
 package music.onestream;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
  * Created by ruspe_000 on 2017-02-16.
  */
 
-public class Song {
+public class Song implements Serializable {
     String name;
     String uri;
     String artist;

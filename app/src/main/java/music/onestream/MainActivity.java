@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -416,13 +415,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
         View nextRow = getViewByPosition(mainList,next);
 
-        if (currentSongListPosition != -1) {
-            View oldRow = getViewByPosition(mainList, currentSongListPosition);
-            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-        }
         mainList.requestFocusFromTouch();
         mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
-        nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
         currentSongListPosition = next;
     }
 
@@ -478,12 +472,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                if (currentSongListPosition != -1) {
-                    getViewByPosition(mainList, currentSongListPosition).setBackgroundColor(getResources().getColor(R.color.default_color));
-                }
                 currentSongListPosition = position;
-                mainList.setItemChecked(currentSongListPosition,true);
-                getViewByPosition(mainList,currentSongListPosition).setBackgroundColor(Color.parseColor("#E0ECF8"));
+                mainList.setItemChecked(currentSongListPosition, true);
                 playSong(position);
             }});
     }
@@ -699,14 +689,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             next = 0;
         }
         View nextRow = getViewByPosition(mainList,next);
-
-        if (currentSongListPosition != -1) {
-            View oldRow = getViewByPosition(mainList, currentSongListPosition);
-            oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-        }
         mainList.requestFocusFromTouch();
         mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
-        nextRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
         currentSongListPosition = next;
     }
 
@@ -715,14 +699,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         if (mainList.getAdapter().getCount() > 0) {
             int choice = (int) (Math.random() * mainList.getAdapter().getCount());
             View choiceRow = getViewByPosition(mainList, choice);
-
-            if (currentSongListPosition != -1) {
-                View oldRow = getViewByPosition(mainList, currentSongListPosition);
-                oldRow.setBackgroundColor(getResources().getColor(R.color.default_color));
-            }
             mainList.requestFocusFromTouch();
             mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
-            choiceRow.setBackgroundColor(Color.parseColor("#E0ECF8"));
             currentSongListPosition = choice;
         }
     }
@@ -824,7 +802,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             return;
         }
-        if (result.getClass().getName().equals("music.onestream.Playlist")) {
+        if (result.getClass().getName().contains("java.lang.Object"))
+        {
+
+        }
+
+        else if (result.getClass().getName().equals("music.onestream.Playlist")) {
             listContent.addSongs(((Playlist) result).getSongInfo());
             combinedList.addSongs(((Playlist) result).getSongInfo());
             if (listContent.size() == listContent.size()) {

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class Playlist implements Serializable {
     private String name;
+    private String owner;
     private ArrayList<Song> songInfo;
     private ArrayList<String> songAdapter;
 
@@ -18,8 +19,17 @@ public class Playlist implements Serializable {
 
     public Playlist() {
         name = "";
+        owner = "";
         songInfo = new ArrayList<Song>();
         songAdapter = new ArrayList<String>();
+    }
+
+
+    public String getOwner() {
+        return this.owner;
+    }
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public ArrayList<Song> getSongInfo() {

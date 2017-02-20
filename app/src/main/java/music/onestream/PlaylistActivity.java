@@ -19,21 +19,26 @@ import java.util.ArrayList;
  * Created by ruspe_000 on 2017-02-03.
  */
 
-public class PlaylistActivity extends Activity {
+public class PlaylistActivity extends Activity implements AsyncResponse {
 
     private static Playlist playlist;
     private static String[] songNames;
+    private static DatabaseActionsHandler dba;
+    private static boolean newList = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playlist_activity);
+        dba = new DatabaseActionsHandler();
+        dba.SAR = this;
         if (getIntent().getSerializableExtra("Playlist") != null) {
             playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         }
 
         if (playlist == null || playlist.getSongInfo() == null) {
             playlist = new Playlist();
+            newList = true;
             songNames = new String[0];
         }
         else {
@@ -64,7 +69,7 @@ public class PlaylistActivity extends Activity {
             }
         });
 
-        EditText playlistTitle = (EditText) findViewById(R.id.playListName);
+        final EditText playlistTitle = (EditText) findViewById(R.id.playListName);
         if (playlist.getName() == null || playlist.getName().equals("")) {
             playlistTitle.setText("Playlist Title");
         }
@@ -106,9 +111,6 @@ public class PlaylistActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent settings = new Intent(v.getContext(), Settings.class);
-                Bundle b = new Bundle();
-                b.putSerializable("Playlist", null);
-                settings.putExtras(b);
                 startActivityForResult(settings, 0);
             }
         });
@@ -117,12 +119,27 @@ public class PlaylistActivity extends Activity {
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playlist.setOwner("Admin"); //Todo: Need to store onestream user and get back
+                playlist.setName(playlistTitle.getText().toString());
+                Object[] params = new Object[3];
+
+                if (newList) {
+                    params[0] = "CreatePlaylist";
+                }
+                else {
+                    params[0] = "UpdatePlaylist";
+                }
+                params[1] = playlist;
+                dba.execute(params);
+
                 Intent settings = new Intent(v.getContext(), Settings.class);
-                Bundle b = new Bundle();
-                b.putSerializable("Playlist", playlist);
-                settings.putExtras(b);
                 startActivityForResult(settings, 0);
             }
         });
+    }
+
+    @Override
+    public void processFinish(Object result) {
+        return;
     }
 }

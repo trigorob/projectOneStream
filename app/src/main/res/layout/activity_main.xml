@@ -54,6 +54,7 @@
         android:paddingTop="115dp">
 
         <ListView
+            android:cacheColorHint="@android:color/transparent"
             android:background="@drawable/listbackground"
             android:listSelector="#E0ECF8"
             android:id="@+id/ListView1"
