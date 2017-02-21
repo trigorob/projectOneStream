@@ -23,7 +23,10 @@ public class MusicLoaderService extends AsyncTask {
 
     @Override
     protected void onPostExecute(Object result) {
-        SAR.processFinish((Playlist) result);
+        Object[] retObject = new Object[2];
+        retObject[0] = "MusicLoaderService";
+        retObject[1] = result;
+        SAR.processFinish(retObject);
     }
 
     //This is the async process that gets songs. It only gets 50 right now.

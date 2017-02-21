@@ -25,7 +25,10 @@ import java.util.logging.Logger;
 
         @Override
         protected void onPostExecute(Object result) {
-            SAR.processFinish((ArrayList<Song>) result);
+            Object[] retObject = new Object[2];
+            retObject[0] = "SpotifyMusicGetter";
+            retObject[1] = result;
+            SAR.processFinish(retObject);
         }
 
         //This is the async process that gets songs. It only gets 50 right now.

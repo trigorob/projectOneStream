@@ -20,7 +20,10 @@ public class DatabaseActionsHandler extends AsyncTask {
     AsyncResponse SAR;
 
     protected void onPostExecute(Object result) {
-        SAR.processFinish(result);
+        Object[] retObject = new Object[2];
+        retObject[0] = "DatabaseActionsHandler";
+        retObject[1] = result;
+        SAR.processFinish(retObject);
     }
 
     @Override

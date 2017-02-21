@@ -455,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             playlists = new ArrayList<Playlist>();
             playlistNames = new ArrayList<String>();
-            getPlaylists();
+            getRemotePlaylists();
         }
     }
 
@@ -742,7 +742,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
     }
 
-    public void getPlaylists() {
+    public void getRemotePlaylists() {
         Object[] params = new Object[2];
         params[0] = "GetPlaylists";
         params[1] = "Admin";
@@ -829,23 +829,17 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     //Called when threads return
     //Todo: We really really need to refactor to send return value AND what to do with it
     @Override
-    public void processFinish(Object result) {
-
-        if (result == null)
+    public void processFinish(Object[] result) {
+        String type = (String) result[0];
+        Object retVal = result[1];
+        if (retVal == null || type == null)
         {
             return;
         }
-        else if (result.getClass().getName().contains("java.lang.Object"))
+        //Case where retrieved from DB. Only DB lists are playlist array
+        else if (type.equals("DatabaseActionsHandler"))
         {
-            return;
-        }
-
-        //Case where retrieved from DB. Only DB lists need owner.
-        else if (result.getClass().getName().contains("java.util.ArrayList") &&
-                ((ArrayList) result).size() > 0 &&
-                !((ArrayList<Playlist>) result).get(0).getOwner().equals(""))
-        {
-            playlists = (ArrayList<Playlist>) result;
+            playlists = (ArrayList<Playlist>) retVal;
             for (int i = 0; i < playlists.size(); i++)
             {
                 playlistNames.add(playlists.get(i).getName());
@@ -854,16 +848,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             mainList.invalidateViews();
         }
 
-        else if (result.getClass().getName().equals("music.onestream.Playlist")) {
-            listContent.addSongs(((Playlist) result).getSongInfo());
-            combinedList.addSongs(((Playlist) result).getSongInfo());
+        else if (type.equals("MusicLoaderService")) {
+            listContent.addSongs(((Playlist) retVal).getSongInfo());
+            combinedList.addSongs(((Playlist) retVal).getSongInfo());
             if (listContent.size() == listContent.size()) {
                 sortLists(sortType, "Local");
             }
             adapter.notifyDataSetChanged();
             mainList.invalidateViews();
-        } else {
-            ArrayList<Song> tempList = (ArrayList<Song>) result;
+        } else if (type.equals("SpotifyMusicGetter")) {
+            ArrayList<Song> tempList = (ArrayList<Song>) retVal;
             if (tempList.size() < 20) {
                 spotifySongOffset = 1000;
             }
@@ -879,6 +873,19 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     public static Intent createIntent(Context context) {
         return new Intent(context, MainActivity.class);
+    }
+
+    public static ArrayList<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    /*
+    Call this when adding a new playlist. We want to make a call to the server whenever we add/change a playlist
+    It's a bit slower this way, but the implementation is MUCH simpler conceptually.
+    Optimizing this is a nice-to-have
+     */
+    public static void resetPlaylists() {
+        playlists = null;
     }
 
 

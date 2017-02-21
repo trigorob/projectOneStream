@@ -140,6 +140,9 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
                 params[1] = playlist;
                 dba.execute(params);
 
+                //Clear out the playlists. Next time mainactivity is loaded, it will have new playlist available
+                MainActivity.resetPlaylists();
+
                 Intent settings = new Intent(v.getContext(), Settings.class);
                 Bundle b = new Bundle();
                 b.putSerializable("Playlist", null);
@@ -151,7 +154,7 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
     }
 
     @Override
-    public void processFinish(Object result) {
+    public void processFinish(Object[] result) {
         return;
     }
 }
