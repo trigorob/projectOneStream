@@ -31,17 +31,17 @@ public class AddSongsActivity extends Activity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.addsongs_activity);
 
-            TextView playListName = (TextView) findViewById(R.id.listName);
-            if (playlist != null && playlist.getName() != null) {
-                playListName.setText(playlist.getName());
-            }
-
             playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
             combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
             if (combinedList == null)
             {
                 this.combinedList =  new Playlist
                         ("", "", MainActivity.getCombinedList().getSongInfo());
+            }
+
+            TextView playListName = (TextView) findViewById(R.id.listName);
+            if (playlist != null && playlist.getName() != null) {
+                playListName.setText(playlist.getName());
             }
 
             this.oldCombinedList = new Playlist();

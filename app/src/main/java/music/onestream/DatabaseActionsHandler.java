@@ -73,7 +73,7 @@ public class DatabaseActionsHandler extends AsyncTask {
         String tableName = playlist.getOwner() + "_" + playlist.getName().replaceAll(" ","");
         String sql = "CREATE TABLE "+ tableName +
                 " (ListPosition int, SongName varchar(30), " +
-                "SongUri varchar(30), PRIMARY KEY (SongUri));";
+                "SongUri varchar(50), PRIMARY KEY (SongUri));";
         restService.createPlaylist(sql);
 
 
@@ -83,6 +83,7 @@ public class DatabaseActionsHandler extends AsyncTask {
         restService.addPlaylistToPlaylists(sql);
         ArrayList<Song> songs = playlist.getSongInfo();
         sql = "";
+
 
 
         ArrayList<String> queries = new ArrayList<String>();
@@ -99,7 +100,17 @@ public class DatabaseActionsHandler extends AsyncTask {
         if (queries.size() > 0) {
             restService.addSongsToPlaylists(queries);
         }
-        return;
+
+
+        queries = new ArrayList<String>();
+        for (int i = 0; i < songs.size(); i++)
+        {
+            queries .add("INSERT INTO " + tableName + " (ListPosition, SongName, SongUri) " +
+                    "values ('" + i + "', " +
+                    "'" + songs.get(i).getName() +"', " +
+                    "'" + songs.get(i).getUri() +"');");
+        }
+        restService.addSongsToPlaylists(queries);
     }
 
 }
