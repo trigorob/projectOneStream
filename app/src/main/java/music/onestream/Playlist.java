@@ -24,6 +24,13 @@ public class Playlist implements Serializable {
         songAdapter = new ArrayList<String>();
     }
 
+    public Playlist(String name, String owner, ArrayList<Song> songInfo)
+    {
+        this.name = name;
+        this.owner = owner;
+        setSongInfo(songInfo);
+    }
+
 
     public String getOwner() {
         return this.owner;
@@ -64,6 +71,7 @@ public class Playlist implements Serializable {
     public void removeSong(int position)
     {
         songInfo.remove(position);
+        songAdapter.remove(position);
     }
 
     public int size() {
@@ -79,6 +87,11 @@ public class Playlist implements Serializable {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 }

@@ -1,8 +1,11 @@
 package music.onestream;
 
 import android.os.AsyncTask;
+
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -17,23 +20,49 @@ public class DatabaseActionsHandler extends AsyncTask {
     AsyncResponse SAR;
 
     protected void onPostExecute(Object result) {
-        SAR.processFinish((String) result);
+        SAR.processFinish(result);
     }
 
     @Override
     protected Object doInBackground(Object[] params) {
         String action = (String) params[0];
-        Playlist playlist = (Playlist) params[1];
 
         if (action.equals("CreatePlaylist"))
         {
+            Playlist playlist = (Playlist) params[1];
             createNewPlaylist(playlist);
+        }
+        else if (action.equals("GetPlaylists"))
+        {
+            String owner = (String) params[1];
+            return getPlaylists(owner);
         }
 
         return null;
     }
 
-    //Todo: need to create table @username, so that multiple playlists with same name can exist for different users
+    public static ArrayList<Playlist> getPlaylists(String owner) {
+        OneStreamRestService restService = new OneStreamRestService();
+        String sql = "SELECT * FROM Playlist WHERE OWNER = '"+ owner + "';";
+        ArrayList<String[]> names = restService.getPlaylistNames(sql);
+
+
+
+        ArrayList<Playlist> playlists = new ArrayList<Playlist>();
+        ArrayList<String> queries = new ArrayList<String>();
+        for (int i = 0; i < names.size(); i++) {
+            sql = "SELECT * FROM " + names.get(i)[1] + ", Song WHERE " +
+            "Song.uri = " + names.get(i)[1] + ".SongUri " +
+            "ORDER BY " + names.get(i)[1] + ".ListPosition";
+            Playlist p = restService.getPlaylist(sql);
+            p.setName(names.get(i)[0]);
+            p.setOwner(owner);
+            playlists.add(p);
+        }
+
+        return playlists;
+    }
+
     private static void createNewPlaylist(Playlist playlist) {
 
         OneStreamRestService restService = new OneStreamRestService();
@@ -50,22 +79,22 @@ public class DatabaseActionsHandler extends AsyncTask {
 
         restService.addPlaylistToPlaylists(sql);
         ArrayList<Song> songs = playlist.getSongInfo();
-        String songValues = "";
+        sql = "";
 
+
+        ArrayList<String> queries = new ArrayList<String>();
         for (int i = 0; i < songs.size(); i++)
         {
-            if (i > 0)
-            {
-                songValues = songValues + ",";
-            }
-            songValues = songValues +"(" + i + ", '" + songs.get(i).getName() + "', '"
-                    + songs.get(i).getUri() +"')";
+            queries .add("INSERT INTO Song (uri, album, artist, type) " +
+                    "values ('" + songs.get(i).getUri() + "', " +
+                    "'" + songs.get(i).getAlbum() +"', " +
+                    "'" + songs.get(i).getArtist() +"', " +
+                    "'" + songs.get(i).getType() +"');");
         }
 
 
-        if (songValues.length() > 1) {
-            sql = "INSERT INTO " + tableName + "  (ListPosition, SongName, SongUri) values " + songValues + ";";
-            restService.addPlaylistToPlaylists(sql);
+        if (queries.size() > 0) {
+            restService.addSongsToPlaylists(queries);
         }
         return;
     }

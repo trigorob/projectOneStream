@@ -22,39 +22,46 @@ import java.util.ArrayList;
 public class AddSongsActivity extends Activity {
 
         private static Playlist playlist;
-        private static String[] songNames;
+        private static Playlist oldPlaylist;
         public static Playlist combinedList; //Contains song info
+        public static Playlist oldCombinedList;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.addsongs_activity);
-            this.combinedList =  MainActivity.getCombinedList();
-            playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
-
-            if (combinedList == null)
-            {
-                combinedList = new Playlist(); //Will almost never happen, but just incase
-            }
-            if (songNames == null && combinedList != null || (songNames.length != combinedList.size()))
-            {
-                songNames = new String[combinedList.size()];
-                for (int i = 0; i < songNames.length; i++)
-                {
-                    songNames[i] = combinedList.getSongInfo().get(i).getName();
-                }
-            }
 
             TextView playListName = (TextView) findViewById(R.id.listName);
             if (playlist != null && playlist.getName() != null) {
                 playListName.setText(playlist.getName());
             }
 
-            ListView playlistslist = (ListView) findViewById(R.id.songList);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, songNames);
-            playlistslist.setAdapter(adapter);
+            playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+            combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
+            if (combinedList == null)
+            {
+                this.combinedList =  new Playlist
+                        ("", "", MainActivity.getCombinedList().getSongInfo());
+            }
 
-            playlistslist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            this.oldCombinedList = new Playlist();
+            this.oldPlaylist = new Playlist();
+
+            for (int i = 0; i < playlist.size(); i++)
+            {
+                oldPlaylist.addSong(playlist.getSongInfo().get(i));
+            }
+            for (int i = 0; i < combinedList.size(); i++)
+            {
+                oldCombinedList.addSong(combinedList.getSongInfo().get(i));
+            }
+
+            final ListView songsList = (ListView) findViewById(R.id.songList);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                    (this, android.R.layout.simple_list_item_1, combinedList.getAdapterList());
+            songsList.setAdapter(adapter);
+
+            songsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -67,6 +74,9 @@ public class AddSongsActivity extends Activity {
                         }
                     }
                         playlist.addSong(combinedList.getSongInfo().get(position));
+                        combinedList.removeSong(position);
+                        adapter.notifyDataSetChanged();
+                        songsList.invalidateViews();
 
                 }
             });
@@ -76,6 +86,10 @@ public class AddSongsActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent back = new Intent(v.getContext(), PlaylistActivity.class);
+                    Bundle b = new Bundle();
+                    b.putSerializable("Playlist", oldPlaylist);
+                    b.putSerializable("combinedList", oldCombinedList);
+                    back.putExtras(b);
                     startActivityForResult(back, 0);
                 }
             });
@@ -86,6 +100,7 @@ public class AddSongsActivity extends Activity {
                     Intent addSongs = new Intent(v.getContext(), PlaylistActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", playlist);
+                    b.putSerializable("combinedList", combinedList);
                     addSongs.putExtras(b);
                     startActivityForResult(addSongs, 0);
                 }

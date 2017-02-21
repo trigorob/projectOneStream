@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static String directory;
     private static Boolean directoryChanged = false;
     private static String sortType;
+    private static DatabaseActionsHandler dba;
 
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
     static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
@@ -63,8 +64,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private MediaPlayer mp;
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> spotifyAdapter;
+    private ArrayAdapter<String> playlistAdapter;
     private static Playlist listContent;
     private static Playlist spotifyListContent;
+    private static ArrayList<Playlist> playlists;
+    private static ArrayList<String> playlistNames;
     private int currentSongListPosition = -1;
     private int currentSongPosition = -1;
     private SpotifyPlayer spotPlayer;
@@ -446,6 +450,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             sortLists(sortType, "Spotify");
         }
+
+        if (playlists == null || playlists.size() == 0)
+        {
+            playlists = new ArrayList<Playlist>();
+            playlistNames = new ArrayList<String>();
+            getPlaylists();
+        }
     }
 
     public Boolean isDirectoryChanged() {
@@ -466,15 +477,26 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 listContent.getAdapterList());
         spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 spotifyListContent.getAdapterList());
+        playlistAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                playlistNames);
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                currentSongListPosition = position;
-                mainList.setItemChecked(currentSongListPosition, true);
-                playSong(position);
+
+                //Open playlist page
+                //TODO: implement
+                if (mViewPager.getCurrentItem() == 4)
+                {
+
+                }
+                else {
+                    currentSongListPosition = position;
+                    mainList.setItemChecked(currentSongListPosition, true);
+                    playSong(position);
+                }
             }});
     }
 
@@ -614,8 +636,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         mainList.setVisibility(View.INVISIBLE);
                         break;
                     case 3:
+                        mainList.setAdapter(playlistAdapter);
+                        mainList.setVisibility(View.VISIBLE);
                         loginButton.setVisibility(View.INVISIBLE);
-                        mainList.setVisibility(View.INVISIBLE);
                         break;
                 }
             }
@@ -719,6 +742,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
     }
 
+    public void getPlaylists() {
+        Object[] params = new Object[2];
+        params[0] = "GetPlaylists";
+        params[1] = "Admin";
+        dba = new DatabaseActionsHandler();
+        dba.SAR = this;
+        dba.execute(params);
+    }
+
     public void getSpotifyLibrary() {
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
@@ -795,6 +827,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     //Called when threads return
+    //Todo: We really really need to refactor to send return value AND what to do with it
     @Override
     public void processFinish(Object result) {
 
@@ -802,9 +835,23 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         {
             return;
         }
-        if (result.getClass().getName().contains("java.lang.Object"))
+        else if (result.getClass().getName().contains("java.lang.Object"))
         {
+            return;
+        }
 
+        //Case where retrieved from DB. Only DB lists need owner.
+        else if (result.getClass().getName().contains("java.util.ArrayList") &&
+                ((ArrayList) result).size() > 0 &&
+                !((ArrayList<Playlist>) result).get(0).getOwner().equals(""))
+        {
+            playlists = (ArrayList<Playlist>) result;
+            for (int i = 0; i < playlists.size(); i++)
+            {
+                playlistNames.add(playlists.get(i).getName());
+            }
+            playlistAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
         }
 
         else if (result.getClass().getName().equals("music.onestream.Playlist")) {

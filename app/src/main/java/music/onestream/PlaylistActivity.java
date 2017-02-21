@@ -24,6 +24,7 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
     private static Playlist playlist;
     private static String[] songNames;
     private static DatabaseActionsHandler dba;
+    private static Playlist combinedList;
     private static boolean newList = false;
 
     @Override
@@ -32,14 +33,15 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
         setContentView(R.layout.playlist_activity);
         dba = new DatabaseActionsHandler();
         dba.SAR = this;
-        if (getIntent().getSerializableExtra("Playlist") != null) {
-            playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
-        }
+
+        playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+        combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
 
         if (playlist == null || playlist.getSongInfo() == null) {
             playlist = new Playlist();
             newList = true;
             songNames = new String[0];
+            combinedList = new Playlist("", "", MainActivity.getCombinedList().getSongInfo());
         }
         else {
             songNames = new String[playlist.getSongInfo().size()];
@@ -57,6 +59,7 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                combinedList.addSong(playlist.getSongInfo().get(position));
                 playlist.removeSong(position);
                 songNames = new String[playlist.getSongInfo().size()];
                 for (int i = 0; i < playlist.getSongInfo().size(); i++)
@@ -101,6 +104,7 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
                 Intent addSongs = new Intent(v.getContext(), AddSongsActivity.class);
                 Bundle b = new Bundle();
                 b.putSerializable("Playlist", playlist);
+                b.putSerializable("combinedList", combinedList);
                 addSongs.putExtras(b);
                 startActivityForResult(addSongs, 0);
             }
@@ -111,6 +115,10 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
             @Override
             public void onClick(View v) {
                 Intent settings = new Intent(v.getContext(), Settings.class);
+                Bundle b = new Bundle();
+                b.putSerializable("Playlist", null);
+                b.putSerializable("combinedList", null);
+                settings.putExtras(b);
                 startActivityForResult(settings, 0);
             }
         });
@@ -133,6 +141,10 @@ public class PlaylistActivity extends Activity implements AsyncResponse {
                 dba.execute(params);
 
                 Intent settings = new Intent(v.getContext(), Settings.class);
+                Bundle b = new Bundle();
+                b.putSerializable("Playlist", null);
+                b.putSerializable("combinedList", null);
+                settings.putExtras(b);
                 startActivityForResult(settings, 0);
             }
         });
