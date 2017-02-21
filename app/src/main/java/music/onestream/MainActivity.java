@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     public void playSpotifySong(Song currentSong) {
+        spotPlayer.refreshCache();
         if (!spotPlayer.isLoggedIn())
         {
             spotPlayer.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
@@ -769,6 +770,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
 
         Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
+        playerConfig.useCache(false); //Prevent memory leaks from spotify!
         // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
         // the second argument in order to refcount it properly. Note that the method
         // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
