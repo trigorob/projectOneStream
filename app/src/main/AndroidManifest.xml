@@ -32,15 +32,17 @@
         </activity>
 
         <activity
-            android:name=".PlaylistActivity"
-            android:label="PlaylistActivity">
+            android:name=".EditPlaylistActivity"
+            android:label="EditPlaylistActivity">
         </activity>
         <activity
             android:name=".AddSongsActivity"
-            android:label=".AddSongsActivity"
-            ></activity>
-
-
+            android:label=".AddSongsActivity">
+        </activity>
+        <activity
+            android:name=".PlaylistActivity"
+            android:label="PlaylistActivity">
+        </activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

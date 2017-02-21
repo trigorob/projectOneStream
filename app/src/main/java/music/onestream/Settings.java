@@ -1,10 +1,8 @@
 package music.onestream;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -42,7 +40,7 @@ public class Settings extends Activity {
         playlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent playlist = new Intent(v.getContext(), PlaylistActivity.class);
+                Intent playlist = new Intent(v.getContext(), EditPlaylistActivity.class);
                 startActivityForResult(playlist, 0);
             }
         });

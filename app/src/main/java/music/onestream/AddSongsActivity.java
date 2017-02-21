@@ -10,11 +10,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 /**
  * Created by ruspe_000 on 2017-02-13.
  */
@@ -85,7 +80,7 @@ public class AddSongsActivity extends Activity {
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent back = new Intent(v.getContext(), PlaylistActivity.class);
+                    Intent back = new Intent(v.getContext(), EditPlaylistActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", oldPlaylist);
                     b.putSerializable("combinedList", oldCombinedList);
@@ -97,7 +92,7 @@ public class AddSongsActivity extends Activity {
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent addSongs = new Intent(v.getContext(), PlaylistActivity.class);
+                    Intent addSongs = new Intent(v.getContext(), EditPlaylistActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", playlist);
                     b.putSerializable("combinedList", combinedList);

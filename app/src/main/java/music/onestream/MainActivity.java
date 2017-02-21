@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
     static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
+    private PlayerActionsHandler playerHandler;
+
     // variable declaration
     private ListView mainList;
     private MusicGetter mG;
@@ -69,14 +71,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static Playlist spotifyListContent;
     private static ArrayList<Playlist> playlists;
     private static ArrayList<String> playlistNames;
-    private int currentSongListPosition = -1;
-    private int currentSongPosition = -1;
     private SpotifyPlayer spotPlayer;
-    boolean randomNext = false;
     private String currentSongType = "Local";
     private BroadcastReceiver mNetworkStateReceiver;
     private static Playlist combinedList;
-    private int threadCount; //Use this to prevent too many threads when getting songs. Not implemented yet
 
     //Callback for spotify player
     private final Player.OperationCallback opCallback = new Player.OperationCallback() {
@@ -89,112 +87,22 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         public void onError(Error error) {
 
         }
-    };
+};
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+/**
+ * The {@link android.support.v4.view.PagerAdapter} that will provide
+ * fragments for each of the sections. We use a
+ * {@link FragmentPagerAdapter} derivative, which will keep every
+ * loaded fragment in memory. If this becomes too memory intensive, it
+ * may be best to switch to a
+ * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+ */
+private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
-
-    public void resumeSong(int songIndex) {
-        if (currentSongType.equals("Local")) {
-            if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
-                mp.seekTo(currentSongPosition);
-                mp.start(); // starting mediaplayer
-                final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-                fabIO.setImageResource(R.drawable.stop);
-            }
-        }
-        else if (currentSongType.equals("Spotify"))
-        {
-            spotPlayer.resume(opCallback);
-            spotPlayer.playUri(opCallback, spotifyListContent.getSongInfo().get(currentSongListPosition).getUri(), 0, currentSongPosition);
-            final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-            fabIO.setImageResource(R.drawable.stop);
-        }
-        else {
-            playSong(songIndex);
-        }
-    }
-
-    public void resetPlayers() {
-        if (isSpotifyPlaying())
-        {
-            spotPlayer.pause(opCallback);
-        }
-        if (mp.isPlaying())
-        {
-            mp.stop();
-        }
-    }
-
-    // Play song
-    public void playSong(int songIndex) {
-
-        resetPlayers();
-        Song currentSong = getCombinedList().findSongByName((String) mainList.getAdapter().getItem(songIndex));
-        if (currentSong == null)
-        {
-            return;
-        }
-        String type = currentSong.getType();
-
-        if (type.equals("Local") || type.equals("LocalRaw")) {
-            playLocalSong(currentSong);
-        }
-
-        else if (type.equals("Spotify") && spotPlayer != null) {
-            playSpotifySong(currentSong);
-        }
-
-        //Remote mp3 link example
-        else {
-            //Play google song here
-        }
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-        fabIO.setImageResource(R.drawable.stop);
-    }
-
-    public void playLocalSong(Song currentSong) {
-        mp.reset();
-        if (mG.getType() == 1) {
-            mp = MediaPlayer.create(getApplicationContext(), Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
-        } else {
-            mp = MediaPlayer.create(getApplicationContext(), Integer.parseInt(currentSong.getUri()));// creates new mediaplayer with song.
-        }
-        mp.start();
-        currentSongType = "Local";
-
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            public void onCompletion(MediaPlayer mp) {
-                    final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
-                    next.performClick();
-            }});
-        SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-        seekbar.setMax(mp.getDuration());
-    }
-
-    public void playSpotifySong(Song currentSong) {
-        spotPlayer.refreshCache();
-        if (!spotPlayer.isLoggedIn())
-        {
-            spotPlayer.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
-        }
-        spotPlayer.playUri(opCallback, currentSong.getUri(),0,0);
-        currentSongType = "Spotify";
-    }
-
-
+/**
+ * The {@link ViewPager} that will host the section contents.
+ */
+private ViewPager mViewPager;
 
     public MusicGetter setMusicDir(String dir)
     {
@@ -210,29 +118,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             MusicLoaderService mls = new MusicLoaderService();
             mls.SAR = this;
             mls.execute(params);
-            threadCount++;
             localSongOffset+=20;
         }
         //If we change the dir we MUST create a new list to avoid linking things that should not be there
         //Also this is called on boot, which ensures we have local songs when we go into playlists
         return mG;
-    }
-
-    public void stopSong() {
-
-        if (currentSongType.equals("Local"))
-        {
-            mp.pause();
-            currentSongPosition = mp.getCurrentPosition();
-        }
-        else if ((currentSongType.equals("Spotify")))
-        {
-            spotPlayer.pause(opCallback);
-            currentSongPosition = (int) spotPlayer.getPlaybackState().positionMs;
-        }
-
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-        fabIO.setImageResource(R.drawable.play);
     }
 
     @Override
@@ -255,11 +145,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         return combinedList;
     }
 
-    public boolean isSpotifyPlaying()
-    {
-        return spotPlayer != null && spotPlayer.getPlaybackState()!= null && spotPlayer.getPlaybackState().isPlaying;
-    }
-
     public boolean isSpotifyLoggedIn()
     {
         return (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()));
@@ -269,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     protected void onPause() {
         super.onPause();
-        if (spotPlayer != null && !isSpotifyPlaying())
+        if (spotPlayer != null && !playerHandler.isSpotifyPlaying())
         {
             unregisterReceiver(mNetworkStateReceiver);
 
@@ -404,27 +289,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
     }
 
-    public void previousSong() {
-
-        int next;
-        if (currentSongListPosition == -1)
-        {
-            return;
-        }
-
-        if (currentSongListPosition > 0) {
-            next = currentSongListPosition - 1;
-        }
-        else {
-            next = mainList.getCount()-1;
-        }
-        View nextRow = getViewByPosition(mainList,next);
-
-        mainList.requestFocusFromTouch();
-        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
-        currentSongListPosition = next;
-    }
-
     public void initSongLists() {
         if (listContent == null)
         {
@@ -486,25 +350,25 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-
-                //Open playlist page
-                //TODO: implement
-                if (mViewPager.getCurrentItem() == 4)
+                if (mViewPager.getCurrentItem() == 3)
                 {
+                    Intent playlist = new Intent(view.getContext(), PlaylistActivity.class);
+                    Bundle b = new Bundle();
+                    b.putSerializable("Playlist", playlists.get(position));
+                    playlist.putExtras(b);
+                    startActivityForResult(playlist, 0);
 
                 }
                 else {
-                    currentSongListPosition = position;
-                    mainList.setItemChecked(currentSongListPosition, true);
-                    playSong(position);
+                    playerHandler.setCurrentSongListPosition(position);
+                    mainList.setItemChecked(position, true);
+                    playerHandler.playSong(position);
                 }
             }});
     }
 
     public void initButtonListeners() {
 
-        final Handler mHandler = new Handler();
-        final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
         loginButton.setVisibility(View.INVISIBLE);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -516,96 +380,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             }
         });
 
+
+        final Handler mHandler = new Handler();
+        final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-        fabIO.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    //Play or resume song
-
-                    if (currentSongListPosition == -1)
-                    {
-                        if (mp.isPlaying() || (spotPlayer != null && spotPlayer.getPlaybackState().isPlaying))
-                        {
-                            stopSong();
-                        }
-                    }
-                    else {
-                        if (currentSongType.equals("Local")) {
-                            if (!mp.isPlaying()) {
-                                resumeSong(currentSongListPosition);
-                            } else //Stop song.
-                            {
-                                stopSong();
-                            }
-                        }
-                        else if (currentSongType.equals("Spotify"))
-                        {
-                            if (!spotPlayer.getPlaybackState().isPlaying) {
-                                resumeSong(currentSongListPosition);
-                            } else //Stop song.
-                            {
-                                stopSong();
-                            }
-
-                        }
-                    }
-                };
-            }});
-
         final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
-        random.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    if (randomNext == true)
-                    {
-                        randomNext = false;
-                        random.setImageResource(R.drawable.shuffle);
-                    }
-                    else
-                    {
-                        randomNext = true;
-                        random.setImageResource(R.drawable.notrandom);
-                    }
-                };
-            }});
-
         final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.Rewind);
-        rewind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    if (currentSongListPosition != -1) {
-                        playSong(currentSongListPosition);
-                    }
-                };
-            }});
-
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.Prev);
-        prev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    previousSong();
-                };
-            }});
-
-
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    if (!randomNext) {
-                        nextSong();
-                    }
-                    else {
-                        playRandomSong();
-                    }
-                };
-            }});
 
+        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar, mp, spotPlayer);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -613,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             //TODO: Optimize. Also need lists for spotify/googlemusic
             @Override
             public void onPageSelected(int position) {
-                currentSongListPosition = -1;
+                playerHandler.setCurrentSongListPosition(-1);
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
                         mainList.setAdapter(adapter);
@@ -647,44 +431,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onPageScrollStateChanged(int state) {}
         });
 
-
-        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mp != null && fromUser && currentSongType.equals("Local")){
-                    currentSongPosition = progress;
-                    mp.seekTo(currentSongPosition);
-                }
-                else if (fromUser && currentSongType.equals("Spotify"))
-                {
-                    currentSongPosition = progress;
-                    spotPlayer.resume(opCallback);
-                    spotPlayer.seekToPosition(opCallback,progress);
-                }
-            }
-        });
-
         //Seekbar tracker
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    if (mp != null && mp.isPlaying()) {
-                        int mCurrentPosition = mp.getCurrentPosition();
+                    if (playerHandler.isPlayerPlaying()) {
+                        int mCurrentPosition = playerHandler.getMediaPlayer().getCurrentPosition();
                         seekbar.setProgress(mCurrentPosition);
                     }
-                    else if (spotPlayer != null && spotPlayer.getPlaybackState() != null && spotPlayer.getPlaybackState().isPlaying)
+                    else if (playerHandler.isSpotifyPlaying())
                     {
                         int mCurrentPosition = (int) spotPlayer.getPlaybackState().positionMs;
                         seekbar.setProgress(mCurrentPosition);
@@ -699,36 +455,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
 
     }
-
-    public void nextSong() {
-        int next;
-        if (currentSongListPosition == -1)
-        {
-            return;
-        }
-        if (currentSongListPosition < mainList.getCount()-1) {
-            next = currentSongListPosition + 1;
-        }
-        else {
-            next = 0;
-        }
-        View nextRow = getViewByPosition(mainList,next);
-        mainList.requestFocusFromTouch();
-        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
-        currentSongListPosition = next;
-    }
-
-
-    public void playRandomSong() {
-        if (mainList.getAdapter().getCount() > 0) {
-            int choice = (int) (Math.random() * mainList.getAdapter().getCount());
-            View choiceRow = getViewByPosition(mainList, choice);
-            mainList.requestFocusFromTouch();
-            mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
-            currentSongListPosition = choice;
-        }
-    }
-
 
     //Use this to grab a row from music list
     public View getViewByPosition(ListView listView, int pos) {
@@ -764,7 +490,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 sMG = new SpotifyMusicGetter();
                 sMG.SAR = this;
                 sMG.execute(params);
-                threadCount++;
                 spotifySongOffset += 50;
             }
         }
@@ -807,12 +532,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if(mp != null && fromUser && currentSongType.equals("Local")){
-            currentSongPosition = progress;
+            playerHandler.setCurrentSongPosition(progress);
             mp.seekTo(progress);
         }
         else if (spotPlayer!= null && fromUser && currentSongType.equals("Spotify"))
         {
-            currentSongPosition = progress;
+            playerHandler.setCurrentSongPosition(progress);
             spotPlayer.resume(opCallback);
 
         }
@@ -870,7 +595,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             mainList.invalidateViews();
 
         }
-        threadCount--;
     }
 
     public static Intent createIntent(Context context) {

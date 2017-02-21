@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <EditText android:id="@+id/playListName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Playlist Name" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/addPlaylistButtons"
+        android:layout_below="@id/playListName">
+    <Button
+        android:id="@+id/addSongsToPlaylist"
+        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:text="Add New Tracks" />
+
+    <Button
+        android:id="@+id/saveNewPlaylist"
+        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:text="Save Playlist" />
+
+    <Button
+        android:id="@+id/discardNewPlaylist"
+        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:text="Delete Playlist" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="Click song to remove from playlist"
+        android:id="@+id/playlistAddInfo"
+        android:layout_below="@id/addPlaylistButtons"/>
+
+    <ListView
+        android:background="@drawable/listbackground"
+        android:listSelector="#E0ECF8"
+        android:id="@+id/playListSongs"
+        android:choiceMode="singleChoice"
+        android:layout_width="match_parent"
+        android:cacheColorHint="#0000"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_below="@id/playlistAddInfo"
+        android:layout_height="match_parent">
+    </ListView>
+
+</RelativeLayout>

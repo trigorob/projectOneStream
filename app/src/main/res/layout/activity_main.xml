@@ -74,17 +74,17 @@
 
     </RelativeLayout>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="88dp"
-    android:layout_gravity="bottom"
-    android:layout_weight="100">
-    <SeekBar
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"/>
-</LinearLayout>
+        android:layout_marginBottom="88dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="100">
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
