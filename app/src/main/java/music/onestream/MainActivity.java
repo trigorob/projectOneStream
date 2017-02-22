@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     private static String directory;
     private static Boolean directoryChanged = false;
+    private static Boolean sortOnLoad = false;
     private static Boolean playlistsChanged;
     private static String sortType;
     private static DatabaseActionsHandler dba;
@@ -57,19 +58,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     private static ArrayList<Playlist> playlists;
     private static ArrayList<String> playlistNames;
     private static Playlist combinedList;
-
-    //Callback for spotify player
-    private final Player.OperationCallback opCallback = new Player.OperationCallback() {
-        @Override
-        public void onSuccess() {
-
-        }
-
-        @Override
-        public void onError(Error error) {
-
-        }
-};
 
 /**
  * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -158,14 +146,25 @@ private ViewPager mViewPager;
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         directory = settings.getString("dir", "Default");
         directoryChanged = settings.getBoolean("directoryChanged", false);
+        SharedPreferences.Editor editor = settings.edit();
         if (directoryChanged)
         {
-            SharedPreferences.Editor editor = settings.edit();
             editor.remove("directoryChanged");
             editor.commit();
         }
         settings = getSharedPreferences("SORT-TYPE", 0);
         sortType = settings.getString("sortType", "Default");
+        sortOnLoad = settings.getBoolean("sortOnLoad", false);
+
+        if (sortOnLoad)
+        {
+            sortLists(sortType, "Local");
+            sortLists(sortType, "Spotify");
+            sortLists(sortType, "Playlists");
+            editor.putBoolean("sortOnLoad", false);
+            editor.commit();
+        }
+
 
         settings = getSharedPreferences("PLAYLIST-CHANGE", 0);
         playlistsChanged = settings.getBoolean("PlaylistsChanged", false);
@@ -195,12 +194,12 @@ private ViewPager mViewPager;
 
     private void sortLists(String type, String list) {
 
-        ParallelSorter ps = null;
+        MusicSorter ms = null;
         Object[] retVal = null;
          if (list.equals("Local") && listContent != null)
          {
-            ps = new ParallelSorter(listContent.getSongInfo(), type);
-            retVal = ps.getRetArr();
+            ms = new MusicSorter(listContent.getSongInfo(), type);
+            retVal = ms.getRetArr();
             listContent.setSongInfo((ArrayList<Song>) retVal[0]);
 
              if (adapter != null) {
@@ -210,14 +209,33 @@ private ViewPager mViewPager;
          }
          else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
          {
-            ps = new ParallelSorter(spotifyListContent.getSongInfo(), type);
-            retVal = ps.getRetArr();
+            ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
+            retVal = ms.getRetArr();
             spotifyListContent.setSongInfo((ArrayList<Song>) retVal[0]);
 
              if (spotifyAdapter != null) {
                  mainList.invalidateViews();
                  spotifyAdapter.notifyDataSetChanged();
              }
+        }
+
+        else if (playlists != null && list.equals("Playlists"))
+        {
+
+            PlaylistSorter ps;
+            ps = new PlaylistSorter(playlists, type);
+            retVal = ps.getRetArr();
+            playlists = ((ArrayList<Playlist>) retVal[0]);
+            playlistNames = new ArrayList<String>();
+            for (int i = 0; i < playlists.size(); i++)
+            {
+                playlistNames.add(playlists.get(i).getName());
+            }
+            if (playlistAdapter != null) {
+
+                mainList.invalidateViews();
+                playlistAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -242,11 +260,6 @@ private ViewPager mViewPager;
             directoryChanged();
         }
         getSpotifyLibrary();
-
-        if (spotifyListContent != null && spotifyListContent.size() > 0)
-        {
-            sortLists(sortType, "Spotify");
-        }
 
         if (playlists == null || playlists.size() == 0)
         {
@@ -446,6 +459,7 @@ private ViewPager mViewPager;
             {
                 playlistNames.add(playlists.get(i).getName());
             }
+            sortLists(sortType, "Playlists");
             playlistAdapter.notifyDataSetChanged();
             mainList.invalidateViews();
         }
@@ -461,6 +475,7 @@ private ViewPager mViewPager;
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;
             if (tempList.size() < 20) {
                 spotifySongOffset = 1000;
+                sortLists(sortType, "Spotify");
             }
 
             spotifyListContent.addSongs(tempList);

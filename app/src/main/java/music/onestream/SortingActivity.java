@@ -25,6 +25,7 @@ public class SortingActivity extends Activity {
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("sortType", "ALPH-ASC");
+            editor.putBoolean("sortOnLoad", true);
             editor.commit();
 
             Intent back = new Intent(v.getContext(), MainActivity.class);
@@ -38,6 +39,7 @@ public class SortingActivity extends Activity {
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("sortType", "ALPH-DESC");
+                editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
                 Intent back = new Intent(v.getContext(), MainActivity.class);
@@ -52,6 +54,7 @@ public class SortingActivity extends Activity {
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("sortType", "ALPH-ASC-ARTIST");
+                editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
                 Intent back = new Intent(v.getContext(), MainActivity.class);
@@ -66,6 +69,7 @@ public class SortingActivity extends Activity {
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("sortType", "ALPH-DESC-ARTIST");
+                editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
                 Intent back = new Intent(v.getContext(), MainActivity.class);
@@ -80,6 +84,7 @@ public class SortingActivity extends Activity {
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("sortType", "ALPH-ASC-ALBUM");
+                editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
                 Intent back = new Intent(v.getContext(), MainActivity.class);
@@ -94,6 +99,7 @@ public class SortingActivity extends Activity {
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("sortType", "ALPH-DESC-ALBUM");
+                editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
                 Intent back = new Intent(v.getContext(), MainActivity.class);
@@ -108,6 +114,7 @@ public class SortingActivity extends Activity {
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("sortType", "Default");
+            editor.putBoolean("sortOnLoad", false);
             editor.commit();
 
             Intent back = new Intent(v.getContext(), MainActivity.class);

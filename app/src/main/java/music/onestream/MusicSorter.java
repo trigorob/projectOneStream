@@ -14,13 +14,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ParallelSorter {
+public class MusicSorter {
 
     ArrayList<Song> Array1;
     String type;
     Object[] retArr = null;
 
-    public ParallelSorter(ArrayList<Song> listContent, String type) {
+    public MusicSorter(ArrayList<Song> listContent, String type) {
         this.Array1 = listContent;
         this.type = type;
 
