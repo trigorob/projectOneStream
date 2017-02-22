@@ -294,7 +294,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
 
-    public boolean isSpotifyLoggedIn()
+    public boolean isSpotifyLoggedOut()
     {
         return (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()));
     }
@@ -358,7 +358,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void playLocalSong(Song currentSong) {
         mp.reset();
         if (!currentSong.getType().equals("LocalRaw")) {
-            mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
+            mp = MediaPlayer.create(context, Integer.parseInt(currentSong.getUri()));// creates new mediaplayer with song.
         } else {
             mp = MediaPlayer.create(context, Integer.parseInt(currentSong.getUri()));// creates new mediaplayer with song.
         }

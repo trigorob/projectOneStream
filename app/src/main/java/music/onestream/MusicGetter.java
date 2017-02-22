@@ -109,7 +109,6 @@ public class MusicGetter {
                     String fname = file.getName();
                     fname = getFileIfValid(fname);
                     if (fname != null) {
-
                         files.add(file);
                         filess.add(fname);
                         MediaMetadataRetriever mmr = new MediaMetadataRetriever();

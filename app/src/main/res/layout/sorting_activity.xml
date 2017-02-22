@@ -3,6 +3,9 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -14,11 +17,44 @@
         android:layout_height="100dp"
         android:id="@+id/sortAlphDescend"
         android:text="Sort in Descending order"/>
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="80dp"
+        android:id="@+id/resetSortingType"
+        android:text="Turn off sorting"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/sortAlphAscendArtist"
+        android:text="Sort in Ascending order (Artist)"/>
 
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/resetSortingType"
-        android:text="Turn off sorting"/>
+        android:id="@+id/sortAlphDescendArtist"
+        android:text="Sort in Descending order (Artist)"/>
+    </LinearLayout>
+
+    <LinearLayout
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/sortAlphAscendAlbum"
+        android:text="Sort in Ascending order (Album)"/>
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/sortAlphDescendAlbum"
+        android:text="Sort in Descending order (Album)"/>
+    </LinearLayout>
 
 </LinearLayout>

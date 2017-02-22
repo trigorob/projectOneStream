@@ -21,7 +21,6 @@ public class ParallelSorter {
     Object[] retArr = null;
 
     public ParallelSorter(ArrayList<Song> listContent, String type) {
-        //Note: only 2 of these arrays should be non-null. Either 2,3, 3,4 or 2,4 are null
         this.Array1 = listContent;
         this.type = type;
 
@@ -70,6 +69,18 @@ public class ParallelSorter {
             }
             else if (type.equals("ALPH-DESC")) {
                 return b.name.compareTo(a.name) < 0 ? -1 : b.name == a.name ? 0 : 1;
+            }
+            else if (type.equals("ALPH-ASC-ARTIST")) {
+                return a.artist.compareTo(b.artist) < 0 ? -1 : a.artist == b.artist ? 0 : 1;
+            }
+            else if (type.equals("ALPH-DESC-ARTIST")) {
+                return b.artist.compareTo(a.artist) < 0 ? -1 : b.artist == a.artist ? 0 : 1;
+            }
+            else if (type.equals("ALPH-ASC-ALBUM")) {
+                return a.album.compareTo(b.album) < 0 ? -1 : a.album == b.album ? 0 : 1;
+            }
+            else if (type.equals("ALPH-DESC-ALBUM")) {
+                return b.album.compareTo(a.album) < 0 ? -1 : b.album == a.album ? 0 : 1;
             }
             else {
                 return 0;

@@ -45,6 +45,62 @@ public class SortingActivity extends Activity {
             }
         });
 
+        final Button sortAARTIST = (Button) findViewById(R.id.sortAlphAscendArtist);
+        sortAARTIST.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("sortType", "ALPH-ASC-ARTIST");
+                editor.commit();
+
+                Intent back = new Intent(v.getContext(), MainActivity.class);
+                startActivityForResult(back, 0);
+            }
+        });
+
+        final Button sortDARTIST = (Button) findViewById(R.id.sortAlphDescendArtist);
+        sortDARTIST.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("sortType", "ALPH-DESC-ARTIST");
+                editor.commit();
+
+                Intent back = new Intent(v.getContext(), MainActivity.class);
+                startActivityForResult(back, 0);
+            }
+        });
+
+        final Button sortAAlbum = (Button) findViewById(R.id.sortAlphAscendAlbum);
+        sortAAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("sortType", "ALPH-ASC-ALBUM");
+                editor.commit();
+
+                Intent back = new Intent(v.getContext(), MainActivity.class);
+                startActivityForResult(back, 0);
+            }
+        });
+
+        final Button sortDAlbum = (Button) findViewById(R.id.sortAlphDescendAlbum);
+        sortDAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("sortType", "ALPH-DESC-ALBUM");
+                editor.commit();
+
+                Intent back = new Intent(v.getContext(), MainActivity.class);
+                startActivityForResult(back, 0);
+            }
+        });
+
     final Button reset = (Button) findViewById(R.id.resetSortingType);
     reset.setOnClickListener(new View.OnClickListener() {
         @Override

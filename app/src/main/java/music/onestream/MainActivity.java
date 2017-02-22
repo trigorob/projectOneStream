@@ -137,10 +137,6 @@ private ViewPager mViewPager;
         playerHandler.onResume();
     }
 
-    public void destroyPlayers() {
-        playerHandler.destroyPlayers();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -148,7 +144,7 @@ private ViewPager mViewPager;
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            destroyPlayers();
+            playerHandler.destroyPlayers();
             Intent settings = new Intent(mViewPager.getContext(), Settings.class);
             startActivityForResult(settings, 0);
 
@@ -307,7 +303,7 @@ private ViewPager mViewPager;
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", playlists.get(position));
                     playlist.putExtras(b);
-                    destroyPlayers();
+                    playerHandler.destroyPlayers();
                     startActivityForResult(playlist, 0);
                 }
                 else {
@@ -336,7 +332,7 @@ private ViewPager mViewPager;
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                destroyPlayers();
+                playerHandler.destroyPlayers();
                 Intent settings = new Intent(mViewPager.getContext(), LoginActivity.class);
                 startActivityForResult(settings, 0);
             }
@@ -360,7 +356,7 @@ private ViewPager mViewPager;
                         break;
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
-                        if (playerHandler.isSpotifyLoggedIn())
+                        if (playerHandler.isSpotifyLoggedOut())
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }

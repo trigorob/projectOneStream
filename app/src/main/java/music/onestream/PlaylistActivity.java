@@ -11,9 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
+import com.spotify.sdk.android.player.Spotify;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +28,8 @@ public class PlaylistActivity extends AppCompatActivity {
     private PlayerActionsHandler playerHandler;
     private Playlist playlist;
     private ArrayAdapter<String> adapter;
-    ListView mainList;
+    private ListView mainList;
+    private Button loginLauncherLinkerButton;
     final Handler mHandler = new Handler();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +37,46 @@ public class PlaylistActivity extends AppCompatActivity {
         setContentView(R.layout.playlist_activity);
 
         mainList = (ListView) findViewById(R.id.ListViewPL);
+        loginLauncherLinkerButton = (Button) findViewById(R.id.loginLauncherLinkerButtonPL);
 
         initPlayerHandler();
         initSongList();
     }
 
+    public void checkForInvalidSongs() {
+        String services = "";
+        Boolean spotifyAvailable = true;
+        int i = 0;
+        while (i < playlist.getAdapterList().size()){
+            Song s = playlist.getSongInfo().get(i);
+            if (s.type.equals("Local")) {
+                File f = new File(s.getUri());
+                if (!f.exists() || f.isDirectory()) {
+                    playlist.getAdapterList().remove(i);
+                }
+            }
+            else if (s.type.equals("Spotify") && playerHandler.isSpotifyLoggedOut() && spotifyAvailable)
+            {
+                loginLauncherLinkerButton.setVisibility(View.VISIBLE);
+                mainList.setVisibility(View.INVISIBLE);
+                services += " Spotify ";
+                spotifyAvailable = false;
+            }
+            //TODO: Add google case for not logged in here
+            else {
+                i++;
+            }
+        }
+        String buttonText = "Login to Services to access Playlist: " + services;
+        loginLauncherLinkerButton.setText(buttonText);
+
+    }
+
     private void initSongList() {
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+
+        //Handle songs not accessible by device
+        checkForInvalidSongs();
 
         adapter = new ArrayAdapter<String>
                 (this, android.R.layout.simple_list_item_1, playlist.getAdapterList());
@@ -52,6 +90,14 @@ public class PlaylistActivity extends AppCompatActivity {
                     mainList.setItemChecked(position, true);
                     playerHandler.playSong(position);
             }});
+        loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playerHandler.destroyPlayers();
+                Intent settings = new Intent(v.getContext(), LoginActivity.class);
+                startActivityForResult(settings, 0);
+            }
+        });
         //Seekbar tracker
         PlaylistActivity.this.runOnUiThread(new Runnable() {
             @Override
