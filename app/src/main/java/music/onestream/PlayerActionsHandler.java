@@ -554,7 +554,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void onDestroy() {
         mp.release();
         if (spotPlayer != null) {
-            Spotify.destroyPlayer(this);
+            spotPlayer.pause(opCallback);
         }
     }
 

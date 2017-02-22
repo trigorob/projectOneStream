@@ -106,28 +106,6 @@ public class OneStreamRestService {
         }
     }
 
-    public void addBatchSongs(ArrayList<String> sqlQueries) {
-        Connection con; //retrieve your database connection
-        Statement stmt;
-        getDriver();
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://104.155.180.191/onestream", "root",
-                    null);
-
-            stmt = con.createStatement();
-            for (String query : sqlQueries) {
-                stmt.addBatch(query);
-            }
-
-            stmt.executeBatch();
-            stmt.close();
-            con.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public ArrayList<String[]> getPlaylistNames(String sql) {
         Connection con; //retrieve your database connection
         PreparedStatement stmt;
@@ -191,7 +169,8 @@ public class OneStreamRestService {
     }
 
 
-    public void createPlaylist(String sql) {
+    //Delete, insert, create
+    public void performUpdateQuery(String sql) {
         Connection con; //retrieve your database connection
         PreparedStatement stmt;
         getDriver();
@@ -199,7 +178,7 @@ public class OneStreamRestService {
             con = DriverManager.getConnection("jdbc:mysql://104.155.180.191/onestream", "root",
                     null);
             stmt = con.prepareStatement(sql);
-            stmt.executeUpdate(sql);;
+            stmt.executeUpdate(sql);
             stmt.close();
             con.close();
 

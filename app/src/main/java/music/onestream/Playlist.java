@@ -94,4 +94,11 @@ public class Playlist implements Serializable {
         return this.name;
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        return  (((Playlist) o).getName().equals(this.getName()) &&
+                ((Playlist) o).getOwner().equals(this.getOwner()));
+    }
+
 }

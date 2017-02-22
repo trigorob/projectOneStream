@@ -2,6 +2,7 @@ package music.onestream;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 /**
  * Created by ruspe_000 on 2017-02-03.
  */
@@ -19,10 +22,12 @@ import android.widget.ListView;
 public class EditPlaylistActivity extends Activity implements AsyncResponse {
 
     private static Playlist playlist;
+    private static Playlist oldPlaylist;
     private static String[] songNames;
     private static DatabaseActionsHandler dba;
     private static Playlist combinedList;
-    private static boolean newList = false;
+    private static boolean newList;
+    private static boolean previouslyExisting = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,17 +39,41 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
 
-        if (playlist == null || playlist.getSongInfo() == null) {
+        if (oldPlaylist == null) {
+            previouslyExisting = getIntent().getBooleanExtra("previouslyExisting", false);
+        }
+
+        if (isListInDatabase())
+        {
+            oldPlaylist = new Playlist();
+            oldPlaylist.setSongInfo(playlist.getSongInfo());
+            oldPlaylist.setName(playlist.getName());
+            oldPlaylist.setOwner(playlist.getOwner());
+            oldPlaylist.setSongAdapter(playlist.getAdapterList());
+        }
+        if (songNames == null || combinedList == null)
+        {
+            songNames = new String[0];
+        }
+        if (combinedList == null)
+        {
+            combinedList = new Playlist();
+            combinedList.setSongInfo(MainActivity.getCombinedList().getSongInfo());
+        }
+        if (playlist == null) {
+
             playlist = new Playlist();
             newList = true;
-            songNames = new String[0];
-            combinedList = new Playlist("", "", MainActivity.getCombinedList().getSongInfo());
         }
         else {
             songNames = new String[playlist.getSongInfo().size()];
             for (int i = 0; i < playlist.getSongInfo().size(); i++)
             {
                 songNames[i] = playlist.getSongInfo().get(i).getName();
+                if (combinedList.getSongInfo().contains(playlist.getSongInfo().get((i))))
+                {
+                    combinedList.removeSong(combinedList.getSongInfo().indexOf(playlist.getSongInfo().get((i))));
+                }
             }
         }
 
@@ -111,12 +140,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         discardChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settings = new Intent(v.getContext(), Settings.class);
-                Bundle b = new Bundle();
-                b.putSerializable("Playlist", null);
-                b.putSerializable("combinedList", null);
-                settings.putExtras(b);
-                startActivityForResult(settings, 0);
+                handleDelete();
             }
         });
 
@@ -124,31 +148,97 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playlist.setOwner("Admin"); //Todo: Need to store onestream user and get back
-                playlist.setName(playlistTitle.getText().toString());
-                Object[] params = new Object[3];
-
-                if (newList) {
-                    params[0] = "CreatePlaylist";
-                }
-                else {
-                    params[0] = "UpdatePlaylist";
-                }
-                params[1] = playlist;
-                dba.execute(params);
-
-                //Clear out the playlists. Next time mainactivity is loaded, it will have new playlist available
-                MainActivity.resetPlaylists();
-
-                Intent settings = new Intent(v.getContext(), Settings.class);
-                Bundle b = new Bundle();
-                b.putSerializable("Playlist", null);
-                b.putSerializable("combinedList", null);
-                settings.putExtras(b);
-                startActivityForResult(settings, 0);
+                handleSave();
             }
         });
     }
+
+    private void setPlaylistsChangedFlag(boolean value) {
+        SharedPreferences settings = getSharedPreferences("PLAYLIST-CHANGE", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("PlaylistsChanged", value);
+        editor.commit();
+    }
+
+    public boolean isListInDatabase() {
+        return (!newList && playlist != null && !playlist.getOwner().equals("") && previouslyExisting);
+    }
+
+    private void handleDelete()
+    {
+        Object[] params = new Object[2];
+        //Only need to delete it if the playlist is actually stored on the database
+        if (!newList) {
+            playlist.setOwner("Admin"); //Todo: Need to store onestream user and get back
+            playlist.setName(oldPlaylist.getName());
+            params[0] = "DeletePlaylist";
+            params[1] = playlist;
+            dba.execute(params);
+
+            ArrayList<Playlist> playlists = MainActivity.getPlaylists();
+            ArrayList<String> playlistNames = MainActivity.getPlaylistNames();
+            if (playlists != null)
+            {
+                playlists.remove(oldPlaylist);
+                playlistNames.remove(oldPlaylist.getName());
+            }
+        }
+
+        setPlaylistsChangedFlag(true);
+
+        Intent settings = new Intent(getBaseContext(), Settings.class);
+        Bundle b = new Bundle();
+        b.putSerializable("Playlist", null);
+        b.putSerializable("combinedList", null);
+        settings.putExtras(b);
+        startActivityForResult(settings, 0);
+    }
+
+    private void handleSave()
+    {
+        playlist.setOwner("Admin"); //Todo: Need to store onestream user and get back
+        Object[] params = new Object[4];
+        EditText playlistTitle = (EditText) findViewById(R.id.playListName);
+
+        ArrayList<Playlist> playlists = MainActivity.getPlaylists();
+        ArrayList<String> playlistNames = MainActivity.getPlaylistNames();
+
+        if (newList) {
+            playlist.setName(playlistTitle.getText().toString());
+            params[0] = "CreatePlaylist";
+        }
+        else {
+            params[0] = "UpdatePlaylist";
+            params[2] = playlistTitle.getText().toString();
+            params[3] = oldPlaylist.getName();
+        }
+        params[1] = playlist;
+
+        dba.execute(params);
+
+        playlist.setName(playlistTitle.getText().toString());
+        if (playlists != null)
+        {
+            if (oldPlaylist != null) {
+                playlists.remove(oldPlaylist);
+                playlistNames.remove(oldPlaylist.getName());
+            }
+            if (!playlists.contains(playlist)) {
+                playlists.add(playlist);
+                playlistNames.add(playlist.getName());
+            }
+        }
+
+        setPlaylistsChangedFlag(true);
+
+        Intent settings = new Intent(getBaseContext(), Settings.class);
+        Bundle b = new Bundle();
+        b.putSerializable("Playlist", null);
+        b.putSerializable("combinedList", null);
+        settings.putExtras(b);
+        startActivityForResult(settings, 0);
+    }
+
 
     @Override
     public void processFinish(Object[] result) {

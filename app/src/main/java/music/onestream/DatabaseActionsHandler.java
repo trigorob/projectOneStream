@@ -30,17 +30,33 @@ public class DatabaseActionsHandler extends AsyncTask {
     protected Object doInBackground(Object[] params) {
         String action = (String) params[0];
 
-        if (action.equals("CreatePlaylist"))
-        {
-            Playlist playlist = (Playlist) params[1];
-            createNewPlaylist(playlist);
-        }
-        else if (action.equals("GetPlaylists"))
+        if (action.equals("GetPlaylists"))
         {
             String owner = (String) params[1];
             return getPlaylists(owner);
         }
+        else if (action.equals("CreatePlaylist"))
+        {
+            Playlist playlist = (Playlist) params[1];
+            createPlaylist(playlist);
+        }
+        else if (action.equals("DeletePlaylist"))
+        {
+            Playlist playlist = (Playlist) params[1];
+            deletePlaylist(playlist);
+        }
+        //We do this with a delete/create rather than an update mostly for batch loading/speed reasons
+        else if (action.equals("UpdatePlaylist"))
+        {
+            Playlist playlist = (Playlist) params[1];
+            String newName = (String) params[2];
+            String oldName = (String) params[3];
+            playlist.setName(oldName); //Delete old table
+            deletePlaylist(playlist);
+            playlist.setName(newName); //Create new table
+            createPlaylist(playlist);
 
+        }
         return null;
     }
 
@@ -66,7 +82,7 @@ public class DatabaseActionsHandler extends AsyncTask {
         return playlists;
     }
 
-    private static void createNewPlaylist(Playlist playlist) {
+    private static void createPlaylist(Playlist playlist) {
 
         OneStreamRestService restService = new OneStreamRestService();
 
@@ -74,7 +90,7 @@ public class DatabaseActionsHandler extends AsyncTask {
         String sql = "CREATE TABLE "+ tableName +
                 " (ListPosition int, SongName varchar(30), " +
                 "SongUri varchar(50), PRIMARY KEY (SongUri));";
-        restService.createPlaylist(sql);
+        restService.performUpdateQuery(sql);
 
 
         sql = "INSERT INTO Playlist (Name, Owner, SongsTable) values ('" +
@@ -111,6 +127,20 @@ public class DatabaseActionsHandler extends AsyncTask {
                     "'" + songs.get(i).getUri() +"');");
         }
         restService.addSongsToPlaylists(queries);
+    }
+
+    private static void deletePlaylist(Playlist playlist) {
+
+        OneStreamRestService restService = new OneStreamRestService();
+
+        String tableName = playlist.getOwner() + "_" + playlist.getName().replaceAll(" ","");
+        String sql = "DROP TABLE "+ tableName + ";";
+        restService.performUpdateQuery(sql);
+
+        sql = "DELETE FROM Playlist WHERE Owner = '" + playlist.getOwner() + "' " +
+                "AND SongsTable = '" + tableName + "';";
+
+        restService.performUpdateQuery(sql);
     }
 
 }

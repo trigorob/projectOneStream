@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">OneStream</string>
     <string name="action_settings">Settings</string>
+    <string name="action_edit_list">Edit Playlist</string>
     <string name="spotify_login_button">Login to Spotify</string>
     <string name="spotify_logout_button">Logout/Change User</string>
     <string name="googlemusic_login_button">Login to GoogleMusic</string>

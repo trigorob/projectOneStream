@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     private static String directory;
     private static Boolean directoryChanged = false;
+    private static Boolean playlistsChanged;
     private static String sortType;
     private static DatabaseActionsHandler dba;
 
@@ -168,6 +169,9 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("SORT-TYPE", 0);
         sortType = settings.getString("sortType", "Default");
 
+        settings = getSharedPreferences("PLAYLIST-CHANGE", 0);
+        playlistsChanged = settings.getBoolean("PlaylistsChanged", false);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -254,6 +258,13 @@ private ViewPager mViewPager;
         }
     }
 
+    private void setPlaylistsChangedFlag(Boolean value) {
+        SharedPreferences settings = getSharedPreferences("PLAYLIST-CHANGE", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("PlaylistsChanged", value);
+        editor.commit();
+    }
+
     public Boolean isDirectoryChanged() {
         return directoryChanged;
     }
@@ -287,7 +298,6 @@ private ViewPager mViewPager;
                     playlist.putExtras(b);
                     destroyPlayers();
                     startActivityForResult(playlist, 0);
-
                 }
                 else {
                     playerHandler.setCurrentSongListPosition(position);
@@ -376,12 +386,14 @@ private ViewPager mViewPager;
     }
 
     public void getRemotePlaylists() {
-        Object[] params = new Object[2];
-        params[0] = "GetPlaylists";
-        params[1] = "Admin";
-        dba = new DatabaseActionsHandler();
-        dba.SAR = this;
-        dba.execute(params);
+        if (dba == null) {
+            Object[] params = new Object[2];
+            params[0] = "GetPlaylists";
+            params[1] = "Admin";
+            dba = new DatabaseActionsHandler();
+            dba.SAR = this;
+            dba.execute(params);
+        }
     }
 
     public void getSpotifyLibrary() {
@@ -454,15 +466,8 @@ private ViewPager mViewPager;
     public static ArrayList<Playlist> getPlaylists() {
         return playlists;
     }
+    public static ArrayList<String> getPlaylistNames() {return playlistNames;}
 
-    /*
-    Call this when adding a new playlist. We want to make a call to the server whenever we add/change a playlist
-    It's a bit slower this way, but the implementation is MUCH simpler conceptually.
-    Optimizing this is a nice-to-have
-     */
-    public static void resetPlaylists() {
-        playlists = null;
-    }
 
     /**
      * A placeholder fragment containing a simple view.

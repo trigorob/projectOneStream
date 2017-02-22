@@ -41,6 +41,10 @@ public class Settings extends Activity {
             @Override
             public void onClick(View v) {
                 Intent playlist = new Intent(v.getContext(), EditPlaylistActivity.class);
+                Bundle b = new Bundle();
+                b.putSerializable("Playlist", null);
+                b.putSerializable("combinedList", null);
+                playlist.putExtras(b);
                 startActivityForResult(playlist, 0);
             }
         });

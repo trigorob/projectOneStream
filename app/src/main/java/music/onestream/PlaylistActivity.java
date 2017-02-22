@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -72,6 +75,32 @@ public class PlaylistActivity extends AppCompatActivity {
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         playerHandler.initSpotifyPlayer(accessToken);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_edit_list) {
+            playerHandler.onDestroy();
+            Intent editList = new Intent(PlaylistActivity.this, EditPlaylistActivity.class);
+            Bundle b = new Bundle();
+            b.putSerializable("Playlist", playlist);
+            b.putBoolean("previouslyExisting", true);
+            editList.putExtras(b);
+            startActivityForResult(editList, 0);
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_playlist, menu);
+        return true;
     }
 
     @Override
