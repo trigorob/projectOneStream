@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     //Increment this after getting spotify songs. TODO: Implement this functionality
     private static int spotifySongOffset= 0;
+    private static int totalLocalSongs = 0;
 
     private static String directory;
     private static Boolean directoryChanged = false;
@@ -89,7 +90,8 @@ private ViewPager mViewPager;
     {
         mG = new MusicGetter(dir);
         ArrayList<Song> totalListContent = mG.songs;
-        Playlist listContent = new Playlist();
+        totalLocalSongs = totalListContent.size();
+        listContent.setSongInfo(new ArrayList<Song>());
         int localSongOffset= 0;
         while (localSongOffset < totalListContent.size()) {
             Object[] params = new Object[3];
@@ -453,9 +455,8 @@ private ViewPager mViewPager;
         }
 
         else if (type.equals("MusicLoaderService")) {
-            listContent.addSongs(((Playlist) retVal).getSongInfo());
-            combinedList.addSongs(((Playlist) retVal).getSongInfo());
-            if (listContent.size() == listContent.size()) {
+            combinedList.addSongs(listContent.getSongInfo());
+            if (listContent.size() == totalLocalSongs) {
                 sortLists(sortType, "Local");
             }
             adapter.notifyDataSetChanged();
