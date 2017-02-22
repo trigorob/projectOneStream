@@ -76,6 +76,15 @@ public class LoginActivity extends FragmentActivity {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso).enableAutoManage(this,null)
                 .build();
+
+        Button oneStreamDomainButton = (Button) findViewById(R.id.oneStreamDomainLauncherButton);
+        oneStreamDomainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent oneStreamDomain = new Intent(v.getContext(), OneStreamDomainActivity.class);
+                startActivityForResult(oneStreamDomain, 0);
+            }
+        });
     }
 
     public void onSpotifyLoginButtonClicked(View view) {

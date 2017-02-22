@@ -43,6 +43,10 @@
             android:name=".PlaylistActivity"
             android:label="PlaylistActivity">
         </activity>
+        <activity
+            android:name=".OneStreamDomainActivity"
+            android:label="OneStreamDomainActivity">
+        </activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

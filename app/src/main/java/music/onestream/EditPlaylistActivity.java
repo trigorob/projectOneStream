@@ -28,6 +28,13 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     private static Playlist combinedList;
     private static boolean newList;
     private static boolean previouslyExisting = false;
+    private static String domain;
+
+    public String getDomain() {
+        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
+        String oldDomain = domainSettings.getString("domain", "Admin");
+        return oldDomain;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         setContentView(R.layout.edit_playlist_activity);
         dba = new DatabaseActionsHandler();
         dba.SAR = this;
+        domain = getDomain();
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
@@ -169,7 +177,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         Object[] params = new Object[2];
         //Only need to delete it if the playlist is actually stored on the database
         if (!newList) {
-            playlist.setOwner("Admin"); //Todo: Need to store onestream user and get back
+            playlist.setOwner(domain); //Todo: Need to store onestream user and get back
             playlist.setName(oldPlaylist.getName());
             params[0] = "DeletePlaylist";
             params[1] = playlist;
@@ -196,7 +204,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
 
     private void handleSave()
     {
-        playlist.setOwner("Admin"); //Todo: Need to store onestream user and get back
+        playlist.setOwner(domain); //Todo: Need to store onestream user and get back
         Object[] params = new Object[4];
         EditText playlistTitle = (EditText) findViewById(R.id.playListName);
 

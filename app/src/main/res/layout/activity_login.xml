@@ -31,6 +31,14 @@
         android:onClick="onGoogleMusicLoginButtonClicked"
         android:text="Login to Google Music"
         android:layout_below="@+id/spotifyLoginLauncherButton"/>
+    <Button
+        android:id="@+id/oneStreamDomainLauncherButton"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onSpotifyLoginButtonClicked"
+        android:text="@string/onestream_login_button"
+        android:layout_below="@+id/googleMusicLoginLauncherButton"/>
 
 
 </RelativeLayout>

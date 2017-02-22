@@ -254,7 +254,7 @@ private ViewPager mViewPager;
         {
             playlists = new ArrayList<Playlist>();
             playlistNames = new ArrayList<String>();
-            getRemotePlaylists();
+            getRemotePlaylists(getDomain());
         }
     }
 
@@ -263,6 +263,15 @@ private ViewPager mViewPager;
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("PlaylistsChanged", value);
         editor.commit();
+    }
+
+
+    //Only call this when you change domains
+    public static void resetPlaylists()
+    {
+        playlists = null;
+        playlistNames = null;
+        dba = null;
     }
 
     public Boolean isDirectoryChanged() {
@@ -385,15 +394,21 @@ private ViewPager mViewPager;
 
     }
 
-    public void getRemotePlaylists() {
+    public void getRemotePlaylists(String domain) {
         if (dba == null) {
             Object[] params = new Object[2];
             params[0] = "GetPlaylists";
-            params[1] = "Admin";
+            params[1] = domain;
             dba = new DatabaseActionsHandler();
             dba.SAR = this;
             dba.execute(params);
         }
+    }
+
+    public String getDomain() {
+        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
+        String oldDomain = domainSettings.getString("domain", "Admin");
+        return oldDomain;
     }
 
     public void getSpotifyLibrary() {

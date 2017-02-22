@@ -2,10 +2,17 @@
     <string name="app_name">OneStream</string>
     <string name="action_settings">Settings</string>
     <string name="action_edit_list">Edit Playlist</string>
+    <string name="onestream_login_button">Set OneStream Playlist Domain</string>
     <string name="spotify_login_button">Login to Spotify</string>
     <string name="spotify_logout_button">Logout/Change User</string>
     <string name="googlemusic_login_button">Login to GoogleMusic</string>
     <string name="googlemusic_logout_button">Logout/Change User</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="default_domain">Admin</string>
     <string name="server_client_id">537731552101-9ocia7iemi1ssge1572bqrc675p3c8u7.apps.googleusercontent.com</string>
+    <string name="onestream_domain_explanation">Enter your OneStream domain.
+    A OneStream domain acts as your home for playlists. Other users with the same domain can
+    interact with your playlists, and you can interact with theirs. If you do not want other users
+    to interact with your playlists, choose a secure domain name. You can change your domain name
+    at any time</string>
 </resources>

@@ -433,7 +433,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         else {
             next = 0;
         }
-        View nextRow = getViewByPosition(mainList,next);
         mainList.requestFocusFromTouch();
         mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
         currentSongListPosition = next;
@@ -523,7 +522,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
 
     public void onPause() {
-        if (isSpotifyPlaying())
+        if (!isSpotifyPlaying())
         {
             context.unregisterReceiver(mNetworkStateReceiver);
 
@@ -540,12 +539,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     public void destroyPlayers() {
-        if (spotPlayer != null  &&  spotPlayer.getPlaybackState() != null
-                && spotPlayer.getPlaybackState().isPlaying)
+        if (isSpotifyPlaying())
         {
             spotPlayer.pause(opCallback);
         }
-        if (mp.isPlaying())
+        if (isPlayerPlaying())
         {
             mp.stop();
         }
