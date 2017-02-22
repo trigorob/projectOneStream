@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/playlist_content"
     android:layout_width="match_parent"
@@ -21,8 +22,18 @@
             android:id="@+id/ListViewPL"
             android:choiceMode="singleChoice"
             android:layout_width="match_parent"
-            android:layout_height="380dp">
+            android:layout_height="450dp">
         </ListView>
+
+        <Button
+            android:layout_height="60dp"
+            android:layout_width="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="180dp"
+            android:text="Login to Service"
+            android:id="@+id/loginLauncherLinkerButton"
+            android:visibility="invisible">
+        </Button>
 
     </RelativeLayout>
 
@@ -97,3 +108,4 @@
             android:layout_marginBottom="16dp" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
+

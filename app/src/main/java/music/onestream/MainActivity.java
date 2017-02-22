@@ -4,12 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -29,22 +24,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.media.MediaPlayer;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Connectivity;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
-import android.content.BroadcastReceiver;
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, AsyncResponse, Player.NotificationCallback, ConnectionStateCallback {
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     //Increment this after getting spotify songs. TODO: Implement this functionality
     private static int spotifySongOffset= 0;
@@ -54,16 +41,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static String sortType;
     private static DatabaseActionsHandler dba;
 
-    private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
-    static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
-
     private PlayerActionsHandler playerHandler;
 
     // variable declaration
     private ListView mainList;
     private MusicGetter mG;
     private SpotifyMusicGetter sMG;
-    private MediaPlayer mp;
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> spotifyAdapter;
     private ArrayAdapter<String> playlistAdapter;
@@ -71,9 +54,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static Playlist spotifyListContent;
     private static ArrayList<Playlist> playlists;
     private static ArrayList<String> playlistNames;
-    private SpotifyPlayer spotPlayer;
-    private String currentSongType = "Local";
-    private BroadcastReceiver mNetworkStateReceiver;
     private static Playlist combinedList;
 
     //Callback for spotify player
@@ -128,10 +108,7 @@ private ViewPager mViewPager;
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mp.release();
-        if (spotPlayer != null) {
-            Spotify.destroyPlayer(this);
-        }
+        playerHandler.onDestroy();
     }
 
     @Override
@@ -145,66 +122,20 @@ private ViewPager mViewPager;
         return combinedList;
     }
 
-    public boolean isSpotifyLoggedIn()
-    {
-        return (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()));
-    }
-
-
     @Override
     protected void onPause() {
         super.onPause();
-        if (spotPlayer != null && !playerHandler.isSpotifyPlaying())
-        {
-            unregisterReceiver(mNetworkStateReceiver);
-
-            // Note that calling Spotify.destroyPlayer() will also remove any callbacks on whatever
-            // instance was passed as the refcounted owner. So in the case of this particular example,
-            // it's not strictly necessary to call these methods, however it is generally good practice
-            // and also will prevent your application from doing extra work in the background when
-            // paused.
-            if (spotPlayer != null) {
-                spotPlayer.removeNotificationCallback(MainActivity.this);
-                spotPlayer.removeConnectionStateCallback(MainActivity.this);
-            }
-        }
+        playerHandler.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Set up the broadcast receiver for network events. Note that we also unregister
-        // this receiver again in onPause().
-        mNetworkStateReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (spotPlayer != null) {
-                    Connectivity connectivity = getNetworkConnectivity(getBaseContext());
-                    spotPlayer.setConnectivityStatus(opCallback, connectivity);
-                }
-            }
-        };
-
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkStateReceiver, filter);
-
-        if (spotPlayer != null) {
-            spotPlayer.addNotificationCallback(MainActivity.this);
-            spotPlayer.addConnectionStateCallback(MainActivity.this);
-        }
+        playerHandler.onResume();
     }
 
     public void destroyPlayers() {
-        if (spotPlayer != null  &&  spotPlayer.getPlaybackState() != null
-                && spotPlayer.getPlaybackState().isPlaying)
-        {
-            spotPlayer.pause(opCallback);
-        }
-        if (mp.isPlaying())
-        {
-            mp.stop();
-        }
+        playerHandler.destroyPlayers();
     }
 
     @Override
@@ -237,8 +168,6 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("SORT-TYPE", 0);
         sortType = settings.getString("sortType", "Default");
 
-        initSongLists();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -249,14 +178,15 @@ private ViewPager mViewPager;
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mainList = (ListView) findViewById(R.id.ListView1);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         mViewPager.setCurrentItem(0);
 
-        mp = new MediaPlayer();
-
+        initPlayerHandler();
+        initSongLists();
         initListDisplay();
         initButtonListeners();
     }
@@ -337,7 +267,6 @@ private ViewPager mViewPager;
     }
 
     public void initListDisplay() {
-        mainList = (ListView) findViewById(R.id.ListView1);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 listContent.getAdapterList());
         spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
@@ -356,6 +285,7 @@ private ViewPager mViewPager;
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", playlists.get(position));
                     playlist.putExtras(b);
+                    destroyPlayers();
                     startActivityForResult(playlist, 0);
 
                 }
@@ -367,6 +297,17 @@ private ViewPager mViewPager;
             }});
     }
 
+    public void initPlayerHandler() {
+        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
+        final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
+        final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.Rewind);
+        final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.Prev);
+        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
+        final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+
+        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar);
+
+    }
     public void initButtonListeners() {
 
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
@@ -380,16 +321,8 @@ private ViewPager mViewPager;
             }
         });
 
-
         final Handler mHandler = new Handler();
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-        final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
-        final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.Rewind);
-        final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.Prev);
-        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
-
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar, mp, spotPlayer);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -406,7 +339,7 @@ private ViewPager mViewPager;
                         break;
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
-                        if (isSpotifyLoggedIn())
+                        if (playerHandler.isSpotifyLoggedIn())
                         {
                             loginButton.setVisibility(View.VISIBLE);
                         }
@@ -435,38 +368,11 @@ private ViewPager mViewPager;
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (playerHandler.isPlayerPlaying()) {
-                        int mCurrentPosition = playerHandler.getMediaPlayer().getCurrentPosition();
-                        seekbar.setProgress(mCurrentPosition);
-                    }
-                    else if (playerHandler.isSpotifyPlaying())
-                    {
-                        int mCurrentPosition = (int) spotPlayer.getPlaybackState().positionMs;
-                        seekbar.setProgress(mCurrentPosition);
-                    }
-                    mHandler.postDelayed(this, 1000);
-                }
-                catch (IllegalStateException IE)
-                {
-
-                }
+                playerHandler.updateSeekBar();
+                mHandler.postDelayed(this, 1000);
             }
         });
 
-    }
-
-    //Use this to grab a row from music list
-    public View getViewByPosition(ListView listView, int pos) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
     }
 
     public void getRemotePlaylists() {
@@ -482,8 +388,7 @@ private ViewPager mViewPager;
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         if (accessToken != null) {
-            while (spotifySongOffset < 1000)
-            {
+            while (spotifySongOffset < 1000) {
                 Object[] params = new Object[2];
                 params[0] = accessToken;
                 params[1] = spotifySongOffset;
@@ -492,65 +397,10 @@ private ViewPager mViewPager;
                 sMG.execute(params);
                 spotifySongOffset += 50;
             }
+
+            playerHandler.initSpotifyPlayer(accessToken);
         }
 
-        Config playerConfig = new Config(getApplicationContext(), accessToken, CLIENT_ID);
-        playerConfig.useCache(false); //Prevent memory leaks from spotify!
-        // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
-        // the second argument in order to refcount it properly. Note that the method
-        // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
-        // one passed in here. If you pass different instances to Spotify.getPlayer() and
-        // Spotify.destroyPlayer(), that will definitely result in resource leaks.
-
-        spotPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-            @Override
-            public void onInitialized(SpotifyPlayer player) {
-                    player.setConnectivityStatus(opCallback, getNetworkConnectivity(MainActivity.this));
-                    player.addNotificationCallback(MainActivity.this);
-                    player.addConnectionStateCallback(MainActivity.this);
-                    player.login(CredentialsHandler.getToken(getApplicationContext(), "Spotify"));
-            }
-
-            @Override
-            public void onError(Throwable error) {
-                error.printStackTrace();}
-        });
-
-    }
-
-    private Connectivity getNetworkConnectivity(Context context) {
-        ConnectivityManager connectivityManager;
-        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            return Connectivity.fromNetworkType(activeNetwork.getType());
-        } else {
-            return Connectivity.OFFLINE;
-        }
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(mp != null && fromUser && currentSongType.equals("Local")){
-            playerHandler.setCurrentSongPosition(progress);
-            mp.seekTo(progress);
-        }
-        else if (spotPlayer!= null && fromUser && currentSongType.equals("Spotify"))
-        {
-            playerHandler.setCurrentSongPosition(progress);
-            spotPlayer.resume(opCallback);
-
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        //AutogenStub
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        //AutogenStub
     }
 
     //Called when threads return
@@ -613,35 +463,6 @@ private ViewPager mViewPager;
     public static void resetPlaylists() {
         playlists = null;
     }
-
-
-    //Spotify interface implementations
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
-                final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
-                next.performClick();
-        }
-        else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
-            SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-            seekbar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
-        }
-    }
-    @Override
-    public void onPlaybackError(Error error) {}
-    @Override
-    public void onLoggedIn() {
-        Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
-        loginButton.setVisibility(View.INVISIBLE);
-    }
-    @Override
-    public void onLoggedOut() {}
-    @Override
-    public void onLoginFailed(Error error) {}
-    @Override
-    public void onTemporaryError() {}
-    @Override
-    public void onConnectionMessage(String s) {}
 
     /**
      * A placeholder fragment containing a simple view.

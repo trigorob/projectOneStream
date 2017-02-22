@@ -1,20 +1,26 @@
 package music.onestream;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Connectivity;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 
@@ -22,7 +28,11 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
  * Created by ruspe_000 on 2017-02-21.
  */
 
-public class PlayerActionsHandler {
+public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Player.NotificationCallback, ConnectionStateCallback {
+
+
+    private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
+    static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
     final Context context;
     final FloatingActionButton fabIO;
@@ -32,8 +42,11 @@ public class PlayerActionsHandler {
     final FloatingActionButton random;
     final ListView mainList;
     final SeekBar seekBar;
-    SpotifyPlayer spotPlayer;
+
     MediaPlayer mp;
+    SpotifyPlayer spotPlayer = null;
+
+    private BroadcastReceiver mNetworkStateReceiver;
 
     int currentSongListPosition = -1;
     int currentSongPosition = -1;
@@ -54,8 +67,7 @@ public class PlayerActionsHandler {
 
     public PlayerActionsHandler
             (Context context, FloatingActionButton play, FloatingActionButton previous, FloatingActionButton next,
-             FloatingActionButton rewind, FloatingActionButton random, ListView list, SeekBar seekBar,
-             MediaPlayer mediaPlayer, SpotifyPlayer spotifyPlayer)
+             FloatingActionButton rewind, FloatingActionButton random, ListView list, SeekBar seekBar)
     {
         this.context = context;
         this.fabIO = play;
@@ -65,8 +77,7 @@ public class PlayerActionsHandler {
         this.random = random;
         this.mainList = list;
         this.seekBar = seekBar;
-        this.mp = mediaPlayer;
-        this.spotPlayer = spotifyPlayer;
+        this.mp = new MediaPlayer();
 
         initListeners();
     }
@@ -244,6 +255,51 @@ public class PlayerActionsHandler {
         }
     }
 
+    public void initSpotifyPlayer(String accessToken) {
+
+        Config playerConfig = new Config(context, accessToken, CLIENT_ID);
+        playerConfig.useCache(false); //Prevent memory leaks from spotify!
+        // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
+        // the second argument in order to refcount it properly. Note that the method
+        // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
+        // one passed in here. If you pass different instances to Spotify.getPlayer() and
+        // Spotify.destroyPlayer(), that will definitely result in resource leaks.
+
+        spotPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer player) {
+                player.setConnectivityStatus(opCallback, getNetworkConnectivity(context));
+                player.addNotificationCallback(PlayerActionsHandler.this);
+                player.addConnectionStateCallback(PlayerActionsHandler.this);
+                player.login(CredentialsHandler.getToken(context, "Spotify"));
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                error.printStackTrace();
+            }
+        });
+    }
+
+
+    private Connectivity getNetworkConnectivity(Context context) {
+        ConnectivityManager connectivityManager;
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            return Connectivity.fromNetworkType(activeNetwork.getType());
+        } else {
+            return Connectivity.OFFLINE;
+        }
+    }
+
+
+    public boolean isSpotifyLoggedIn()
+    {
+        return (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()));
+    }
+
+
     public boolean isSpotifyPlaying()
     {
         return spotPlayer != null && spotPlayer.getPlaybackState()!= null && spotPlayer.getPlaybackState().isPlaying;
@@ -252,6 +308,24 @@ public class PlayerActionsHandler {
     public boolean isPlayerPlaying()
     {
         return mp != null && mp.isPlaying();
+    }
+
+    public void updateSeekBar() {
+        try {
+            if (isPlayerPlaying()) {
+                int mCurrentPosition = getMediaPlayer().getCurrentPosition();
+                seekBar.setProgress(mCurrentPosition);
+            }
+            else if (isSpotifyPlaying())
+            {
+                int mCurrentPosition = (int) spotPlayer.getPlaybackState().positionMs;
+                seekBar.setProgress(mCurrentPosition);
+            }
+        }
+        catch (IllegalStateException IE)
+        {
+
+        }
     }
 
     // Play song
@@ -411,4 +485,106 @@ public class PlayerActionsHandler {
         }
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if(mp != null && fromUser && currentSongType.equals("Local")){
+            setCurrentSongPosition(progress);
+            mp.seekTo(progress);
+        }
+        else if (spotPlayer!= null && fromUser && currentSongType.equals("Spotify"))
+        {
+            setCurrentSongPosition(progress);
+            spotPlayer.resume(opCallback);
+
+        }
+    }
+
+    public void onResume() {
+        // Set up the broadcast receiver for network events. Note that we also unregister
+        // this receiver again in onPause().
+        mNetworkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (spotPlayer != null) {
+                    Connectivity connectivity = getNetworkConnectivity(context);
+                    spotPlayer.setConnectivityStatus(opCallback, connectivity);
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        context.registerReceiver(mNetworkStateReceiver, filter);
+
+        if (spotPlayer != null) {
+            spotPlayer.addNotificationCallback(PlayerActionsHandler.this);
+            spotPlayer.addConnectionStateCallback(PlayerActionsHandler.this);
+        }
+    }
+
+
+    public void onPause() {
+        if (isSpotifyPlaying())
+        {
+            context.unregisterReceiver(mNetworkStateReceiver);
+
+            // Note that calling Spotify.destroyPlayer() will also remove any callbacks on whatever
+            // instance was passed as the refcounted owner. So in the case of this particular example,
+            // it's not strictly necessary to call these methods, however it is generally good practice
+            // and also will prevent your application from doing extra work in the background when
+            // paused.
+            if (spotPlayer != null) {
+                spotPlayer.removeNotificationCallback(PlayerActionsHandler.this);
+                spotPlayer.removeConnectionStateCallback(PlayerActionsHandler.this);
+            }
+        }
+    }
+
+    public void destroyPlayers() {
+        if (spotPlayer != null  &&  spotPlayer.getPlaybackState() != null
+                && spotPlayer.getPlaybackState().isPlaying)
+        {
+            spotPlayer.pause(opCallback);
+        }
+        if (mp.isPlaying())
+        {
+            mp.stop();
+        }
+    }
+
+    public void onDestroy() {
+        mp.release();
+        if (spotPlayer != null) {
+            Spotify.destroyPlayer(this);
+        }
+    }
+
+    //Interface required implementations
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {}
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {}
+    @Override
+    public void onLoggedIn() {}
+    @Override
+    public void onLoggedOut() {}
+    @Override
+    public void onLoginFailed(Error error) {}
+    @Override
+    public void onTemporaryError() {}
+    @Override
+    public void onConnectionMessage(String s) {}
+
+    //Spotify interface implementations
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+        if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
+            next.performClick();
+        }
+        else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
+            seekBar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
+        }
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {}
 }
