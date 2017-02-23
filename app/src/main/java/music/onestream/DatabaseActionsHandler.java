@@ -10,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import music.onestream.database.OneStreamRestService;
-
 /**
  * Created by ruspe_000 on 2017-02-20.
  */
@@ -61,42 +59,47 @@ public class DatabaseActionsHandler extends AsyncTask {
     }
 
     public static ArrayList<Playlist> getPlaylists(String owner) {
-        OneStreamRestService restService = new OneStreamRestService();
+        DatabaseQueryHandler queryHandler = new DatabaseQueryHandler();
         String sql = "SELECT * FROM Playlist WHERE OWNER = '"+ owner + "';";
-        ArrayList<String[]> names = restService.getPlaylistNames(sql);
+        ArrayList<String[]> names = queryHandler.getPlaylistNames(sql);
 
 
 
+        sql = "";
         ArrayList<Playlist> playlists = new ArrayList<Playlist>();
         ArrayList<String> queries = new ArrayList<String>();
         for (int i = 0; i < names.size(); i++) {
-            sql = "SELECT * FROM " + names.get(i)[1] + ", Song WHERE " +
-            "Song.uri = " + names.get(i)[1] + ".SongUri " +
-            "ORDER BY " + names.get(i)[1] + ".ListPosition";
-            Playlist p = restService.getPlaylist(sql);
-            p.setName(names.get(i)[0]);
-            p.setOwner(owner);
-            playlists.add(p);
+            sql +=  " SELECT * FROM " + names.get(i)[1] + ", Song, Playlist WHERE " +
+            "Song.uri = " + names.get(i)[1] + ".SongUri AND " +
+            "Playlist.SongsTable = '" + names.get(i)[1] + "' ";
+            if (i != names.size() -1)
+            {
+                sql += "UNION ";
+            }
+            else
+            {
+                sql+=  " ORDER BY Name, ListPosition;";
+            }
         }
-
+        playlists = queryHandler.getPlaylistsList(sql);
         return playlists;
     }
 
     private static void createPlaylist(Playlist playlist) {
 
-        OneStreamRestService restService = new OneStreamRestService();
+        DatabaseQueryHandler queryHandler = new DatabaseQueryHandler();
 
         String tableName = playlist.getOwner() + "_" + playlist.getName().replaceAll(" ","");
         String sql = "CREATE TABLE "+ tableName +
                 " (ListPosition int, SongName varchar(30), " +
                 "SongUri varchar(50), PRIMARY KEY (SongUri));";
-        restService.performUpdateQuery(sql);
+        queryHandler.performUpdateQuery(sql);
 
 
         sql = "INSERT INTO Playlist (Name, Owner, SongsTable) values ('" +
                 playlist.getName() + "', '" +  playlist.getOwner() + "', '" + tableName + "');";
 
-        restService.addPlaylistToPlaylists(sql);
+        queryHandler.addPlaylistToPlaylists(sql);
         ArrayList<Song> songs = playlist.getSongInfo();
         sql = "";
 
@@ -114,7 +117,7 @@ public class DatabaseActionsHandler extends AsyncTask {
 
 
         if (queries.size() > 0) {
-            restService.addSongsToPlaylists(queries);
+            queryHandler.addSongsToPlaylists(queries);
         }
 
 
@@ -126,21 +129,21 @@ public class DatabaseActionsHandler extends AsyncTask {
                     "'" + songs.get(i).getName() +"', " +
                     "'" + songs.get(i).getUri() +"');");
         }
-        restService.addSongsToPlaylists(queries);
+        queryHandler.addSongsToPlaylists(queries);
     }
 
     private static void deletePlaylist(Playlist playlist) {
 
-        OneStreamRestService restService = new OneStreamRestService();
+        DatabaseQueryHandler queryHandler = new DatabaseQueryHandler();
 
         String tableName = playlist.getOwner() + "_" + playlist.getName().replaceAll(" ","");
         String sql = "DROP TABLE "+ tableName + ";";
-        restService.performUpdateQuery(sql);
+        queryHandler.performUpdateQuery(sql);
 
         sql = "DELETE FROM Playlist WHERE Owner = '" + playlist.getOwner() + "' " +
                 "AND SongsTable = '" + tableName + "';";
 
-        restService.performUpdateQuery(sql);
+        queryHandler.performUpdateQuery(sql);
     }
 
 }
