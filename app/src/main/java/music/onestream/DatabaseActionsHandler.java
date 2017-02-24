@@ -60,8 +60,8 @@ public class DatabaseActionsHandler extends AsyncTask {
 
     public static ArrayList<Playlist> getPlaylists(String owner) {
         DatabaseQueryHandler queryHandler = new DatabaseQueryHandler();
-        String sql = "SELECT * FROM Playlist WHERE OWNER = '"+ owner + "';";
-        ArrayList<String[]> names = queryHandler.getPlaylistNames(sql);
+        String sql = "SELECT SongsTable FROM Playlist WHERE OWNER = '"+ owner + "';";
+        ArrayList<String> names = queryHandler.getPlaylistNames(sql);
 
 
 
@@ -69,9 +69,9 @@ public class DatabaseActionsHandler extends AsyncTask {
         ArrayList<Playlist> playlists = new ArrayList<Playlist>();
         ArrayList<String> queries = new ArrayList<String>();
         for (int i = 0; i < names.size(); i++) {
-            sql +=  " SELECT * FROM " + names.get(i)[1] + ", Song, Playlist WHERE " +
-            "Song.uri = " + names.get(i)[1] + ".SongUri AND " +
-            "Playlist.SongsTable = '" + names.get(i)[1] + "' ";
+            sql +=  " SELECT * FROM " + names.get(i) + ", Song, Playlist WHERE " +
+            "Song.uri = " + names.get(i) + ".SongUri AND " +
+            "Playlist.SongsTable = '" + names.get(i) + "' ";
             if (i != names.size() -1)
             {
                 sql += "UNION ";

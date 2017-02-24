@@ -91,7 +91,7 @@ public class DatabaseQueryHandler {
         }
     }
 
-    public ArrayList<String[]> getPlaylistNames(String sql) {
+    public ArrayList<String> getPlaylistNames(String sql) {
         Connection con; //retrieve your database connection
         PreparedStatement stmt;
         getDriver();
@@ -100,13 +100,12 @@ public class DatabaseQueryHandler {
                     null);
             stmt = con.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery(sql);;
-            ArrayList<String[]> playlists = new ArrayList<String[]>();
+            ArrayList<String> playlists = new ArrayList<String>();
+            String s = "";
             try {
                 while (rs.next()){
-                    String[] vals = new String[2];
-                    vals[0] = (rs.getString("Name"));
-                    vals[1] = (rs.getString("SongsTable"));
-                    playlists.add(vals);
+                    s = (rs.getString("SongsTable"));
+                    playlists.add(s);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
