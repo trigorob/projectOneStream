@@ -11,7 +11,13 @@
         android:text="PLACEHOLDER FOR ALBUM ART"
         android:background="@color/colorPrimaryDark"
     />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="375dp"
+        android:gravity="center"
+        android:text="Album Name"/>
 
 
 </RelativeLayout>
