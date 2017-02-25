@@ -44,6 +44,10 @@
             android:label="PlaylistActivity">
         </activity>
         <activity
+            android:name="SongActivity"
+            android:label="SongActivity">
+        </activity>
+        <activity
             android:name=".OneStreamDomainActivity"
             android:label="OneStreamDomainActivity">
         </activity>
