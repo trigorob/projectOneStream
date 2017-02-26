@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.spotify.sdk.android.player.Connectivity;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
 
@@ -406,7 +409,7 @@ private ViewPager mViewPager;
     }
 
     public void getRemotePlaylists(String domain) {
-        if (dba == null) {
+        if (dba == null && isConnected()) {
             Object[] params = new Object[2];
             params[0] = "GetPlaylists";
             params[1] = domain;
@@ -414,6 +417,10 @@ private ViewPager mViewPager;
             dba.SAR = this;
             dba.execute(params);
         }
+    }
+
+    public Boolean isConnected() {
+        return !playerHandler.getNetworkConnectivity(this.getApplicationContext()).equals(Connectivity.OFFLINE);
     }
 
     public String getDomain() {
@@ -425,7 +432,7 @@ private ViewPager mViewPager;
     public void getSpotifyLibrary() {
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
-        if (accessToken != null) {
+        if (accessToken != null && isConnected()) {
             while (spotifySongOffset < 1000) {
                 Object[] params = new Object[2];
                 params[0] = accessToken;

@@ -282,7 +282,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
 
-    private Connectivity getNetworkConnectivity(Context context) {
+    public Connectivity getNetworkConnectivity(Context context) {
         ConnectivityManager connectivityManager;
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();

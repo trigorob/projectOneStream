@@ -63,7 +63,10 @@ public class DatabaseActionsHandler extends AsyncTask {
         String sql = "SELECT SongsTable FROM Playlist WHERE OWNER = '"+ owner + "';";
         ArrayList<String> names = queryHandler.getPlaylistNames(sql);
 
-
+        if (names == null)
+        {
+            return null;
+        }
 
         sql = "";
         ArrayList<Playlist> playlists = new ArrayList<Playlist>();
