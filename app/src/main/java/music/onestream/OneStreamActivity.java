@@ -190,6 +190,7 @@ private ViewPager mViewPager;
 
         SharedPreferences settings = getSharedPreferences("dirInfo", 0);
         String directory = settings.getString("dir", "Default");
+        boolean directoryChanged = settings.getBoolean("directoryChanged", false);
         SharedPreferences.Editor editor = settings.edit();
         settings = getSharedPreferences("SORT-TYPE", 0);
         String sortType = settings.getString("sortType", "Default");
@@ -197,7 +198,8 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
         String domain =  settings.getString("domain", "Admin");
 
-        playlistHandler = new PlaylistHandler(this.getApplicationContext(), this.playerHandler, sortType, directory, domain);
+        playlistHandler = new PlaylistHandler(this.getApplicationContext(), this.playerHandler,
+                sortType, directory, directoryChanged, domain);
 
         if (sortOnLoad)
         {

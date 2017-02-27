@@ -30,11 +30,12 @@ public class PlaylistHandler implements AsyncResponse {
 
 
     public PlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
-                           String type, String directory, String domain) {
+                           String type, String directory, boolean directoryChanged, String domain) {
         this.context = appContext;
         this.playerHandler = playerHandler;
         this.sortType = type;
         this.directory = directory;
+        this.directoryChanged = directoryChanged;
         this.domain = domain;
 
         this.musicGetterHandler = new MusicGetterHandler();
