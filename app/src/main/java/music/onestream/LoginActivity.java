@@ -1,6 +1,5 @@
 package music.onestream;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -137,7 +135,7 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void startMainActivity(String token) {
-        Intent intent = MainActivity.createIntent(this);
+        Intent intent = OneStreamActivity.createIntent(this);
         intent.putExtra("SPOTIFY_TOKEN", token);
         startActivity(intent);
         finish();

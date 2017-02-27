@@ -35,7 +35,7 @@ public class OneStreamDomainActivity extends Activity {
                 editor.commit();
 
                 //Clear out old domain playlists
-                MainActivity.resetPlaylists();
+                OneStreamActivity.getPlaylistHandler().resetPlaylists();
 
                 Intent login = new Intent(v.getContext(), LoginActivity.class);
                 startActivityForResult(login, 0);

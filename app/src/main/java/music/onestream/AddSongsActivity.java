@@ -31,7 +31,7 @@ public class AddSongsActivity extends Activity {
             if (combinedList == null)
             {
                 this.combinedList =  new Playlist
-                        ("", "", MainActivity.getCombinedList().getSongInfo());
+                        ("", "", OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
             }
 
             TextView playListName = (TextView) findViewById(R.id.listName);

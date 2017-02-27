@@ -84,6 +84,8 @@ public class DatabaseActionsHandler extends AsyncTask {
                 sql+=  " ORDER BY Name, ListPosition;";
             }
         }
+
+
         playlists = queryHandler.getPlaylistsList(sql);
         return playlists;
     }

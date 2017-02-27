@@ -66,7 +66,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         if (combinedList == null)
         {
             combinedList = new Playlist();
-            combinedList.setSongInfo(MainActivity.getCombinedList().getSongInfo());
+            combinedList.setSongInfo(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
         }
         if (playlist == null) {
 
@@ -183,8 +183,8 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             params[1] = playlist;
             dba.execute(params);
 
-            ArrayList<Playlist> playlists = MainActivity.getPlaylists();
-            ArrayList<String> playlistNames = MainActivity.getPlaylistNames();
+            ArrayList<Playlist> playlists = OneStreamActivity.getPlaylistHandler().getPlaylists();
+            ArrayList<String> playlistNames = OneStreamActivity.getPlaylistHandler().getPlaylistNames();
             if (playlists != null)
             {
                 playlists.remove(oldPlaylist);
@@ -208,8 +208,8 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         Object[] params = new Object[4];
         EditText playlistTitle = (EditText) findViewById(R.id.playListName);
 
-        ArrayList<Playlist> playlists = MainActivity.getPlaylists();
-        ArrayList<String> playlistNames = MainActivity.getPlaylistNames();
+        ArrayList<Playlist> playlists = OneStreamActivity.getPlaylistHandler().getPlaylists();
+        ArrayList<String> playlistNames = OneStreamActivity.getPlaylistHandler().getPlaylistNames();
 
         if (newList) {
             playlist.setName(playlistTitle.getText().toString());

@@ -31,7 +31,7 @@ public class Settings extends Activity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Intent back = new Intent(v.getContext(), MainActivity.class);
+                    Intent back = new Intent(v.getContext(), OneStreamActivity.class);
                     startActivityForResult(back, 0);
                 }
             });

@@ -28,7 +28,7 @@ public class SortingActivity extends Activity {
             editor.putBoolean("sortOnLoad", true);
             editor.commit();
 
-            Intent back = new Intent(v.getContext(), MainActivity.class);
+            Intent back = new Intent(v.getContext(), OneStreamActivity.class);
             startActivityForResult(back, 0);
         }
     });
@@ -42,7 +42,7 @@ public class SortingActivity extends Activity {
                 editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
-                Intent back = new Intent(v.getContext(), MainActivity.class);
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
                 startActivityForResult(back, 0);
             }
         });
@@ -57,7 +57,7 @@ public class SortingActivity extends Activity {
                 editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
-                Intent back = new Intent(v.getContext(), MainActivity.class);
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
                 startActivityForResult(back, 0);
             }
         });
@@ -72,7 +72,7 @@ public class SortingActivity extends Activity {
                 editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
-                Intent back = new Intent(v.getContext(), MainActivity.class);
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
                 startActivityForResult(back, 0);
             }
         });
@@ -87,7 +87,7 @@ public class SortingActivity extends Activity {
                 editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
-                Intent back = new Intent(v.getContext(), MainActivity.class);
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
                 startActivityForResult(back, 0);
             }
         });
@@ -102,7 +102,7 @@ public class SortingActivity extends Activity {
                 editor.putBoolean("sortOnLoad", true);
                 editor.commit();
 
-                Intent back = new Intent(v.getContext(), MainActivity.class);
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
                 startActivityForResult(back, 0);
             }
         });
@@ -117,7 +117,7 @@ public class SortingActivity extends Activity {
             editor.putBoolean("sortOnLoad", false);
             editor.commit();
 
-            Intent back = new Intent(v.getContext(), MainActivity.class);
+            Intent back = new Intent(v.getContext(), OneStreamActivity.class);
             startActivityForResult(back, 0);
         }
     });

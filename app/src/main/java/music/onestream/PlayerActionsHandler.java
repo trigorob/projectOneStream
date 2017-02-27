@@ -1,6 +1,5 @@
 package music.onestream;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.ListView;
@@ -332,7 +330,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void playSong(int songIndex) {
 
         resetPlayers();
-        Song currentSong = MainActivity.getCombinedList().findSongByName((String) mainList.getAdapter().getItem(songIndex));
+        Song currentSong = OneStreamActivity.getPlaylistHandler().getCombinedList()
+                .findSongByName((String) mainList.getAdapter().getItem(songIndex));
         if (currentSong == null)
         {
             return;
