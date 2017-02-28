@@ -29,29 +29,6 @@ public class DatabaseQueryHandler {
         }
     }
 
-    public List<Playlist> getPlaylists(String sql) {
-        List<Playlist> PlaylistList = new ArrayList<>();
-        Connection con; //retrieve your database connection
-        Statement stmt;
-        ResultSet rs = null;
-        getDriver();
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://104.155.180.191/onestream", "root",
-                    null);
-            stmt = con.createStatement();
-            stmt.setFetchSize(1000);
-            rs = stmt.executeQuery("SELECT * FROM Playlist");
-            rs.close();
-            stmt.close();
-            con.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
     public void addSongsToPlaylists(ArrayList<String> queries) {
         Connection con; //retrieve your database connection
         Statement stmt;

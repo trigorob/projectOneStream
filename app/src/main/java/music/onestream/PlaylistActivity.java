@@ -25,7 +25,7 @@ import java.util.ArrayList;
  */
 
 public class PlaylistActivity extends AppCompatActivity {
-    private PlayerActionsHandler playerHandler;
+    private static PlayerActionsHandler playerHandler;
     private Playlist playlist;
     private ArrayAdapter<String> adapter;
     private ListView mainList;
@@ -41,6 +41,8 @@ public class PlaylistActivity extends AppCompatActivity {
 
         initPlayerHandler();
         initSongList();
+
+        setTitle(playlist.getName());
     }
 
     public void checkForInvalidSongs() {
@@ -115,7 +117,7 @@ public class PlaylistActivity extends AppCompatActivity {
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevPL);
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextPL);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarPL);
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar);
+        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar, "PlaylistActivity");
 
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
@@ -142,6 +144,10 @@ public class PlaylistActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static PlayerActionsHandler getPlayerHandler() {
+        return playerHandler;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -153,17 +159,19 @@ public class PlaylistActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         playerHandler.onDestroy();
+        playerHandler.stopPlayerService();
     }
     @Override
     protected void onPause() {
         super.onPause();
-        playerHandler.onPause();
+        playerHandler.onDestroy();
+        playerHandler.stopPlayerService();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        playerHandler.onResume();
+        initPlayerHandler();
     }
 
 }

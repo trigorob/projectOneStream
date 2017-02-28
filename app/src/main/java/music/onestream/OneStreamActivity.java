@@ -32,7 +32,7 @@ import com.spotify.sdk.android.player.Connectivity;
 
 public class OneStreamActivity extends AppCompatActivity {
 
-    private PlayerActionsHandler playerHandler;
+    private static PlayerActionsHandler playerHandler;
     private static PlaylistHandler playlistHandler;
 
     // variable declaration
@@ -107,6 +107,7 @@ private ViewPager mViewPager;
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             playerHandler.destroyPlayers();
+            playerHandler.stopPlayerService();
             Intent settings = new Intent(mViewPager.getContext(), Settings.class);
             startActivityForResult(settings, 0);
 
@@ -163,7 +164,8 @@ private ViewPager mViewPager;
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", playlistHandler.getPlaylists().get(position));
                     playlist.putExtras(b);
-                    playerHandler.destroyPlayers();
+                    playerHandler.onDestroy();
+                    playerHandler.stopPlayerService();
                     startActivityForResult(playlist, 0);
                 }
                 else {
@@ -182,7 +184,8 @@ private ViewPager mViewPager;
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
 
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar);
+        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next,
+                rewind, random, mainList, seekbar, "OneStreamActivity");
 
     }
 
@@ -198,7 +201,7 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
         String domain =  settings.getString("domain", "Admin");
 
-        playlistHandler = new PlaylistHandler(this.getApplicationContext(), this.playerHandler,
+        playlistHandler = new PlaylistHandler(this.getApplicationContext(), playerHandler,
                 sortType, directory, directoryChanged, domain);
 
         if (sortOnLoad)
@@ -222,6 +225,7 @@ private ViewPager mViewPager;
             @Override
             public void onClick(View v) {
                 playerHandler.destroyPlayers();
+                playerHandler.stopPlayerService();
                 Intent settings = new Intent(mViewPager.getContext(), LoginActivity.class);
                 startActivityForResult(settings, 0);
             }
@@ -283,6 +287,10 @@ private ViewPager mViewPager;
 
     public static Intent createIntent(Context context) {
         return new Intent(context, OneStreamActivity.class);
+    }
+
+    public static PlayerActionsHandler getPlayerHandler() {
+        return playerHandler;
     }
 
     /**

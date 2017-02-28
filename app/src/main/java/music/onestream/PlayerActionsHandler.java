@@ -1,12 +1,15 @@
 package music.onestream;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.ListView;
@@ -41,6 +44,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     final ListView mainList;
     final SeekBar seekBar;
 
+    boolean serviceInit;
+    String parentClass;
+
     MediaPlayer mp;
     SpotifyPlayer spotPlayer = null;
 
@@ -65,7 +71,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public PlayerActionsHandler
             (Context context, FloatingActionButton play, FloatingActionButton previous, FloatingActionButton next,
-             FloatingActionButton rewind, FloatingActionButton random, ListView list, SeekBar seekBar)
+             FloatingActionButton rewind, FloatingActionButton random, ListView list, SeekBar seekBar, String parentClass)
     {
         this.context = context;
         this.fabIO = play;
@@ -76,8 +82,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         this.mainList = list;
         this.seekBar = seekBar;
         this.mp = new MediaPlayer();
+        this.parentClass = parentClass;
+
+        serviceInit = false;
 
         initListeners();
+        initPlayerService();
     }
 
     public void setCurrentSongType(String type)
@@ -125,6 +135,23 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public SpotifyPlayer getSpotifyPlayer()
     {
         return this.spotPlayer;
+    }
+
+    public void initPlayerService() {
+        if (!serviceInit) {
+            Intent intent = new Intent(context, OneStreamPlayerService.class);
+            intent.setAction(OneStreamPlayerService.ACTION_INIT);
+            intent.putExtra("currentActivity", parentClass);
+            context.startService(intent);
+            serviceInit = true;
+        }
+    }
+
+    public void stopPlayerService() {
+        if (serviceInit) {
+            context.stopService(new Intent(context, OneStreamPlayerService.class));
+            serviceInit = false;
+        }
     }
 
     public void initListeners() {
@@ -330,6 +357,16 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void playSong(int songIndex) {
 
         resetPlayers();
+        if (songIndex == -1 && mainList.getAdapter() != null && mainList.getAdapter().getCount() > 0)
+        {
+            currentSongListPosition = 0;
+            songIndex = 0;
+            mainList.setSelection(0);
+        }
+        else if (songIndex == -1)
+        {
+            return;
+        }
         Song currentSong = OneStreamActivity.getPlaylistHandler().getCombinedList()
                 .findSongByName((String) mainList.getAdapter().getItem(songIndex));
         if (currentSong == null)
@@ -503,10 +540,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         mNetworkStateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (spotPlayer != null) {
-                    Connectivity connectivity = getNetworkConnectivity(context);
-                    spotPlayer.setConnectivityStatus(opCallback, connectivity);
-                }
+            if (spotPlayer != null) {
+                Connectivity connectivity = getNetworkConnectivity(context);
+                spotPlayer.setConnectivityStatus(opCallback, connectivity);
+            }
+        mp = new MediaPlayer();
             }
         };
 
@@ -517,6 +555,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             spotPlayer.addNotificationCallback(PlayerActionsHandler.this);
             spotPlayer.addConnectionStateCallback(PlayerActionsHandler.this);
         }
+        initPlayerService();
     }
 
 
@@ -553,6 +592,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (spotPlayer != null) {
             spotPlayer.pause(opCallback);
         }
+
     }
 
     //Interface required implementations
@@ -584,4 +624,5 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     @Override
     public void onPlaybackError(Error error) {}
+
 }
