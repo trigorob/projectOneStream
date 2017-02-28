@@ -97,6 +97,7 @@ public class PlaylistActivity extends AppCompatActivity {
             public void onClick(View v) {
                 playerHandler.destroyPlayers();
                 Intent settings = new Intent(v.getContext(), LoginActivity.class);
+                playerHandler.stopPlayerService();
                 startActivityForResult(settings, 0);
             }
         });
@@ -122,7 +123,6 @@ public class PlaylistActivity extends AppCompatActivity {
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         playerHandler.initSpotifyPlayer(accessToken);
-
     }
 
     @Override
@@ -133,6 +133,7 @@ public class PlaylistActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_edit_list) {
             playerHandler.onDestroy();
+            playerHandler.stopPlayerService();
             Intent editList = new Intent(PlaylistActivity.this, EditPlaylistActivity.class);
             Bundle b = new Bundle();
             b.putSerializable("Playlist", playlist);
@@ -159,20 +160,17 @@ public class PlaylistActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         playerHandler.onDestroy();
-        playerHandler.stopPlayerService();
     }
     @Override
     protected void onPause() {
         super.onPause();
-        playerHandler.onDestroy();
-        playerHandler.stopPlayerService();
+        playerHandler.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         playerHandler.onResume();
-        initPlayerHandler();
     }
 
 }

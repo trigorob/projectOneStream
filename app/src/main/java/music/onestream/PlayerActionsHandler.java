@@ -149,6 +149,15 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
+    public void changePlayerServiceAdapter() {
+        if (serviceInit) {
+            Intent intent = new Intent(context, OneStreamPlayerService.class);
+            intent.setAction(OneStreamPlayerService.ACTION_INIT);
+            intent.putExtra("currentActivity", parentClass);
+            context.startService(intent);
+        }
+    }
+
     public void stopPlayerService() {
         if (serviceInit) {
             Intent intent = new Intent(context, OneStreamPlayerService.class);
@@ -358,6 +367,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
+    public Song getCurrentSong(int songIndex) {
+        return OneStreamActivity.getPlaylistHandler().getCombinedList()
+                .findSongByName((String) mainList.getAdapter().getItem(songIndex));
+    }
+
     // Play song
     public void playSong(int songIndex) {
 
@@ -372,8 +386,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         {
             return;
         }
-        Song currentSong = OneStreamActivity.getPlaylistHandler().getCombinedList()
-                .findSongByName((String) mainList.getAdapter().getItem(songIndex));
+        Song currentSong = getCurrentSong(songIndex);
         if (currentSong == null)
         {
             return;
@@ -440,24 +453,19 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public void resumeSong(int songIndex)
     {
-        if (currentSongType.equals("Local"))
-        {
-            if (currentSongPosition != -1 && songIndex == currentSongListPosition)
-            {
+        if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
+            if (currentSongType.equals("Local")) {
                 mp.seekTo(currentSongPosition);
                 mp.start(); // starting mediaplayer
                 fabIO.setImageResource(R.drawable.stop);
+
+            } else if (currentSongType.equals("Spotify")) {
+               spotPlayer.resume(opCallback);
+                spotPlayer.playUri(opCallback, spotPlayer.getMetadata().contextUri, 0, currentSongPosition);
+                fabIO.setImageResource(R.drawable.stop);
+            } else {
+                playSong(songIndex);
             }
-        }
-        else if (currentSongType.equals("Spotify"))
-        {
-            spotPlayer.resume(opCallback);
-            spotPlayer.playUri(opCallback, spotPlayer.getMetadata().contextUri, 0, currentSongPosition);
-            fabIO.setImageResource(R.drawable.stop);
-        }
-        else
-        {
-            playSong(songIndex);
         }
         mainList.setSelection(songIndex);
     }
@@ -560,6 +568,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             spotPlayer.addConnectionStateCallback(PlayerActionsHandler.this);
         }
         initPlayerService();
+        changePlayerServiceAdapter();
     }
 
 
@@ -584,7 +593,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         {
             mp.stop();
         }
-        stopPlayerService();
     }
 
     public void onDestroy() {
@@ -592,7 +600,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (spotPlayer != null) {
             spotPlayer.pause(opCallback);
         }
-        stopPlayerService();
     }
 
     //Interface required implementations

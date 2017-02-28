@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
@@ -28,7 +29,7 @@ public class OneStreamPlayerService extends Service {
     public static final String ACTION_STOP = "action_stop";
 
 
-    private static String currentActivity = "";
+    private String currentActivity = "";
     private MediaSession session;
     private MediaController mediaController;
 
@@ -68,13 +69,8 @@ public class OneStreamPlayerService extends Service {
         else if (action.equalsIgnoreCase(ACTION_PLAY))
         {
             mediaController.getTransportControls().play();
+            playerHandler.resumeSong(playerHandler.currentSongListPosition);
 
-            if (playerHandler.isSpotifyPlaying() || playerHandler.isPlayerPlaying()) {
-                playerHandler.resumeSong(playerHandler.currentSongPosition);
-            }
-            else {
-                playerHandler.playSong(playerHandler.currentSongListPosition);
-            }
         }
         else if (action.equalsIgnoreCase(ACTION_PAUSE))
         {
@@ -85,7 +81,12 @@ public class OneStreamPlayerService extends Service {
         {
             mediaController.getTransportControls().skipToNext();
             mediaController.getTransportControls().play();
-            playerHandler.nextSong();
+            if (!playerHandler.randomNext) {
+                playerHandler.playRandomSong();
+            }
+            else {
+                playerHandler.nextSong();
+            }
         }
         else if (action.equalsIgnoreCase(ACTION_REWIND))
         {
@@ -121,9 +122,11 @@ public class OneStreamPlayerService extends Service {
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.logo)
-                .setContentTitle("OneStream Controller")
+                .setShowWhen(false)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.logo))
                 .setDeleteIntent(pendingIntent)
-                .setStyle(style);
+                .setStyle(style)
+                .setContentTitle("OneStream");
 
         builder.addAction(generateAction(android.R.drawable.ic_media_previous, "Previous", ACTION_PREVIOUS));
         if (action.title.equals("Pause")) {
@@ -150,12 +153,10 @@ public class OneStreamPlayerService extends Service {
 
     private void initPlayerHandler()
     {
-        if (playerHandler == null) {
-            if (currentActivity.equalsIgnoreCase("PlaylistActivity")) {
-                playerHandler = PlaylistActivity.getPlayerHandler();
-            } else if (currentActivity.equalsIgnoreCase("OneStreamActivity")) {
-                playerHandler = OneStreamActivity.getPlayerHandler();
-            }
+        if (currentActivity.equalsIgnoreCase("PlaylistActivity")) {
+            playerHandler = PlaylistActivity.getPlayerHandler();
+        } else if (currentActivity.equalsIgnoreCase("OneStreamActivity")) {
+            playerHandler = OneStreamActivity.getPlayerHandler();
         }
     }
 

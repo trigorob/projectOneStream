@@ -165,7 +165,6 @@ private ViewPager mViewPager;
                     b.putSerializable("Playlist", playlistHandler.getPlaylists().get(position));
                     playlist.putExtras(b);
                     playerHandler.onDestroy();
-                    playerHandler.stopPlayerService();
                     startActivityForResult(playlist, 0);
                 }
                 else {
