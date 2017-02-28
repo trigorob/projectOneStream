@@ -81,7 +81,7 @@ public class Playlist implements Serializable {
     public Song findSongByName(String name) {
         for (int i = 0; i < songInfo.size(); i++)
         {
-            if (songInfo.get(i).getName().equals(name))
+            if (songInfo.get(i).getName().equalsIgnoreCase(name))
             {
                 return songInfo.get(i);
             }

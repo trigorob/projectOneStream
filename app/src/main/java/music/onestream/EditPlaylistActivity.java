@@ -45,7 +45,13 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         domain = getDomain();
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
-        combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
+        Playlist tempCombinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
+
+        if (tempCombinedList != null)
+        {
+            combinedList = new Playlist();
+            combinedList.addSongs(tempCombinedList.getSongInfo());
+        }
 
         if (oldPlaylist == null) {
             previouslyExisting = getIntent().getBooleanExtra("previouslyExisting", false);
@@ -66,7 +72,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         if (combinedList == null)
         {
             combinedList = new Playlist();
-            combinedList.setSongInfo(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
+            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
         }
         if (playlist == null) {
 

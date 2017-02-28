@@ -171,6 +171,7 @@ public class PlaylistActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        playerHandler.onResume();
         initPlayerHandler();
     }
 

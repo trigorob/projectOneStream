@@ -44,6 +44,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     final ListView mainList;
     final SeekBar seekBar;
 
+    boolean receiverIsRegistered;
     boolean serviceInit;
     String parentClass;
 
@@ -85,6 +86,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         this.parentClass = parentClass;
 
         serviceInit = false;
+        receiverIsRegistered = false;
 
         initListeners();
         initPlayerService();
@@ -149,6 +151,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public void stopPlayerService() {
         if (serviceInit) {
+            Intent intent = new Intent(context, OneStreamPlayerService.class);
+            intent.setAction(OneStreamPlayerService.ACTION_STOP);
+            context.startService(intent);
             context.stopService(new Intent(context, OneStreamPlayerService.class));
             serviceInit = false;
         }
@@ -535,8 +540,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     public void onResume() {
-        // Set up the broadcast receiver for network events. Note that we also unregister
-        // this receiver again in onPause().
         mNetworkStateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -549,7 +552,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         };
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        context.registerReceiver(mNetworkStateReceiver, filter);
+            context.registerReceiver(mNetworkStateReceiver, filter);
+            receiverIsRegistered = true;
 
         if (spotPlayer != null) {
             spotPlayer.addNotificationCallback(PlayerActionsHandler.this);
@@ -560,19 +564,14 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
 
     public void onPause() {
-        if (!isSpotifyPlaying())
+        if (spotPlayer != null && !isSpotifyPlaying())
         {
-            context.unregisterReceiver(mNetworkStateReceiver);
-
-            // Note that calling Spotify.destroyPlayer() will also remove any callbacks on whatever
-            // instance was passed as the refcounted owner. So in the case of this particular example,
-            // it's not strictly necessary to call these methods, however it is generally good practice
-            // and also will prevent your application from doing extra work in the background when
-            // paused.
-            if (spotPlayer != null) {
-                spotPlayer.removeNotificationCallback(PlayerActionsHandler.this);
-                spotPlayer.removeConnectionStateCallback(PlayerActionsHandler.this);
+            if (receiverIsRegistered) {
+                context.unregisterReceiver(mNetworkStateReceiver);
+                receiverIsRegistered = false;
             }
+            spotPlayer.removeNotificationCallback(PlayerActionsHandler.this);
+            spotPlayer.removeConnectionStateCallback(PlayerActionsHandler.this);
         }
     }
 
@@ -585,6 +584,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         {
             mp.stop();
         }
+        stopPlayerService();
     }
 
     public void onDestroy() {
@@ -592,7 +592,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (spotPlayer != null) {
             spotPlayer.pause(opCallback);
         }
-
+        stopPlayerService();
     }
 
     //Interface required implementations

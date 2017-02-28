@@ -65,7 +65,7 @@ public class OneStreamPlayerService extends Service {
             mediaController.getTransportControls().pause();
         }
 
-        if (action.equalsIgnoreCase(ACTION_PLAY))
+        else if (action.equalsIgnoreCase(ACTION_PLAY))
         {
             mediaController.getTransportControls().play();
 
