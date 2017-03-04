@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
@@ -41,6 +42,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     final FloatingActionButton next;
     final FloatingActionButton rewind;
     final FloatingActionButton random;
+    final Button loginButton;
     final ListView mainList;
     final SeekBar seekBar;
 
@@ -71,8 +73,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     };
 
     public PlayerActionsHandler
-            (Context context, FloatingActionButton play, FloatingActionButton previous, FloatingActionButton next,
-             FloatingActionButton rewind, FloatingActionButton random, ListView list, SeekBar seekBar, String parentClass)
+            (Context context, FloatingActionButton play, FloatingActionButton previous,
+             FloatingActionButton next, FloatingActionButton rewind, FloatingActionButton random,
+             Button loginButton, ListView list, SeekBar seekBar, String parentClass)
     {
         this.context = context;
         this.fabIO = play;
@@ -80,6 +83,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         this.next = next;
         this.rewind = rewind;
         this.random = random;
+        this.loginButton = loginButton;
         this.mainList = list;
         this.seekBar = seekBar;
         this.mp = new MediaPlayer();
@@ -369,7 +373,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public Song getCurrentSong(int songIndex) {
         return OneStreamActivity.getPlaylistHandler().getCombinedList()
-                .findSongByName((String) mainList.getAdapter().getItem(songIndex));
+                .findSongByName(mainList.getAdapter().getItem(songIndex).toString());
     }
 
     // Play song
@@ -608,7 +612,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {}
     @Override
-    public void onLoggedIn() {}
+    public void onLoggedIn() {
+        OneStreamActivity.setLoginButtonVisible(false, loginButton);
+    }
     @Override
     public void onLoggedOut() {}
     @Override

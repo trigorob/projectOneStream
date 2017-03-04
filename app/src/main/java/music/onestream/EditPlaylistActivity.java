@@ -26,7 +26,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     private static String[] songNames;
     private static DatabaseActionsHandler dba;
     private static Playlist combinedList;
-    private static boolean newList;
+    private boolean newList = false;
     private static boolean previouslyExisting = false;
     private static String domain;
 
@@ -47,10 +47,15 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         Playlist tempCombinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
 
+
+        combinedList = new Playlist();
         if (tempCombinedList != null)
         {
-            combinedList = new Playlist();
             combinedList.addSongs(tempCombinedList.getSongInfo());
+        }
+        else
+        {
+            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
         }
 
         if (oldPlaylist == null) {
@@ -63,21 +68,16 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             oldPlaylist.setSongInfo(playlist.getSongInfo());
             oldPlaylist.setName(playlist.getName());
             oldPlaylist.setOwner(playlist.getOwner());
-            oldPlaylist.setSongAdapter(playlist.getAdapterList());
         }
         if (songNames == null || combinedList == null)
         {
             songNames = new String[0];
         }
-        if (combinedList == null)
-        {
-            combinedList = new Playlist();
-            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
-        }
         if (playlist == null) {
 
             playlist = new Playlist();
             newList = true;
+            songNames = new String[0];
         }
         else {
             songNames = new String[playlist.getSongInfo().size()];
@@ -175,7 +175,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     }
 
     public boolean isListInDatabase() {
-        return (!newList && playlist != null && !playlist.getOwner().equals("") && previouslyExisting);
+        return (playlist != null && !newList && !playlist.getOwner().equals("") && previouslyExisting);
     }
 
     private void handleDelete()
@@ -190,11 +190,9 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             dba.execute(params);
 
             ArrayList<Playlist> playlists = OneStreamActivity.getPlaylistHandler().getPlaylists();
-            ArrayList<String> playlistNames = OneStreamActivity.getPlaylistHandler().getPlaylistNames();
             if (playlists != null)
             {
                 playlists.remove(oldPlaylist);
-                playlistNames.remove(oldPlaylist.getName());
             }
         }
 
@@ -215,9 +213,8 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         EditText playlistTitle = (EditText) findViewById(R.id.playListName);
 
         ArrayList<Playlist> playlists = OneStreamActivity.getPlaylistHandler().getPlaylists();
-        ArrayList<String> playlistNames = OneStreamActivity.getPlaylistHandler().getPlaylistNames();
 
-        if (newList) {
+        if (!isListInDatabase()) {
             playlist.setName(playlistTitle.getText().toString());
             params[0] = "CreatePlaylist";
         }
@@ -235,11 +232,9 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         {
             if (oldPlaylist != null) {
                 playlists.remove(oldPlaylist);
-                playlistNames.remove(oldPlaylist.getName());
             }
             if (!playlists.contains(playlist)) {
                 playlists.add(playlist);
-                playlistNames.add(playlist.getName());
             }
         }
 
@@ -252,7 +247,6 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         settings.putExtras(b);
         startActivityForResult(settings, 0);
     }
-
 
     @Override
     public void processFinish(Object[] result) {

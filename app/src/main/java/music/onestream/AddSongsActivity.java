@@ -52,8 +52,8 @@ public class AddSongsActivity extends Activity {
             }
 
             final ListView songsList = (ListView) findViewById(R.id.songList);
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                    (this, android.R.layout.simple_list_item_1, combinedList.getAdapterList());
+            final ArrayAdapter<Song> adapter = new ArrayAdapter<Song>
+                    (this, android.R.layout.simple_list_item_1, combinedList.getSongInfo());
             songsList.setAdapter(adapter);
 
             songsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

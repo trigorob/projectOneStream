@@ -1,6 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -60,6 +67,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:10.0.1'
     // TODO: Add play/music api here
     testCompile 'junit:junit:4.12'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr1'
 }
 
 buildscript {

@@ -8,7 +8,6 @@ import com.spotify.sdk.android.player.Connectivity;
 public class PlaylistHandler implements AsyncResponse {
 
     //Increment this after getting spotify songs. TODO: Implement this functionality
-    private static int spotifySongOffset= 0;
     private static int totalLocalSongs = 0;
 
     private String domain;
@@ -23,7 +22,6 @@ public class PlaylistHandler implements AsyncResponse {
     private static Playlist listContent;
     private static Playlist spotifyListContent;
     private static ArrayList<Playlist> playlists;
-    private static ArrayList<String> playlistNames;
     private static Playlist combinedList;
 
     private Context context;
@@ -76,6 +74,7 @@ public class PlaylistHandler implements AsyncResponse {
             mls.SAR = this;
             mls.execute(params);
             localSongOffset+=20;
+            OneStreamActivity.notifyAdapters();
         }
     }
 
@@ -99,12 +98,14 @@ public class PlaylistHandler implements AsyncResponse {
             ms = new MusicSorter(listContent.getSongInfo(), type);
             retVal = ms.getRetArr();
             listContent.setSongInfo((ArrayList<Song>) retVal[0]);
+            OneStreamActivity.notifyAdapters();
         }
         else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
         {
             ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
             retVal = ms.getRetArr();
             spotifyListContent.setSongInfo((ArrayList<Song>) retVal[0]);
+            OneStreamActivity.notifyAdapters();
         }
 
         else if (playlists != null && list.equals("Playlists"))
@@ -114,41 +115,37 @@ public class PlaylistHandler implements AsyncResponse {
             ps = new PlaylistSorter(playlists, type);
             retVal = ps.getRetArr();
             playlists = ((ArrayList<Playlist>) retVal[0]);
-            playlistNames = new ArrayList<String>();
-            for (int i = 0; i < playlists.size(); i++)
-            {
-                playlistNames.add(playlists.get(i).getName());
-            }
+
         }
         OneStreamActivity.notifyAdapters();
     }
 
     public void initSongLists() {
+
         if (listContent == null)
         {
             listContent = new Playlist();
-        }
-
-        if (spotifyListContent == null)
-        {
-            spotifyListContent = new Playlist();
-        }
-
-        if (combinedList == null)
-        {
-            combinedList = new Playlist();
         }
 
         if (listContent.size() == 0 || isDirectoryChanged()) {
             setMusicDir(directory);
             directoryChanged();
         }
+
+        if (spotifyListContent == null)
+        {
+            spotifyListContent = new Playlist();
+        }
         getSpotifyLibrary();
+
+        if (combinedList == null)
+        {
+            combinedList = new Playlist();
+        }
 
         if (playlists == null || playlists.size() == 0)
         {
             playlists = new ArrayList<Playlist>();
-            playlistNames = new ArrayList<String>();
             getRemotePlaylists(getDomain());
         }
     }
@@ -157,7 +154,6 @@ public class PlaylistHandler implements AsyncResponse {
     public static void resetPlaylists()
     {
         playlists = null;
-        playlistNames = null;
         dba = null;
     }
 
@@ -196,7 +192,8 @@ public class PlaylistHandler implements AsyncResponse {
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(context, "Spotify");
 
-        if (accessToken != null && isConnected()) {
+        if (accessToken != null && isConnected() && spotifyListContent.size() == 0) {
+            spotifyListContent = new Playlist();
             musicGetterHandler.setSpotifyMusicGetter(new SpotifyMusicGetter(accessToken, this));
             musicGetterHandler.initSpotifyMusicGetter();
             playerHandler.initSpotifyPlayer(accessToken);
@@ -218,12 +215,8 @@ public class PlaylistHandler implements AsyncResponse {
         else if (type.equals("DatabaseActionsHandler"))
         {
             playlists = (ArrayList<Playlist>) retVal;
-            for (int i = 0; i < playlists.size(); i++)
-            {
-                playlistNames.add(playlists.get(i).getName());
-            }
             sortLists(sortType, "Playlists");
-            OneStreamActivity.notifyAdapters();
+            OneStreamActivity.resetPlaylistAdapter(context);
         }
 
         else if (type.equals("MusicLoaderService")) {
@@ -235,7 +228,6 @@ public class PlaylistHandler implements AsyncResponse {
         } else if (type.equals("SpotifyMusicGetter")) {
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;
             if (tempList.size() < 20) {
-                spotifySongOffset = 1000;
                 sortLists(sortType, "Spotify");
             }
 
@@ -249,7 +241,6 @@ public class PlaylistHandler implements AsyncResponse {
     public ArrayList<Playlist> getPlaylists() {
         return playlists;
     }
-    public ArrayList<String> getPlaylistNames() {return playlistNames;}
 
 }
 

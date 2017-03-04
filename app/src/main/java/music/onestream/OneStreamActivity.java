@@ -37,10 +37,10 @@ public class OneStreamActivity extends AppCompatActivity {
 
     // variable declaration
     private static ListView mainList;
-    private static ArrayAdapter<String> adapter;
-    private static ArrayAdapter<String> spotifyAdapter;
-    private static ArrayAdapter<String> playlistAdapter;
-    private static ArrayAdapter<String> googleAdapter;
+    private static ArrayAdapter<Song> adapter;
+    private static ArrayAdapter<Song> spotifyAdapter;
+    private static ArrayAdapter<Playlist> playlistAdapter;
+    private static ArrayAdapter<Song> googleAdapter;
 
 /**
  * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -92,11 +92,7 @@ private ViewPager mViewPager;
         {
             spotifyAdapter.notifyDataSetChanged();
         }
-        if (playlistAdapter != null) {
-            playlistAdapter.notifyDataSetChanged();
-        }
         mainList.invalidateViews();
-
     }
 
     @Override
@@ -141,17 +137,27 @@ private ViewPager mViewPager;
         initButtonListeners();
     }
 
+    public static void resetPlaylistAdapter(Context context) {
+        playlistAdapter = new ArrayAdapter<Playlist>(context, android.R.layout.simple_list_item_1,
+                playlistHandler.getPlaylists());
+        if (playlistAdapter != null) {
+            playlistAdapter.notifyDataSetChanged();
+        }
+        mainList.invalidateViews();
+    }
+
     public void initListDisplay() {
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                playlistHandler.getList("Local").getAdapterList());
-        spotifyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                playlistHandler.getList("Spotify").getAdapterList());
-        playlistAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-               playlistHandler.getPlaylistNames());
+
+        adapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1,
+                playlistHandler.getList("Local").getSongInfo());
+        spotifyAdapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1,
+                playlistHandler.getList("Spotify").getSongInfo());
+        playlistAdapter = new ArrayAdapter<Playlist>(this, android.R.layout.simple_list_item_1,
+               playlistHandler.getPlaylists());
 
         //TODO: Implement. Placeholder so we dont have to make lists visible/invisible
-        googleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                new ArrayList<String>());
+        googleAdapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1,
+                new ArrayList<Song>());
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -176,6 +182,7 @@ private ViewPager mViewPager;
     }
 
     public void initPlayerHandler() {
+        final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
         final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.Rewind);
@@ -183,8 +190,8 @@ private ViewPager mViewPager;
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
 
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next,
-                rewind, random, mainList, seekbar, "OneStreamActivity");
+        playerHandler = new PlayerActionsHandler(this.getApplicationContext(), fabIO, prev, next,
+                rewind, random, loginButton, mainList, seekbar, "OneStreamActivity");
 
     }
 
@@ -212,6 +219,15 @@ private ViewPager mViewPager;
 
     }
 
+    public static void setLoginButtonVisible(boolean visible, Button loginButton) {
+        if (visible) {
+            loginButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            loginButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
     public static PlaylistHandler getPlaylistHandler() {
         return playlistHandler;
     }
@@ -219,7 +235,7 @@ private ViewPager mViewPager;
     public void initButtonListeners() {
 
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
-        loginButton.setVisibility(View.INVISIBLE);
+        setLoginButtonVisible(false, loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,26 +258,26 @@ private ViewPager mViewPager;
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
                         mainList.setAdapter(adapter);
-                        loginButton.setVisibility(View.INVISIBLE);
+                        setLoginButtonVisible(false, loginButton);;
                         break;
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
                         if (playerHandler.isSpotifyLoggedOut())
                         {
-                            loginButton.setVisibility(View.VISIBLE);
+                            setLoginButtonVisible(true, loginButton);;
                         }
                         break;
                     case 2:
                         //Todo: change to googlemusicStrings
                         if ((playlistHandler.getList("Spotify") == null))
                         {
-                            loginButton.setVisibility(View.VISIBLE);
+                            setLoginButtonVisible(true, loginButton);;
                         }
                         mainList.setAdapter(googleAdapter);
                         break;
                     case 3:
                         mainList.setAdapter(playlistAdapter);
-                        loginButton.setVisibility(View.INVISIBLE);
+                        setLoginButtonVisible(false, loginButton);;
                         break;
                 }
             }

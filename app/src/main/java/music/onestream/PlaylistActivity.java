@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,8 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
-
-import com.spotify.sdk.android.player.Spotify;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ import java.util.ArrayList;
 public class PlaylistActivity extends AppCompatActivity {
     private static PlayerActionsHandler playerHandler;
     private Playlist playlist;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<Song> adapter;
     private ListView mainList;
     private Button loginLauncherLinkerButton;
     final Handler mHandler = new Handler();
@@ -45,16 +42,15 @@ public class PlaylistActivity extends AppCompatActivity {
         setTitle(playlist.getName());
     }
 
-    public void checkForInvalidSongs() {
+    public void checkForInvalidSongs(ArrayList<Song> playlistAdapter) {
         String services = "";
         Boolean spotifyAvailable = true;
-        int i = 0;
-        while (i < playlist.getAdapterList().size()){
+        for (int i = 0; i < playlist.getSongInfo().size(); i++){
             Song s = playlist.getSongInfo().get(i);
             if (s.type.equals("Local")) {
                 File f = new File(s.getUri());
-                if (!f.exists() || f.isDirectory()) {
-                    playlist.getAdapterList().remove(i);
+                if (f.exists() && !f.isDirectory()) {
+                    playlistAdapter.add(s);
                 }
             }
             else if (s.type.equals("Spotify") && playerHandler.isSpotifyLoggedOut() && spotifyAvailable)
@@ -66,7 +62,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
             //TODO: Add google case for not logged in here
             else {
-                i++;
+                playlistAdapter.add(s);
             }
         }
         String buttonText = "Login to Services to access Playlist: " + services;
@@ -76,12 +72,12 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void initSongList() {
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+        ArrayList<Song> playlistAdapter = new ArrayList<Song>();
 
         //Handle songs not accessible by device
-        checkForInvalidSongs();
+        checkForInvalidSongs(playlistAdapter);
 
-        adapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1, playlist.getAdapterList());
+        adapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, playlistAdapter);
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -112,13 +108,14 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     private void initPlayerHandler() {
+        final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButtonPL);
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIOPL);
         final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.RandomPL);
         final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.RewindPL);
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevPL);
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextPL);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarPL);
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, mainList, seekbar, "PlaylistActivity");
+        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, loginButton, mainList, seekbar, "PlaylistActivity");
 
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
