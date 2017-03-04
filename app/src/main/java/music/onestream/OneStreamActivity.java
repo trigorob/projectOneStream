@@ -148,15 +148,15 @@ private ViewPager mViewPager;
 
     public void initListDisplay() {
 
-        adapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1,
+        adapter = new SongAdapter(this, R.layout.songlayout,
                 playlistHandler.getList("Local").getSongInfo());
-        spotifyAdapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1,
+        spotifyAdapter = new SongAdapter(this, R.layout.songlayout,
                 playlistHandler.getList("Spotify").getSongInfo());
         playlistAdapter = new ArrayAdapter<Playlist>(this, android.R.layout.simple_list_item_1,
                playlistHandler.getPlaylists());
 
         //TODO: Implement. Placeholder so we dont have to make lists visible/invisible
-        googleAdapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1,
+        googleAdapter = new SongAdapter(this,R.layout.songlayout,
                 new ArrayList<Song>());
         mainList.setAdapter(adapter);
 

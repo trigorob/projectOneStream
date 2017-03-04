@@ -77,7 +77,7 @@ public class PlaylistActivity extends AppCompatActivity {
         //Handle songs not accessible by device
         checkForInvalidSongs(playlistAdapter);
 
-        adapter = new ArrayAdapter<Song>(this, android.R.layout.simple_list_item_1, playlistAdapter);
+        adapter = new SongAdapter(this, R.layout.songlayout, playlistAdapter);
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

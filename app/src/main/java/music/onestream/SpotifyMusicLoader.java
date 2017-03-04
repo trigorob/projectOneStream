@@ -46,7 +46,11 @@ import java.util.logging.Logger;
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("accept", "application/json");
                 //Get the songs as an object
-                result = JSONExtractor.processSpotifyJSON(JSONExtractor.extractJSON(conn), (int) params[1]);
+                String json = (JSONExtractor.extractJSON(conn));
+                if (json != null)
+                {
+                    result = JSONExtractor.processSpotifyJSON(json, (int) params[1]);
+                }
             } catch (IOException IOE) {
 
             }

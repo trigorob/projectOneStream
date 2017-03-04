@@ -75,7 +75,10 @@ public class DatabaseActionsHandler extends AsyncTask {
             e.printStackTrace();
         }
         String json = JSONExtractor.extractJSON(conn);
-        return JSONExtractor.processPlaylistJSON(json);
+        if (json != null) {
+            return JSONExtractor.processPlaylistJSON(json);
+        }
+        return null;
     }
 
     private static void createPlaylist(Playlist playlist, boolean update) {

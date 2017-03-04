@@ -34,7 +34,6 @@ public class JSONExtractor {
                 }
                 br.close();
             }
-
         }
         catch (MalformedURLException ex) {
             ex.printStackTrace();
