@@ -18,28 +18,28 @@ import java.util.List;
  * Created by ruspe_000 on 2017-03-04.
  */
 
-public class SongAdapter extends ArrayAdapter<Song> {
+public class PlaylistAdapter extends ArrayAdapter<Playlist> {
 
-    private ArrayList<Song> songs;
+    private ArrayList<Playlist> playlists;
 
-        public SongAdapter(Context context, int textViewResourceId, List<Song> songs) {
-            super(context, textViewResourceId, songs);
-            this.songs = (ArrayList<Song>) songs;
-        }
+    public PlaylistAdapter(Context context, int textViewResourceId, List<Playlist> playlists) {
+        super(context, textViewResourceId, playlists);
+        this.playlists = (ArrayList<Playlist>) playlists;
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View customView = convertView;
-        Song song = getItem(position);
+        Playlist playlist = getItem(position);
         if (customView == null) {
-          final LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-          customView = vi.inflate(R.layout.songlayout, null);
+            final LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            customView = vi.inflate(R.layout.songlayout, null);
         }
 
         TextView t1 = (TextView) customView.findViewById(R.id.listSongName);
-        t1.setText(song.getName());
-        TextView t2= (TextView) customView.findViewById(R.id.listSongArtistAlbum);
-        t2.setText(song.getArtist() + " ---- " + song.getAlbum());
+        t1.setText(playlist.getName());
+        TextView t2 = (TextView) customView.findViewById(R.id.listSongArtistAlbum);
+        t2.setText(playlist.getSongInfo().size() + " Songs");
 
         return customView;
     }

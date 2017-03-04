@@ -21,7 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.AdapterView;
@@ -92,6 +94,10 @@ private ViewPager mViewPager;
         {
             spotifyAdapter.notifyDataSetChanged();
         }
+        if (playlistAdapter != null)
+        {
+            playlistAdapter.notifyDataSetChanged();
+        }
         mainList.invalidateViews();
     }
 
@@ -137,13 +143,9 @@ private ViewPager mViewPager;
         initButtonListeners();
     }
 
-    public static void resetPlaylistAdapter(Context context) {
-        playlistAdapter = new ArrayAdapter<Playlist>(context, android.R.layout.simple_list_item_1,
+    public static void initPlaylistAdapter(Context context) {
+        playlistAdapter = new PlaylistAdapter(context, R.layout.songlayout,
                 playlistHandler.getPlaylists());
-        if (playlistAdapter != null) {
-            playlistAdapter.notifyDataSetChanged();
-        }
-        mainList.invalidateViews();
     }
 
     public void initListDisplay() {
@@ -152,7 +154,7 @@ private ViewPager mViewPager;
                 playlistHandler.getList("Local").getSongInfo());
         spotifyAdapter = new SongAdapter(this, R.layout.songlayout,
                 playlistHandler.getList("Spotify").getSongInfo());
-        playlistAdapter = new ArrayAdapter<Playlist>(this, android.R.layout.simple_list_item_1,
+        playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                playlistHandler.getPlaylists());
 
         //TODO: Implement. Placeholder so we dont have to make lists visible/invisible
@@ -262,7 +264,7 @@ private ViewPager mViewPager;
                         break;
                     case 1:
                         mainList.setAdapter(spotifyAdapter);
-                        if (playerHandler.isSpotifyLoggedOut())
+                        if (playerHandler.isSpotifyLoggedOut() && spotifyAdapter.getCount() == 0)
                         {
                             setLoginButtonVisible(true, loginButton);;
                         }
@@ -340,6 +342,13 @@ private ViewPager mViewPager;
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            notifyAdapters();
+            mainList.invalidateViews();
         }
 
     }

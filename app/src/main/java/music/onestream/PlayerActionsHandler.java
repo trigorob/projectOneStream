@@ -339,7 +339,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public boolean isSpotifyLoggedOut()
     {
-        return (spotPlayer == null || (spotPlayer != null && !spotPlayer.isLoggedIn()));
+        return (spotPlayer == null || !spotPlayer.isLoggedIn());
     }
 
 

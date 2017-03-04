@@ -216,7 +216,8 @@ public class PlaylistHandler implements AsyncResponse {
         {
             playlists = (ArrayList<Playlist>) retVal;
             sortLists(sortType, "Playlists");
-            OneStreamActivity.resetPlaylistAdapter(context);
+            OneStreamActivity.initPlaylistAdapter(context);
+            OneStreamActivity.notifyAdapters();
         }
 
         else if (type.equals("MusicLoaderService")) {
