@@ -2,6 +2,7 @@ package music.onestream;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -11,36 +12,19 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
+import java.util.ArrayList;
+
 /**
  * Created by jovan on 2/25/17.
  */
 
-public class SongActivity extends Activity {
+public class SongActivity extends OSActivity {
 
     private static PlayerActionsHandler playerHandler;
-    private static PlaylistHandler playlistHandler;
-
-    // variable declaration
+    private static Playlist playlist;
     private static ListView mainList;
     private static ArrayAdapter<Song> adapter;
-    private static ArrayAdapter<Song> spotifyAdapter;
-    private static ArrayAdapter<Playlist> playlistAdapter;
-    private static ArrayAdapter<Song> googleAdapter;
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
+    final Handler mHandler = new Handler();
 
     @Override
     public void onDestroy() {
@@ -72,6 +56,16 @@ public class SongActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.song_activity);
 
+        mainList = (ListView) findViewById(R.id.ListViewSV);
+        playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+
+        initMainList();
+        initPlayerHandler();
+    }
+
+    private void initMainList() {
+        adapter = new SongAdapter(this, R.layout.songlayout, playlist.getSongInfo());
+        mainList.setAdapter(adapter);
     }
 
 
@@ -81,10 +75,26 @@ public class SongActivity extends Activity {
         final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.RewindSV);
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevSV);
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextSV);
-        //final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarSV);
-
+        final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarSV);
+        playerHandler =
+                initPlayerHandler(this.getApplicationContext(), "SongActivity",
+                        null, fabIO, prev, next, rewind,
+                        random, seekbar, mainList);
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(getBaseContext(), "Spotify");
         playerHandler.initSpotifyPlayer(accessToken);
+
+        int songIndex = getIntent().getIntExtra("songIndex", -1);
+        playerHandler.currentSongListPosition = songIndex;
+
+        //Seekbar tracker
+        SongActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerHandler.updateSeekBar();
+                mHandler.postDelayed(this, 1000);
+            }
+        });
+
     }
 }

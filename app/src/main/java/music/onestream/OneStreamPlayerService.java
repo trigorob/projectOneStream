@@ -157,6 +157,8 @@ public class OneStreamPlayerService extends Service {
             playerHandler = PlaylistActivity.getPlayerHandler();
         } else if (currentActivity.equalsIgnoreCase("OneStreamActivity")) {
             playerHandler = OneStreamActivity.getPlayerHandler();
+        } else if (currentActivity.equalsIgnoreCase("SongActivity")) {
+            playerHandler = SongActivity.getPlayerHandler();
         }
     }
 

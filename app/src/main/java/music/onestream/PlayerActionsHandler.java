@@ -1,5 +1,6 @@
 package music.onestream;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -206,6 +208,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                             }
 
                         }
+                        else {
+                            playSong(currentSongListPosition);
+                        }
                     }
                 };
             }});
@@ -378,7 +383,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     // Play song
     public void playSong(int songIndex) {
-
         resetPlayers();
         if (songIndex == -1 && mainList.getAdapter() != null && mainList.getAdapter().getCount() > 0)
         {
@@ -396,6 +400,28 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             return;
         }
         String type = currentSong.getType();
+
+        //Todo: Setup so that we switch IFF option toggle is set AND not already in songActivity
+        if (!this.parentClass.equals("SongActivity")) {
+
+            Intent songActivity = new Intent(context, SongActivity.class);
+            Bundle b = new Bundle();
+            Playlist p = null;
+            if (type.equals("Local") || type.equals("LocalRaw"))
+            {
+                p = OneStreamActivity.getPlaylistHandler().getList("Local");
+            }
+            else if (type.equals("Spotify"))
+            {
+                p = OneStreamActivity.getPlaylistHandler().getList("Spotify");
+            }
+            b.putSerializable("Playlist", p);
+            b.putInt("songIndex", songIndex);
+            songActivity.putExtras(b);
+            context.startActivity(songActivity);
+            return;
+        }
+
 
         if (type.equals("Local") || type.equals("LocalRaw")) {
             playLocalSong(currentSong);
@@ -486,19 +512,16 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         else {
             next = 0;
         }
-        mainList.requestFocusFromTouch();
-        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
         currentSongListPosition = next;
         mainList.setSelection(next);
+        playSong(next);
     }
 
 
     public void playRandomSong() {
         if (mainList.getAdapter().getCount() > 0) {
             int choice = (int) (Math.random() * mainList.getAdapter().getCount());
-            View choiceRow = getViewByPosition(mainList, choice);
-            mainList.requestFocusFromTouch();
-            mainList.performItemClick(mainList, choice, mainList.getItemIdAtPosition(choice));
+            playSong(choice);
             currentSongListPosition = choice;
         }
     }
@@ -517,11 +540,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         else {
             next = mainList.getCount()-1;
         }
-        View nextRow = getViewByPosition(mainList,next);
-
-        mainList.requestFocusFromTouch();
-        mainList.performItemClick(mainList, next, mainList.getItemIdAtPosition(next));
         currentSongListPosition = next;
+        playSong(next);
     }
 
     //Use this to grab a row from music list
@@ -612,8 +632,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {}
     @Override
-    public void onLoggedIn() {
-        OneStreamActivity.setLoginButtonVisible(false, loginButton);
+    public void onLoggedIn()
+    {
+        if (loginButton != null) {
+            OneStreamActivity.setLoginButtonVisible(false, loginButton);
+        }
     }
     @Override
     public void onLoggedOut() {}

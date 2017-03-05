@@ -36,9 +36,15 @@
             android:textSize="15sp"
             android:gravity="center"
             android:text="Artist Name"/>
-
-
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/ListViewSV"
+        android:choiceMode="singleChoice"
+        android:layout_width="0dp"
+        android:layout_height="0dp">
+    </ListView>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,7 +55,7 @@
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/seekBarPL"/>
+            android:id="@+id/seekBarSV"/>
     </LinearLayout>
 
     <LinearLayout

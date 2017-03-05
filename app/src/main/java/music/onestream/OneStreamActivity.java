@@ -32,7 +32,7 @@ import android.widget.ListView;
 
 import com.spotify.sdk.android.player.Connectivity;
 
-public class OneStreamActivity extends AppCompatActivity {
+public class OneStreamActivity extends OSActivity {
 
     private static PlayerActionsHandler playerHandler;
     private static PlaylistHandler playlistHandler;
@@ -183,7 +183,7 @@ private ViewPager mViewPager;
             }});
     }
 
-    public void initPlayerHandler() {
+    private void initPlayerHandler() {
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
         final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
         final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
@@ -191,10 +191,10 @@ private ViewPager mViewPager;
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.Prev);
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
-
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(), fabIO, prev, next,
-                rewind, random, loginButton, mainList, seekbar, "OneStreamActivity");
-
+        playerHandler =
+                initPlayerHandler(this.getApplicationContext(), "OneStreamActivity",
+                        loginButton, fabIO, prev, next, rewind,
+                        random, seekbar, mainList);
     }
 
     public void initPlaylistHandler() {
@@ -233,6 +233,7 @@ private ViewPager mViewPager;
     public static PlaylistHandler getPlaylistHandler() {
         return playlistHandler;
     }
+
 
     public void initButtonListeners() {
 
@@ -304,10 +305,6 @@ private ViewPager mViewPager;
 
     public static Intent createIntent(Context context) {
         return new Intent(context, OneStreamActivity.class);
-    }
-
-    public static PlayerActionsHandler getPlayerHandler() {
-        return playerHandler;
     }
 
     /**

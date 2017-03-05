@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Created by ruspe_000 on 2017-02-21.
  */
 
-public class PlaylistActivity extends AppCompatActivity {
+public class PlaylistActivity extends OSActivity {
     private static PlayerActionsHandler playerHandler;
     private Playlist playlist;
     private ArrayAdapter<Song> adapter;
@@ -115,11 +115,10 @@ public class PlaylistActivity extends AppCompatActivity {
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevPL);
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextPL);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarPL);
-        playerHandler = new PlayerActionsHandler(this.getApplicationContext(),fabIO, prev, next, rewind, random, loginButton, mainList, seekbar, "PlaylistActivity");
-
-        CredentialsHandler CH = new CredentialsHandler();
-        final String accessToken = CH.getToken(getBaseContext(), "Spotify");
-        playerHandler.initSpotifyPlayer(accessToken);
+        playerHandler =
+                 initPlayerHandler(this.getApplicationContext(), "PlaylistActivity",
+                         loginButton, fabIO, prev, next, rewind,
+                        random, seekbar, mainList);
     }
 
     @Override
@@ -140,10 +139,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public static PlayerActionsHandler getPlayerHandler() {
-        return playerHandler;
     }
 
     @Override
