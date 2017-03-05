@@ -1,38 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playlist_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:vmSafeMode="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent">
 
 
-    <TextView
-        android:layout_height="250dp"
-        android:layout_width="250dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="PLACEHOLDER FOR ALBUM ART"
-        android:background="@color/colorPrimaryDark"
-    />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="375dp"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:text="Album Name"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="405dp"
-        android:textSize="15sp"
-        android:gravity="center"
-        android:text="Artist Name"/>
+        <TextView
+            android:layout_height="250dp"
+            android:layout_width="250dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="60dp"
+            android:text="PLACEHOLDER FOR ALBUM ART"
+            android:background="@color/colorPrimaryDark"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="310dp"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="Album Name"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="340dp"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:text="Artist Name"/>
 
-    <SeekBar
-        android:layout_marginTop="445dp"
+
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"/>
+        android:layout_marginBottom="88dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="100">
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBarPL"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_weight="100">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/PrevSV"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@android:color/black"
+            android:layout_gravity="bottom|start"
+            app:srcCompat="@android:drawable/ic_media_previous"
+            android:clickable="true"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/RewindSV"
+            app:backgroundTint="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            app:srcCompat="@android:drawable/ic_media_rew"
+            android:layout_marginBottom="16dp"
+            android:clickable="true" />
 
 
-</RelativeLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabIOSV"
+            android:height="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            app:backgroundTint="@android:color/black"
+            android:src="@android:drawable/ic_media_play"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/NextSV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            app:backgroundTint="@android:color/black"
+            app:srcCompat="@android:drawable/ic_media_next"
+            android:layout_marginBottom="16dp"
+            android:clickable="true" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/RandomSV"
+            app:backgroundTint="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            app:srcCompat="@drawable/shuffle"
+            android:clickable="true"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
