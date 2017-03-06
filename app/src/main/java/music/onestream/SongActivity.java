@@ -1,6 +1,9 @@
 package music.onestream;
 
-import android.graphics.drawable.BitmapDrawable;
+import android.content.ContentResolver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 /**
  * Created by jovan on 2/25/17.
  */
@@ -21,6 +23,7 @@ public class SongActivity extends OSActivity {
     private static Playlist playlist;
     private ListView mainList;
     private static ArrayAdapter<Song> adapter;
+    private static ContentResolver contentResolver;
     final Handler mHandler = new Handler();
 
     static TextView artistName;
@@ -43,7 +46,7 @@ public class SongActivity extends OSActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        playerHandler.onResume();
+        playerHandler.playSong(playerHandler.currentSongListPosition);
     }
 
 
@@ -57,6 +60,7 @@ public class SongActivity extends OSActivity {
         artistName = (TextView) findViewById(R.id.artistName);
         albumName = (TextView) findViewById(R.id.albumName);
         albumArt = (ImageView) findViewById(R.id.album);
+        contentResolver = this.getContentResolver();
         title = getSupportActionBar();
 
         initMainList();
@@ -77,12 +81,28 @@ public class SongActivity extends OSActivity {
         {
             albumArt.setImageResource(R.mipmap.logo);
         }
+        else if (song.getType().equals("Local"))
+        {
+            setLocalAlbumArt(song);
+        }
     }
 
-    public static void setAlbumArt(BitmapDrawable bmp) {
-        if (bmp.getBitmap() != null) {
-            albumArt.setImageBitmap(bmp.getBitmap());
+    public static void setAlbumArt(Bitmap bmp) {
+        if (bmp != null) {
+            albumArt.setImageBitmap(bmp);
+            albumArt.invalidate();
         }
+    }
+
+    public static void setLocalAlbumArt(Song song) {
+
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        mmr.setDataSource(song.getAlbumArt());
+        byte[] art = mmr.getEmbeddedPicture();
+        Bitmap image = BitmapFactory.decodeByteArray(art, 0, art.length);
+
+        image = Bitmap.createScaledBitmap(image, 300, 300, false);
+        albumArt.setImageBitmap(image);
     }
 
     private void initMainList() {
@@ -102,10 +122,6 @@ public class SongActivity extends OSActivity {
                 initPlayerHandler(this.getApplicationContext(), "SongActivity",
                         null, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
-        CredentialsHandler CH = new CredentialsHandler();
-        final String accessToken = CH.getToken(getBaseContext(), "Spotify");
-        playerHandler.initSpotifyPlayer(accessToken);
-
         int songIndex = getIntent().getIntExtra("songIndex", -1);
         playerHandler.currentSongListPosition = songIndex;
 

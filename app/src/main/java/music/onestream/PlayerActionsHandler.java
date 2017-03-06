@@ -1,20 +1,20 @@
 package music.onestream;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -28,6 +28,8 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
+
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -137,6 +139,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     {
         return this.randomNext;
     }
+
     public MediaPlayer getMediaPlayer()
     {
         return this.mp;
@@ -416,11 +419,13 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             {
                 p = OneStreamActivity.getPlaylistHandler().getList("Spotify");
             }
+
             b.putSerializable("Playlist", p);
             b.putSerializable("songIndex", songIndex);
             songActivity.putExtras(b);
             songActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(songActivity);
+            this.onDestroy();
             return;
         }
 
@@ -445,12 +450,19 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void setSongViewDisplay(Song song) {
         if (this.parentClass.equals("SongActivity")) {
             SongActivity.initDisplay(song);
-            String url = song.getAlbumArt();
-            Object[] params = new Object[1];
-            params[0] = url;
-            ImageGetter imageGetter = new ImageGetter();
-            imageGetter.SAR = this;
-            imageGetter.execute(params);
+            if (!song.getType().equals("Local") && !song.getType().equals("LocalRaw"))
+            {
+                String url = song.getAlbumArt();
+                Object[] params = new Object[1];
+                params[0] = url;
+                ImageGetter imageGetter = new ImageGetter();
+                imageGetter.SAR = this;
+                imageGetter.execute(params);
+            }
+            else if (song.getType().equals("Local"))
+            {
+                SongActivity.setLocalAlbumArt(song);
+            }
         }
     }
 
@@ -681,8 +693,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
 
         BitmapDrawable image = (BitmapDrawable) result[0];
+        Bitmap bitmap = image.getBitmap();
         if (image != null) {
-            SongActivity.setAlbumArt(image);
+            SongActivity.setAlbumArt(bitmap);
         }
     }
 
