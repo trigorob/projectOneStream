@@ -15,6 +15,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 
 import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -162,6 +165,27 @@ private ViewPager mViewPager;
                 playlistHandler.getList("Spotify").getSongInfo());
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                playlistHandler.getPlaylists());
+
+        EditText textFilter = (EditText) findViewById(R.id.songFilter);
+        textFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                if (mViewPager.getCurrentItem() == 3)
+                {
+                    ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
+                }
+                else
+                {
+                    ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
+                }
+                notifyAdapters();
+                mainList.invalidateViews();
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+           });
 
         //TODO: Implement. Placeholder so we dont have to make lists visible/invisible
         googleAdapter = new SongAdapter(this,R.layout.songlayout,

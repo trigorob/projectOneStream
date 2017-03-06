@@ -443,16 +443,15 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     public void setSongViewDisplay(Song song) {
-        if (this.parentClass.equals("SongActivity"))
-        {
+        if (this.parentClass.equals("SongActivity")) {
             SongActivity.initDisplay(song);
-        }
             String url = song.getAlbumArt();
             Object[] params = new Object[1];
             params[0] = url;
             ImageGetter imageGetter = new ImageGetter();
             imageGetter.SAR = this;
             imageGetter.execute(params);
+        }
     }
 
     public void playLocalSong(Song currentSong) {

@@ -4,7 +4,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.view.Menu;
+import android.support.v7.app.ActionBar;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -26,6 +26,7 @@ public class SongActivity extends OSActivity {
     static TextView artistName;
     static TextView albumName;
     static ImageView albumArt;
+    static ActionBar title;
 
     @Override
     public void onDestroy() {
@@ -56,6 +57,7 @@ public class SongActivity extends OSActivity {
         artistName = (TextView) findViewById(R.id.artistName);
         albumName = (TextView) findViewById(R.id.albumName);
         albumArt = (ImageView) findViewById(R.id.album);
+        title = getSupportActionBar();
 
         initMainList();
         initPlayerHandler();
@@ -68,6 +70,7 @@ public class SongActivity extends OSActivity {
     public static void initDisplay(Song song) {
         artistName.setText(song.getArtist());
         albumName.setText(song.getAlbum());
+        title.setTitle(song.getName());
         String artURL = song.getAlbumArt();
 
         if (artURL == null)
@@ -77,7 +80,9 @@ public class SongActivity extends OSActivity {
     }
 
     public static void setAlbumArt(BitmapDrawable bmp) {
-        albumArt.setImageBitmap(bmp.getBitmap());
+        if (bmp.getBitmap() != null) {
+            albumArt.setImageBitmap(bmp.getBitmap());
+        }
     }
 
     private void initMainList() {

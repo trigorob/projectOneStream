@@ -23,7 +23,18 @@
             android:theme="?attr/actionBarTheme"
             android:minHeight="?attr/actionBarSize"
             android:id="@+id/toolbar"
-            android:layout_weight="1" />
+            android:layout_weight="1">
+
+        <EditText
+            android:layout_marginLeft ="100dp"
+            android:layout_width="150dp"
+            android:gravity="end"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/songFilter"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
+        </android.support.v7.widget.Toolbar>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/container"
@@ -79,7 +90,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="88dp"
         android:layout_gravity="bottom"
-        android:layout_weight="100">
+        android:layout_weight="100"
+        android:isScrollContainer="false">
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,7 +102,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_weight="100">
+        android:layout_weight="100"
+        android:isScrollContainer="false">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/Prev"
