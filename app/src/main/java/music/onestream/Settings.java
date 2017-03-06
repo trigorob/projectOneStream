@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.github.angads25.filepicker.controller.DialogSelectionListener;
 import com.github.angads25.filepicker.model.DialogConfigs;
@@ -49,8 +51,31 @@ public class Settings extends Activity {
             }
         });
 
+        final ToggleButton songViewToggle = (ToggleButton) findViewById(R.id.songViewToggleButton);
+        SharedPreferences settings = getSharedPreferences("SongView", 0);
+        if (settings.getBoolean("SongView", false) == true)
+        {
+            songViewToggle.setChecked(true);
+        }
 
-        SharedPreferences settings = getSharedPreferences("dirInfo", 0);
+        songViewToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    SharedPreferences settings = getSharedPreferences("SongView", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    if (songViewToggle.isChecked())
+                    {
+                        editor.putBoolean("SongView", true);
+                    }
+                    else
+                    {
+                        editor.putBoolean("SongView", false);
+                    }
+                    editor.commit();
+                }
+            });
+
+        settings = getSharedPreferences("dirInfo", 0);
         final String directory = settings.getString("dir", "Default");
         TextView directoryTxt = (TextView) findViewById(R.id.dirName);
         directoryTxt.setText(directory);

@@ -34,11 +34,13 @@ import com.spotify.sdk.android.player.Connectivity;
 
 public class OneStreamActivity extends OSActivity {
 
-    private static PlayerActionsHandler playerHandler;
+    private PlayerActionsHandler playerHandler;
+    private static boolean songViewEnabled;
+
     private static PlaylistHandler playlistHandler;
+    private static ListView mainList;
 
     // variable declaration
-    private static ListView mainList;
     private static ArrayAdapter<Song> adapter;
     private static ArrayAdapter<Song> spotifyAdapter;
     private static ArrayAdapter<Playlist> playlistAdapter;
@@ -82,23 +84,6 @@ private ViewPager mViewPager;
     protected void onResume() {
         super.onResume();
         playerHandler.onResume();
-    }
-
-    public static void notifyAdapters() {
-
-        if (adapter != null)
-        {
-            adapter.notifyDataSetChanged();
-        }
-        if (spotifyAdapter != null)
-        {
-            spotifyAdapter.notifyDataSetChanged();
-        }
-        if (playlistAdapter != null)
-        {
-            playlistAdapter.notifyDataSetChanged();
-        }
-        mainList.invalidateViews();
     }
 
     @Override
@@ -147,6 +132,27 @@ private ViewPager mViewPager;
         playlistAdapter = new PlaylistAdapter(context, R.layout.songlayout,
                 playlistHandler.getPlaylists());
     }
+
+    public static void notifyAdapters() {
+        if (adapter != null)
+        {
+            adapter.notifyDataSetChanged();
+        }
+        if (spotifyAdapter != null)
+        {
+            spotifyAdapter.notifyDataSetChanged();
+        }
+        if (playlistAdapter != null)
+        {
+            playlistAdapter.notifyDataSetChanged();
+        }
+        if (googleAdapter != null)
+        {
+            googleAdapter.notifyDataSetChanged();
+        }
+        mainList.invalidateViews();
+    }
+
 
     public void initListDisplay() {
 
@@ -197,9 +203,15 @@ private ViewPager mViewPager;
                         random, seekbar, mainList);
     }
 
+    public static boolean isSongViewEnabled() {
+        return songViewEnabled;
+    }
+
     public void initPlaylistHandler() {
 
-        SharedPreferences settings = getSharedPreferences("dirInfo", 0);
+        SharedPreferences settings = getSharedPreferences("SongView", 0);
+        songViewEnabled = settings.getBoolean("SongView", false);
+        settings = getSharedPreferences("dirInfo", 0);
         String directory = settings.getString("dir", "Default");
         boolean directoryChanged = settings.getBoolean("directoryChanged", false);
         SharedPreferences.Editor editor = settings.edit();
@@ -209,8 +221,14 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
         String domain =  settings.getString("domain", "Admin");
 
+        ArrayList<ArrayAdapter> adapters = new ArrayList<ArrayAdapter>();
+        adapters.add(adapter);
+        adapters.add(spotifyAdapter);
+        adapters.add(playlistAdapter);
+        adapters.add(googleAdapter);
+
         playlistHandler = new PlaylistHandler(this.getApplicationContext(), playerHandler,
-                sortType, directory, directoryChanged, domain);
+                sortType, directory, directoryChanged, domain ,adapters);
 
         if (sortOnLoad)
         {
@@ -344,8 +362,6 @@ private ViewPager mViewPager;
         @Override
         public void onResume() {
             super.onResume();
-            notifyAdapters();
-            mainList.invalidateViews();
         }
 
     }

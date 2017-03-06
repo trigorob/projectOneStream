@@ -32,8 +32,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
 
     public String getDomain() {
         final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
-        String oldDomain = domainSettings.getString("domain", "Admin");
-        return oldDomain;
+        return domainSettings.getString("domain", "Admin");
     }
 
     @Override

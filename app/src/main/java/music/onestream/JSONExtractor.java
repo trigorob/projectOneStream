@@ -1,14 +1,19 @@
 package music.onestream;
 
+import android.util.JsonReader;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,14 +26,13 @@ public class JSONExtractor {
 
     public static String extractJSON(HttpURLConnection url) {
         HttpURLConnection c = url;
-        StringBuilder sb = null;
+        StringBuilder sb = new StringBuilder();
         try {
             c.connect();
             int status = c.getResponseCode();
             if (status == 200 || status == 201) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
                 String line;
-                sb = new StringBuilder();
                 while ((line = br.readLine()) != null) {
                     sb.append(line + "\n");
                 }
@@ -59,6 +63,7 @@ public class JSONExtractor {
             JSONArray jArray = jsonObject.getJSONArray("items");
             String album = "";
             String artist = "";
+            String albumArt = null;
 
             ArrayList<Song> tempList = new ArrayList<Song>();
 
@@ -66,7 +71,9 @@ public class JSONExtractor {
                 try {
                     jsonObject = (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
                     artist = (String) jsonObject.getJSONArray("artists").getJSONObject(0).get("name");
-                    album = (String) jsonObject.getJSONObject("album").get("name");
+                    jsonObject = jsonObject.getJSONObject("album");
+                    album = (String) jsonObject.get("name");
+
                 } catch (JSONException je) {
                     if (jsonObject == null)
                         artist = "<Unknown>";
@@ -83,7 +90,11 @@ public class JSONExtractor {
                 }
                 Song song = new Song((String) jsonObject.get("name"),
                         (String) jsonObject.get("uri"),
-                        artist, album, "Spotify", spotifySongOffset + i);
+                        artist, album, "Spotify", spotifySongOffset + i, albumArt);
+
+                jsonObject = jsonObject.getJSONArray("images").getJSONObject(0);
+                albumArt = (String) jsonObject.get("url");
+                song.setAlbumArt(albumArt);
                 tempList.add(song);
 
             }
@@ -116,7 +127,7 @@ public class JSONExtractor {
                             String artist = (String) jsonObject.get("artist");
                             String album = (String) jsonObject.get("album");
                             String type = (String) jsonObject.get("type");
-                            Song song = new Song(sName, uri, artist, album, type, i);
+                            Song song = new Song(sName, uri, artist, album, type, i, null);
                             playlist.addSong(song);
                         }
                     }

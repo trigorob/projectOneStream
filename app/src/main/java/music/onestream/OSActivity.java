@@ -21,6 +21,10 @@ public class OSActivity extends AppCompatActivity {
         return playerHandler;
     }
 
+    public static Context getContext() {
+        return playerHandler.context;
+    }
+
     public PlayerActionsHandler initPlayerHandler(Context context, String parentClass,
                                   Button loginButton, FloatingActionButton fabIO, FloatingActionButton prev,
                                   FloatingActionButton next, FloatingActionButton rewind,

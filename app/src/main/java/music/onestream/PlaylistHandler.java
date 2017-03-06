@@ -2,6 +2,8 @@ package music.onestream;
 
 import java.util.ArrayList;
 import android.content.Context;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 
 import com.spotify.sdk.android.player.Connectivity;
 
@@ -23,18 +25,21 @@ public class PlaylistHandler implements AsyncResponse {
     private static Playlist spotifyListContent;
     private static ArrayList<Playlist> playlists;
     private static Playlist combinedList;
+    private final ArrayList<ArrayAdapter> adapters;
 
     private Context context;
 
 
     public PlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
-                           String type, String directory, boolean directoryChanged, String domain) {
+                           String type, String directory, boolean directoryChanged, String domain,
+    ArrayList<ArrayAdapter> adapters) {
         this.context = appContext;
         this.playerHandler = playerHandler;
         this.sortType = type;
         this.directory = directory;
         this.directoryChanged = directoryChanged;
         this.domain = domain;
+        this.adapters = adapters;
 
         this.musicGetterHandler = new MusicGetterHandler();
         initSongLists();
@@ -232,8 +237,12 @@ public class PlaylistHandler implements AsyncResponse {
                 sortLists(sortType, "Spotify");
             }
 
-            spotifyListContent.addSongs(tempList);
-            combinedList.addSongs(tempList);
+            for (Song song: tempList)
+            if (!spotifyListContent.getSongInfo().contains(song))
+            {
+                spotifyListContent.addSong(song);
+                combinedList.addSong(song);
+            }
             OneStreamActivity.notifyAdapters();
 
         }

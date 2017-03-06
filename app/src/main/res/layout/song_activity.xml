@@ -11,31 +11,29 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:layout_height="match_parent">
 
-
-        <TextView
-            android:layout_height="250dp"
-            android:layout_width="250dp"
+        <ImageView
+            android:layout_height="300dp"
+            android:layout_width="300dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="60dp"
-            android:text="PLACEHOLDER FOR ALBUM ART"
-            android:background="@color/colorPrimaryDark"
+            android:id="@+id/album"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="310dp"
             android:textSize="20sp"
+            android:id="@+id/artistName"
             android:gravity="center"
-            android:text="Album Name"/>
+            android:layout_below="@id/album" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="340dp"
             android:textSize="15sp"
+            android:layout_below="@id/artistName"
             android:gravity="center"
-            android:text="Artist Name"/>
+            android:id ="@+id/albumName"/>
     </RelativeLayout>
 
     <ListView

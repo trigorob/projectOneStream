@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -32,34 +34,34 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
  * Created by ruspe_000 on 2017-02-21.
  */
 
-public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Player.NotificationCallback, ConnectionStateCallback {
+public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Player.NotificationCallback, ConnectionStateCallback, AsyncResponse {
 
 
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
     static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
     final Context context;
-    final FloatingActionButton fabIO;
-    final FloatingActionButton prev;
-    final FloatingActionButton next;
-    final FloatingActionButton rewind;
-    final FloatingActionButton random;
-    final Button loginButton;
+    private final FloatingActionButton fabIO;
+    private final FloatingActionButton prev;
+    private final FloatingActionButton next;
+    private final FloatingActionButton rewind;
+    private final FloatingActionButton random;
+    private final Button loginButton;
     final ListView mainList;
-    final SeekBar seekBar;
+    private final SeekBar seekBar;
 
-    boolean receiverIsRegistered;
-    boolean serviceInit;
-    String parentClass;
+    private boolean receiverIsRegistered;
+    private boolean serviceInit;
+    private String parentClass;
 
-    MediaPlayer mp;
-    SpotifyPlayer spotPlayer = null;
+    private MediaPlayer mp;
+    private SpotifyPlayer spotPlayer = null;
 
     private BroadcastReceiver mNetworkStateReceiver;
 
     int currentSongListPosition = -1;
-    int currentSongPosition = -1;
-    String currentSongType = "";
+    private int currentSongPosition = -1;
+    private String currentSongType = "";
     Boolean randomNext = false;
 
     private final Player.OperationCallback opCallback = new Player.OperationCallback() {
@@ -401,8 +403,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
         String type = currentSong.getType();
 
-        //Todo: Setup so that we switch IFF option toggle is set AND not already in songActivity
-        if (!this.parentClass.equals("SongActivity")) {
+        if (!this.parentClass.equals("SongActivity") && OneStreamActivity.isSongViewEnabled()) {
 
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
@@ -416,8 +417,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                 p = OneStreamActivity.getPlaylistHandler().getList("Spotify");
             }
             b.putSerializable("Playlist", p);
-            b.putInt("songIndex", songIndex);
+            b.putSerializable("songIndex", songIndex);
             songActivity.putExtras(b);
+            songActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(songActivity);
             return;
         }
@@ -437,12 +439,26 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
         fabIO.setImageResource(R.drawable.stop);
         mainList.setSelection(songIndex);
+        setSongViewDisplay(currentSong);
+    }
+
+    public void setSongViewDisplay(Song song) {
+        if (this.parentClass.equals("SongActivity"))
+        {
+            SongActivity.initDisplay(song);
+        }
+            String url = song.getAlbumArt();
+            Object[] params = new Object[1];
+            params[0] = url;
+            ImageGetter imageGetter = new ImageGetter();
+            imageGetter.SAR = this;
+            imageGetter.execute(params);
     }
 
     public void playLocalSong(Song currentSong) {
         mp.reset();
         if (!currentSong.getType().equals("LocalRaw")) {
-            mp = MediaPlayer.create(context, Integer.parseInt(currentSong.getUri()));// creates new mediaplayer with song.
+            mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
         } else {
             mp = MediaPlayer.create(context, Integer.parseInt(currentSong.getUri()));// creates new mediaplayer with song.
         }
@@ -655,6 +671,19 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
         else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
             seekBar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
+        }
+    }
+
+    @Override
+    public void processFinish(Object[] result) {
+        if (result == null || result.length == 0)
+        {
+            return;
+        }
+
+        BitmapDrawable image = (BitmapDrawable) result[0];
+        if (image != null) {
+            SongActivity.setAlbumArt(image);
         }
     }
 

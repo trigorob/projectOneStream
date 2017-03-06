@@ -38,7 +38,8 @@ public class LocalMusicGetter implements MusicGetter {
         songs = new ArrayList<Song>();
         for (int i = 0; i < tempFiles.size(); i++)
         {
-            Song song = new Song(tempNames.get(i), tempFiles.get(i).toString(), "<Unknown>", "<Unknown>", "LocalRaw", i);
+            Song song = new Song(tempNames.get(i), tempFiles.get(i).toString(),
+                    "<Unknown>", "<Unknown>", "LocalRaw", i, null);
             songs.add(song);
         }
 
@@ -89,6 +90,7 @@ public class LocalMusicGetter implements MusicGetter {
         ArrayList<String> filess = new ArrayList<String>();
         ArrayList<String> artists = new ArrayList<String>();
         ArrayList<String> albums = new ArrayList<String>();
+        ArrayList<byte[]> art = new ArrayList<byte[]>();
         ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()) {
             File[] listFiles = dir.listFiles();
@@ -103,8 +105,10 @@ public class LocalMusicGetter implements MusicGetter {
                         mmr.setDataSource(file.getPath());
                         String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                         String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                        byte[] albumArt = mmr.getEmbeddedPicture();
                         artists.add(artistName);
                         albums.add(albumName);
+                        art.add(albumArt);
                     }
                 }
                 else if (file.isDirectory())
@@ -112,8 +116,28 @@ public class LocalMusicGetter implements MusicGetter {
                     fileNames(file.getPath(), false);
                 }
             }
+            String artist;
+            String album;
+            String albumArtString;
             for (int i = 0; i < files.size(); i++) {
-                Song song = new Song(filess.get(i), files.get(i).toURI().toString(), "<Unknown>", "<Unknown>", "Local", i);
+                artist = artists.get(i);
+                album = albums.get(i);
+                albumArtString = null;
+                byte[] albumArt = art.get(i);
+                if (artist == null ||artist.equals(""))
+                {
+                    artist = "<Unknown>";
+                }
+                if (album == null || album.equals(""))
+                {
+                    album = "<Unknown>";
+                }
+                if (albumArt != null && albumArt.length != 0)
+                {
+                    albumArtString = new String(albumArt);
+                }
+                Song song = new Song(filess.get(i), files.get(i).toURI().toString(),
+                        artist, album, "Local", i, albumArtString);
                 songs.add(song);
             }
         }

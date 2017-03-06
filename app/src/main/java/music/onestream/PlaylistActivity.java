@@ -1,6 +1,7 @@
 package music.onestream;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -22,9 +23,8 @@ import java.util.ArrayList;
  */
 
 public class PlaylistActivity extends OSActivity {
-    private static PlayerActionsHandler playerHandler;
+    private PlayerActionsHandler playerHandler;
     private Playlist playlist;
-    private ArrayAdapter<Song> adapter;
     private ListView mainList;
     private Button loginLauncherLinkerButton;
     final Handler mHandler = new Handler();
@@ -77,7 +77,7 @@ public class PlaylistActivity extends OSActivity {
         //Handle songs not accessible by device
         checkForInvalidSongs(playlistAdapter);
 
-        adapter = new SongAdapter(this, R.layout.songlayout, playlistAdapter);
+        ArrayAdapter<Song> adapter = new SongAdapter(this, R.layout.songlayout, playlistAdapter);
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,6 +115,7 @@ public class PlaylistActivity extends OSActivity {
         final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevPL);
         final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextPL);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarPL);
+
         playerHandler =
                  initPlayerHandler(this.getApplicationContext(), "PlaylistActivity",
                          loginButton, fabIO, prev, next, rewind,

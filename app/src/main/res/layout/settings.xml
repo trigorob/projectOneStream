@@ -9,6 +9,15 @@
     android:fitsSystemWindows="true"
     tools:context="music.onestream.Settings">
 
+    <ToggleButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:textOn = "SongView Enabled"
+        android:textOff = "SongView Disabled"
+        android:id="@+id/songViewToggleButton" />
+
+
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"

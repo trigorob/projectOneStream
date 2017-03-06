@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -127,7 +128,8 @@ public class DatabaseActionsHandler extends AsyncTask {
         HttpURLConnection conn = null;
         try {
             String urlString = "http://api-7328501912465276845-942591.appspot.com" +
-                    "/OneStream/Playlists?owner=" + playlist.getOwner() + "&name=" + playlist.getName();
+                    "/OneStream/Playlists?owner=" + URLEncoder.encode(playlist.getOwner(), "UTF-8")
+                    + "&name=" + URLEncoder.encode(playlist.getName(), "UTF-8");
             URL url = new URL(urlString);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
