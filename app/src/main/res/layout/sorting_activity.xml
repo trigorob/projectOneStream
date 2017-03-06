@@ -9,9 +9,9 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/sortAlphAscend"
-        android:text="Sort in Ascending order"/>
-
+        android:id="@+id/resetSortingType"
+        android:text="Turn off sorting"
+        android:layout_gravity="right"/>
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -20,9 +20,8 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginLeft="80dp"
-        android:id="@+id/resetSortingType"
-        android:text="Turn off sorting"/>
+        android:id="@+id/sortAlphAscend"
+        android:text="Sort in Ascending order"/>
     </LinearLayout>
 
     <LinearLayout
