@@ -3,11 +3,13 @@ package music.onestream.activity;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -52,7 +54,9 @@ public class SongActivity extends OSActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        playerHandler.playSong(playerHandler.getCurrentSongListPosition());
+        if (!playerHandler.isPlayerPlaying() && !playerHandler.isSpotifyPlaying()) {
+            playerHandler.playSong(playerHandler.getCurrentSongListPosition());
+        }
     }
 
 
@@ -97,6 +101,7 @@ public class SongActivity extends OSActivity {
             albumArt.setImageBitmap(bmp);
             albumArt.invalidate();
         }
+        setSongViewBackground(bmp);
     }
 
     public static void setLocalAlbumArt(Song song) {
@@ -108,6 +113,33 @@ public class SongActivity extends OSActivity {
 
         image = Bitmap.createScaledBitmap(image, 300, 300, false);
         albumArt.setImageBitmap(image);
+        setSongViewBackground(image);
+    }
+
+    public static int getAverageColor(Bitmap bitmap) {
+        int redColors = 0;
+        int greenColors = 0;
+        int blueColors = 0;
+        int pixelCount = 0;
+
+        for (int y = 0; y < bitmap.getHeight(); y++) {
+            for (int x = 0; x < bitmap.getWidth(); x++) {
+                int c = bitmap.getPixel(x, y);
+                pixelCount++;
+                redColors += Color.red(c);
+                greenColors += Color.green(c);
+                blueColors += Color.blue(c);
+            }
+        }
+        int red = (redColors/pixelCount);
+        int green = (greenColors/pixelCount);
+        int blue = (blueColors/pixelCount);
+        return Color.rgb(red, green, blue);
+    }
+
+    public static void setSongViewBackground(Bitmap bitmap) {
+        View rootView = albumArt.getRootView();
+        rootView.setBackgroundColor(getAverageColor(bitmap));
     }
 
     private void initMainList() {
