@@ -1,6 +1,7 @@
 package music.onestream.activity;
 
 import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -38,6 +39,7 @@ public class SongActivity extends OSActivity {
     static TextView albumName;
     static ImageView albumArt;
     static ActionBar title;
+    static Resources resources;
 
     @Override
     public void onDestroy() {
@@ -67,9 +69,12 @@ public class SongActivity extends OSActivity {
         mainList = (ListView) findViewById(R.id.ListViewSV);
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
 
+
+
         artistName = (TextView) findViewById(R.id.artistName);
         albumName = (TextView) findViewById(R.id.albumName);
         albumArt = (ImageView) findViewById(R.id.album);
+        resources = this.getResources();
         title = getSupportActionBar();
 
         initMainList();
@@ -117,29 +122,20 @@ public class SongActivity extends OSActivity {
     }
 
     public static int getAverageColor(Bitmap bitmap) {
-        int redColors = 0;
-        int greenColors = 0;
-        int blueColors = 0;
-        int pixelCount = 0;
-
-        for (int y = 0; y < bitmap.getHeight(); y++) {
-            for (int x = 0; x < bitmap.getWidth(); x++) {
-                int c = bitmap.getPixel(x, y);
-                pixelCount++;
-                redColors += Color.red(c);
-                greenColors += Color.green(c);
-                blueColors += Color.blue(c);
-            }
-        }
-        int red = (redColors/pixelCount);
-        int green = (greenColors/pixelCount);
-        int blue = (blueColors/pixelCount);
-        return Color.rgb(red, green, blue);
+        int intArray[] = new int[bitmap.getWidth()*bitmap.getHeight()];
+        bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        return intArray[0];
     }
 
     public static void setSongViewBackground(Bitmap bitmap) {
         View rootView = albumArt.getRootView();
-        rootView.setBackgroundColor(getAverageColor(bitmap));
+        int backgroundColor = getAverageColor(bitmap);
+        rootView.setBackgroundColor(backgroundColor);
+        int textColor = Color.rgb(255-Color.red(backgroundColor),
+                255-Color.green(backgroundColor),
+                255-Color.blue(backgroundColor));
+        albumName.setTextColor(textColor);
+        artistName.setTextColor(textColor);
     }
 
     private void initMainList() {
