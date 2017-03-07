@@ -122,9 +122,8 @@ public class SongActivity extends OSActivity {
     }
 
     public static int getAverageColor(Bitmap bitmap) {
-        int intArray[] = new int[bitmap.getWidth()*bitmap.getHeight()];
-        bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        return intArray[0];
+        Bitmap colorRef = Bitmap.createScaledBitmap(bitmap, 1, 1, false);
+        return colorRef.getPixel(0,0);
     }
 
     public static void setSongViewBackground(Bitmap bitmap) {
@@ -134,8 +133,12 @@ public class SongActivity extends OSActivity {
         int textColor = Color.rgb(255-Color.red(backgroundColor),
                 255-Color.green(backgroundColor),
                 255-Color.blue(backgroundColor));
-        albumName.setTextColor(textColor);
-        artistName.setTextColor(textColor);
+        if (Math.abs(textColor - backgroundColor)<= 2500000)
+        {
+            textColor = Color.WHITE;
+        }
+            albumName.setTextColor(textColor);
+            artistName.setTextColor(textColor);
     }
 
     private void initMainList() {
