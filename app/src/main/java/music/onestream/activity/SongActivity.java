@@ -127,6 +127,7 @@ public class SongActivity extends OSActivity {
                 initPlayerHandler(this.getApplicationContext(), "SongActivity",
                         null, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
+
         int songIndex = getIntent().getIntExtra("songIndex", -1);
         playerHandler.setCurrentSongListPosition(songIndex);
 

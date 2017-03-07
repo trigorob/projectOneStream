@@ -386,9 +386,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     public Song getCurrentSong(int songIndex) {
-        return OneStreamActivity.getPlaylistHandler().getCombinedList()
-                .findSongByName(mainList.getAdapter().getItem(songIndex).toString());
+        return (Song) mainList.getAdapter().getItem(songIndex);
     }
+
 
     // Play song
     public void playSong(int songIndex) {
@@ -417,7 +417,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             Playlist p = new Playlist("", "", ((SongAdapter) mainList.getAdapter()).getSongs());
 
             b.putSerializable("Playlist", p);
-            b.putSerializable("songIndex", songIndex);
+            //Don't use the actual index here, because we might be filtering the list
+            b.putSerializable("songIndex", ((SongAdapter) mainList.getAdapter()).getSongs().indexOf(currentSong));
             songActivity.putExtras(b);
             songActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(songActivity);
