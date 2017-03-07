@@ -68,6 +68,10 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             oldPlaylist.setName(playlist.getName());
             oldPlaylist.setOwner(playlist.getOwner());
         }
+        else
+        {
+            newList = true;
+        }
         if (songNames == null || combinedList == null)
         {
             songNames = new String[0];
@@ -75,7 +79,6 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         if (playlist == null) {
 
             playlist = new Playlist();
-            newList = true;
             songNames = new String[0];
         }
         else {
