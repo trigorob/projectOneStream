@@ -33,6 +33,7 @@ import music.onestream.song.Song;
 import music.onestream.activity.SongActivity;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.musicgetter.ImageGetter;
+import music.onestream.song.SongAdapter;
 
 
 /**
@@ -413,15 +414,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
-            Playlist p = null;
-            if (type.equals("Local") || type.equals("LocalRaw"))
-            {
-                p = OneStreamActivity.getPlaylistHandler().getList("Local");
-            }
-            else if (type.equals("Spotify"))
-            {
-                p = OneStreamActivity.getPlaylistHandler().getList("Spotify");
-            }
+            Playlist p = new Playlist("", "", ((SongAdapter) mainList.getAdapter()).getSongs());
 
             b.putSerializable("Playlist", p);
             b.putSerializable("songIndex", songIndex);
@@ -433,7 +426,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
 
 
-        if (type.equals("Local") || type.equals("LocalRaw")) {
+        if (type.equals("Local")) {
             playLocalSong(currentSong);
         }
 
@@ -453,7 +446,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void setSongViewDisplay(Song song) {
         if (this.parentClass.equals("SongActivity")) {
             SongActivity.initDisplay(song);
-            if (!song.getType().equals("Local") && !song.getType().equals("LocalRaw"))
+            if (!song.getType().equals("Local"))
             {
                 String url = song.getAlbumArt();
                 Object[] params = new Object[1];
@@ -471,11 +464,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public void playLocalSong(Song currentSong) {
         mp.reset();
-        if (!currentSong.getType().equals("LocalRaw")) {
-            mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
-        } else {
-            mp = MediaPlayer.create(context, Integer.parseInt(currentSong.getUri()));// creates new mediaplayer with song.
-        }
+        mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
         mp.start();
         currentSongType = "Local";
 

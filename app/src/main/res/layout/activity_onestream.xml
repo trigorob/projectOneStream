@@ -26,9 +26,9 @@
             android:layout_weight="1">
 
         <EditText
-            android:layout_marginLeft ="100dp"
+            android:layout_marginLeft ="90dp"
             android:cursorVisible="false"
-            android:layout_width="125dp"
+            android:layout_width="120dp"
             android:gravity="end"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"

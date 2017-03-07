@@ -41,6 +41,10 @@ public class PlaylistAdapter extends ArrayAdapter<Playlist> {
         return position;
     }
 
+    public ArrayList<Playlist> getPlaylists() {
+        return playlists;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View customView = convertView;

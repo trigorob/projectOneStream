@@ -34,6 +34,11 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
         return filteredSongs.size();
     }
 
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
+
+
     public Song getItem(int position) {
         return filteredSongs.get(position);
     }

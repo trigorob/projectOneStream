@@ -15,37 +15,11 @@ import music.onestream.song.Song;
 
 public class LocalMusicGetter implements MusicGetter {
     ArrayList<Song> songs;
-    static String testDirectory = "./app/src/main/res/raw/";
-    String directory = "R.raw";
+    String directory = "/sdcard/music";
     private int type; //0 => Integer files, 1 => Uri
 
     public int getType() {
         return type;
-    }
-
-    public void getRawFiles() {
-        Field[] fields = R.raw.class.getFields();
-        ArrayList<Integer> tempFiles = new ArrayList<Integer>();
-        ArrayList<String> tempNames = new ArrayList<String>();
-        for(Field f : fields)
-            try {
-                    tempFiles.add(f.getInt(null));
-                    if (f != null && f.getName() != null) {
-                        tempNames.add(f.getName());
-                    }
-                //Resource files dont have this data, so we dont need to look for it
-            } catch (IllegalArgumentException e) {
-            } catch (IllegalAccessException e) { }
-
-        songs = new ArrayList<Song>();
-        for (int i = 0; i < tempFiles.size(); i++)
-        {
-            Song song = new Song(tempNames.get(i), tempFiles.get(i).toString(),
-                    "<Unknown>", "<Unknown>", "LocalRaw", i, null);
-            songs.add(song);
-        }
-
-        return;
     }
 
     public LocalMusicGetter(String directory)
@@ -132,11 +106,6 @@ public class LocalMusicGetter implements MusicGetter {
         if (!directory.equals("Default")) {
             this.songs = fileNames(directory, true);
             this.type = 1;
-        }
-        else
-        {
-            this.getRawFiles();
-            this.type = 0;
         }
     }
 }

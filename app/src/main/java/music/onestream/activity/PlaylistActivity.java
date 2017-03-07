@@ -2,6 +2,7 @@ package music.onestream.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
@@ -14,7 +15,6 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import music.onestream.R;
@@ -50,13 +50,15 @@ public class PlaylistActivity extends OSActivity {
     public void checkForInvalidSongs(ArrayList<Song> playlistAdapter) {
         String services = "";
         Boolean spotifyAvailable = true;
+        String dir = (Environment.getExternalStorageDirectory().toString());
         for (int i = 0; i < playlist.getSongInfo().size(); i++){
             Song s = playlist.getSongInfo().get(i);
             if (s.getType().equals("Local")) {
-                File f = new File(s.getUri());
-                try {
-                    f.createNewFile();
-                } catch (IOException e) {
+                /*     Looks a bit silly but we always have 12chars extra in our URI.
+                Android is a bit buggy this way. Need to remove those to get correct path
+                Since we don't use it anywhere else, it's not worth keeping elsewhere*/
+                File f = new File(dir + s.getUri().substring(12));
+                if (f.exists() && !f.isDirectory()) {
                     playlistAdapter.add(s);
                 }
             }

@@ -282,7 +282,6 @@ private ViewPager mViewPager;
         return playlistHandler;
     }
 
-
     public void initButtonListeners() {
 
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);

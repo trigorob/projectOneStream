@@ -38,7 +38,7 @@ public class AddSongsActivity extends Activity {
                         ("", "", OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
             }
 
-            TextView playListName = (TextView) findViewById(R.id.listName);
+            final TextView playListName = (TextView) findViewById(R.id.listName);
             if (playlist != null && playlist.getName() != null) {
                 playListName.setText(playlist.getName());
             }
@@ -64,13 +64,11 @@ public class AddSongsActivity extends Activity {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    for (int i = 0; i < playlist.getSongInfo().size(); i++)
-                    {
-                        if ((combinedList.getSongInfo().contains(playlist.getSongInfo().get(i))))
+                        if ((playlist.getSongInfo().contains(combinedList.getSongInfo().get(position))))
                         {
+                            combinedList.removeSong(position);
                             return;
                         }
-                    }
                         playlist.addSong(combinedList.getSongInfo().get(position));
                         combinedList.removeSong(position);
                         adapter.notifyDataSetChanged();
