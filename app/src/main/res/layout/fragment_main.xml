@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="music.onestream.OneStreamActivity$PlaceholderFragment">
+    tools:context="music.onestream.activity.OneStreamActivity$PlaceholderFragment">
 
     <TextView
         android:id="@+id/section_label"
