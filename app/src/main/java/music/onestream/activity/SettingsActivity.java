@@ -78,7 +78,7 @@ public class SettingsActivity extends Activity {
             });
 
         settings = getSharedPreferences("dirInfo", 0);
-        final String directory = settings.getString("dir", "Default");
+        final String directory = settings.getString("dir", "N/A");
         TextView directoryTxt = (TextView) findViewById(R.id.dirName);
         directoryTxt.setText(directory);
 
@@ -114,14 +114,14 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 final TextView eTxt = (TextView) findViewById(R.id.dirName);
-                eTxt.setText("Default");
+                eTxt.setText("N/A");
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
-                if (!settings.getString("dir", "Default").equals("Default"))
+                if (!settings.getString("dir", "N/A").equals("N/A"))
                 {
                     editor.putBoolean("directoryChanged", true);
                 }
-                editor.putString("dir", "Default");
+                editor.putString("dir", "N/A");
                 editor.commit();
             }
         });

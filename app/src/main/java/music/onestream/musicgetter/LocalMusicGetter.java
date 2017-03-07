@@ -15,13 +15,7 @@ import music.onestream.song.Song;
 
 public class LocalMusicGetter implements MusicGetter {
     ArrayList<Song> songs;
-    String directory = "/sdcard/music";
-    private int type; //0 => Integer files, 1 => Uri
-
-    public int getType() {
-        return type;
-    }
-
+    String directory = "N/A";
     public LocalMusicGetter(String directory)
     {
         this.directory = directory;
@@ -45,13 +39,8 @@ public class LocalMusicGetter implements MusicGetter {
         return null;
     }
 
-    public ArrayList<Song> fileNames(String directoryPath, Boolean root) {
+    public ArrayList<Song> fileNames(String directoryPath) {
 
-        if (root)
-        {
-            this.songs = new ArrayList<Song>();
-        }
-        
         File dir = new File(directoryPath);
         ArrayList<String> filess = new ArrayList<String>();
         ArrayList<String> artists = new ArrayList<String>();
@@ -76,7 +65,7 @@ public class LocalMusicGetter implements MusicGetter {
                 }
                 else if (file.isDirectory())
                 {
-                    fileNames(file.getPath(), false);
+                    fileNames(file.getPath());
                 }
             }
             String artist;
@@ -103,9 +92,9 @@ public class LocalMusicGetter implements MusicGetter {
 
     @Override
     public void init() {
-        if (!directory.equals("Default")) {
-            this.songs = fileNames(directory, true);
-            this.type = 1;
+        this.songs = new ArrayList<Song>();
+        if (!directory.equals("N/A")) {
+            this.songs = fileNames(directory);
         }
     }
 }

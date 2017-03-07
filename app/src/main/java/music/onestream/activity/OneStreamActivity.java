@@ -242,7 +242,7 @@ private ViewPager mViewPager;
         SharedPreferences settings = getSharedPreferences("SongView", 0);
         songViewEnabled = settings.getBoolean("SongView", false);
         settings = getSharedPreferences("dirInfo", 0);
-        String directory = settings.getString("dir", "Default");
+        String directory = settings.getString("dir", "N/A");
         boolean directoryChanged = settings.getBoolean("directoryChanged", false);
         SharedPreferences.Editor editor = settings.edit();
         settings = getSharedPreferences("SORT-TYPE", 0);
