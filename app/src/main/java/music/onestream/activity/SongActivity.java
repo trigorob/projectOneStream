@@ -121,9 +121,11 @@ public class SongActivity extends OSActivity {
         setSongViewBackground(image);
     }
 
-    public static int getAverageColor(Bitmap bitmap) {
-        Bitmap colorRef = Bitmap.createScaledBitmap(bitmap, 1, 1, false);
-        return colorRef.getPixel(0,0);
+    public static int getAverageColor(Bitmap bmp) {
+        bmp = bmp.copy(Bitmap.Config.ARGB_8888, true);
+        int intArray[] = new int[bmp.getWidth()*bmp.getHeight()];
+        bmp.getPixels(intArray, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
+        return intArray[0];
     }
 
     public static void setSongViewBackground(Bitmap bitmap) {

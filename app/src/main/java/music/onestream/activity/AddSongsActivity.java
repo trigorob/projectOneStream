@@ -3,16 +3,18 @@ package music.onestream.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import music.onestream.playlist.Playlist;
 import music.onestream.R;
 import music.onestream.song.Song;
+import music.onestream.song.SongAdapter;
 
 /**
  * Created by ruspe_000 on 2017-02-13.
@@ -38,11 +40,6 @@ public class AddSongsActivity extends Activity {
                         ("", "", OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
             }
 
-            final TextView playListName = (TextView) findViewById(R.id.listName);
-            if (playlist != null && playlist.getName() != null) {
-                playListName.setText(playlist.getName());
-            }
-
             this.oldCombinedList = new Playlist();
             this.oldPlaylist = new Playlist();
 
@@ -56,7 +53,7 @@ public class AddSongsActivity extends Activity {
             }
 
             final ListView songsList = (ListView) findViewById(R.id.songList);
-            final ArrayAdapter<Song> adapter = new ArrayAdapter<Song>
+            final SongAdapter adapter = new SongAdapter
                     (this, android.R.layout.simple_list_item_1, combinedList.getSongInfo());
             songsList.setAdapter(adapter);
 
@@ -69,12 +66,28 @@ public class AddSongsActivity extends Activity {
                             combinedList.removeSong(position);
                             return;
                         }
-                        playlist.addSong(combinedList.getSongInfo().get(position));
-                        combinedList.removeSong(position);
+                        Song newSong = adapter.getItem(position);
+                        playlist.addSong(newSong);
+                        combinedList.removeSongItem(newSong);
+                        adapter.getFilteredSongs().remove(newSong);
                         adapter.notifyDataSetChanged();
                         songsList.invalidateViews();
 
                 }
+            });
+
+            EditText textFilter = (EditText) findViewById(R.id.songFilterAS);
+            textFilter.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                    adapter.getFilter().filter(cs);
+                    adapter.notifyDataSetChanged();
+                    songsList.invalidateViews();
+                }
+                @Override
+                public void afterTextChanged(Editable s) {}
+                @Override
+                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
             });
 
             Button back = (Button) findViewById(R.id.discardNewPlaylistChanges);

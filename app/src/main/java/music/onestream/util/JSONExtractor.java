@@ -124,7 +124,8 @@ public class JSONExtractor {
                             String artist = (String) jsonObject.get("artist");
                             String album = (String) jsonObject.get("album");
                             String type = (String) jsonObject.get("type");
-                            Song song = new Song(sName, uri, artist, album, type, i, null);
+                            String albumArt = (String) jsonObject.get("albumArt");
+                            Song song = new Song(sName, uri, artist, album, type, i, albumArt);
                             playlist.addSong(song);
                         }
                     }

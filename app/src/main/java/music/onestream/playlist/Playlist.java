@@ -64,6 +64,11 @@ public class Playlist implements Serializable {
         songInfo.remove(position);
     }
 
+    public void removeSongItem(Song song)
+    {
+        songInfo.remove(song);
+    }
+
     public int size() {
         return songInfo.size();
     }

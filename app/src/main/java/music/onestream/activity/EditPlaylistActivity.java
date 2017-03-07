@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 
 import music.onestream.R;
 import music.onestream.playlist.Playlist;
+import music.onestream.song.SongAdapter;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.DatabaseActionsHandler;
 
@@ -28,7 +28,6 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
 
     private static Playlist playlist;
     private static Playlist oldPlaylist;
-    private static String[] songNames;
     private static DatabaseActionsHandler dba;
     private static Playlist combinedList;
     private boolean newList = false;
@@ -77,20 +76,13 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         {
             newList = true;
         }
-        if (songNames == null || combinedList == null)
-        {
-            songNames = new String[0];
-        }
         if (playlist == null) {
 
             playlist = new Playlist();
-            songNames = new String[0];
         }
         else {
-            songNames = new String[playlist.getSongInfo().size()];
             for (int i = 0; i < playlist.getSongInfo().size(); i++)
             {
-                songNames[i] = playlist.getSongInfo().get(i).getName();
                 if (combinedList.getSongInfo().contains(playlist.getSongInfo().get((i))))
                 {
                     combinedList.removeSong(combinedList.getSongInfo().indexOf(playlist.getSongInfo().get((i))));
@@ -99,7 +91,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         }
 
         final ListView playSongs = (ListView) findViewById(R.id.playListSongs);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, songNames);
+        final SongAdapter adapter = new SongAdapter(this, android.R.layout.simple_list_item_1, playlist.getSongInfo());
         playSongs.setAdapter(adapter);
 
         playSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -108,14 +100,8 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 combinedList.addSong(playlist.getSongInfo().get(position));
                 playlist.removeSong(position);
-                songNames = new String[playlist.getSongInfo().size()];
-                for (int i = 0; i < playlist.getSongInfo().size(); i++)
-                {
-                    songNames[i] = playlist.getSongInfo().get(i).getName();
-                }
+                adapter.notifyDataSetChanged();
                 playSongs.invalidateViews();
-                playSongs.setAdapter(new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, songNames));
-
             }
         });
 
