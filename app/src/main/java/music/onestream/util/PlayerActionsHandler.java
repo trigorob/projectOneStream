@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -461,6 +463,15 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                 SongActivity.setLocalAlbumArt(song);
             }
         }
+    }
+
+    public void setButtonColors(int filter)
+    {
+        fabIO.setColorFilter(filter);
+        prev.setColorFilter(filter);
+        random.setColorFilter(filter);
+        next.setColorFilter(filter);
+        rewind.setColorFilter(filter);
     }
 
     public void playLocalSong(Song currentSong) {
