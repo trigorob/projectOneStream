@@ -54,57 +54,57 @@
         android:layout_gravity="bottom"
         android:layout_weight="100">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/PrevPL"
-            android:layout_height="wrap_content"
-            app:backgroundTint="@android:color/black"
-            android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_media_previous"
-            android:clickable="true"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content" />
+        <ImageButton
+        android:id="@+id/PrevPL"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@android:color/transparent"
+        android:layout_gravity="bottom|start"
+        app:srcCompat="@drawable/previous"
+        android:clickable="true"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content" />
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/RewindPL"
-            app:backgroundTint="@android:color/black"
+            app:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_media_rew"
-            android:layout_marginBottom="16dp"
+            app:srcCompat="@drawable/rewind"
+            android:layout_marginTop="12dp"
             android:clickable="true" />
 
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/fabIOPL"
             android:height="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="12dp"
             android:clickable="true"
-            app:backgroundTint="@android:color/black"
+            app:backgroundTint="@android:color/transparent"
             android:src="@drawable/play"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/NextPL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            app:backgroundTint="@android:color/black"
-            app:srcCompat="@android:drawable/ic_media_next"
-            android:layout_marginBottom="16dp"
+            app:backgroundTint="@android:color/transparent"
+            app:srcCompat="@drawable/skip"
+            android:layout_marginTop="12dp"
             android:clickable="true" />
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/RandomPL"
-            app:backgroundTint="@android:color/black"
+            app:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             app:srcCompat="@drawable/shuffle"
             android:clickable="true"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginTop="12dp" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 

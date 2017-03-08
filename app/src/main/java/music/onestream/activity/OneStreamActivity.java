@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -24,6 +23,7 @@ import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.AdapterView;
@@ -221,11 +221,11 @@ private ViewPager mViewPager;
 
     private void initPlayerHandler() {
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIO);
-        final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.Random);
-        final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.Rewind);
-        final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.Prev);
-        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.Next);
+        final ImageButton fabIO = (ImageButton) findViewById(R.id.fabIO);
+        final ImageButton random = (ImageButton) findViewById(R.id.Random);
+        final ImageButton rewind = (ImageButton) findViewById(R.id.Rewind);
+        final ImageButton prev = (ImageButton) findViewById(R.id.Prev);
+        final ImageButton next = (ImageButton) findViewById(R.id.Next);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         playerHandler =
                 initPlayerHandler(this.getApplicationContext(), "OneStreamActivity",

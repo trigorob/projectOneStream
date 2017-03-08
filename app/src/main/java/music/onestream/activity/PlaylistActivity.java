@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
@@ -118,11 +118,11 @@ public class PlaylistActivity extends OSActivity {
 
     private void initPlayerHandler() {
         final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButtonPL);
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIOPL);
-        final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.RandomPL);
-        final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.RewindPL);
-        final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevPL);
-        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextPL);
+        final ImageButton fabIO = (ImageButton) findViewById(R.id.fabIOPL);
+        final ImageButton random = (ImageButton) findViewById(R.id.RandomPL);
+        final ImageButton rewind = (ImageButton) findViewById(R.id.RewindPL);
+        final ImageButton prev = (ImageButton) findViewById(R.id.PrevPL);
+        final ImageButton next = (ImageButton) findViewById(R.id.NextPL);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarPL);
 
         playerHandler =

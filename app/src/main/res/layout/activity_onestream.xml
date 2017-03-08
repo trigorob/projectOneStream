@@ -106,56 +106,56 @@
         android:layout_weight="100"
         android:isScrollContainer="false">
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/Prev"
             android:layout_height="wrap_content"
-            app:backgroundTint="@android:color/black"
+            app:backgroundTint="@android:color/transparent"
             android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_media_previous"
+            app:srcCompat="@drawable/previous"
             android:clickable="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content" />
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/Rewind"
-            app:backgroundTint="@android:color/black"
+            app:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_media_rew"
-            android:layout_marginBottom="16dp"
+            app:srcCompat="@drawable/rewind"
+            android:layout_marginBottom="8dp"
             android:clickable="true" />
 
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/fabIO"
             android:height="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:clickable="true"
-            app:backgroundTint="@android:color/black"
-            android:src="@android:drawable/ic_media_play"/>
+            app:backgroundTint="@android:color/transparent"
+            android:src="@drawable/play"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/Next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            app:backgroundTint="@android:color/black"
-            app:srcCompat="@android:drawable/ic_media_next"
-            android:layout_marginBottom="16dp"
+            app:backgroundTint="@android:color/transparent"
+            app:srcCompat="@drawable/skip"
+            android:layout_marginBottom="8dp"
             android:clickable="true" />
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/Random"
-            app:backgroundTint="@android:color/black"
+            app:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             app:srcCompat="@drawable/shuffle"
             android:clickable="true"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="8dp" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

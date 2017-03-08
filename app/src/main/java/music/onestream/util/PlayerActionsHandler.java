@@ -11,9 +11,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
@@ -47,11 +47,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
     public final Context context;
-    private final FloatingActionButton fabIO;
-    private final FloatingActionButton prev;
-    private final FloatingActionButton next;
-    private final FloatingActionButton rewind;
-    private final FloatingActionButton random;
+    private final ImageButton fabIO;
+    private final ImageButton prev;
+    private final ImageButton next;
+    private final ImageButton rewind;
+    private final ImageButton random;
     private final Button loginButton;
     final ListView mainList;
     private final SeekBar seekBar;
@@ -83,8 +83,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     };
 
     public PlayerActionsHandler
-            (Context context, FloatingActionButton play, FloatingActionButton previous,
-             FloatingActionButton next, FloatingActionButton rewind, FloatingActionButton random,
+            (Context context, ImageButton play, ImageButton previous,
+             ImageButton next, ImageButton rewind, ImageButton random,
              Button loginButton, ListView list, SeekBar seekBar, String parentClass)
     {
         this.context = context;

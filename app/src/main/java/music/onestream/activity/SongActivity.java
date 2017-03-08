@@ -7,10 +7,10 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -149,11 +149,11 @@ public class SongActivity extends OSActivity {
 
 
     private void initPlayerHandler() {
-        final FloatingActionButton fabIO = (FloatingActionButton) findViewById(R.id.fabIOSV);
-        final FloatingActionButton random = (FloatingActionButton) findViewById(R.id.RandomSV);
-        final FloatingActionButton rewind = (FloatingActionButton) findViewById(R.id.RewindSV);
-        final FloatingActionButton prev = (FloatingActionButton) findViewById(R.id.PrevSV);
-        final FloatingActionButton next = (FloatingActionButton) findViewById(R.id.NextSV);
+        final ImageButton fabIO = (ImageButton) findViewById(R.id.fabIOSV);
+        final ImageButton random = (ImageButton) findViewById(R.id.RandomSV);
+        final ImageButton rewind = (ImageButton) findViewById(R.id.RewindSV);
+        final ImageButton prev = (ImageButton) findViewById(R.id.PrevSV);
+        final ImageButton next = (ImageButton) findViewById(R.id.NextSV);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarSV);
         playerHandler =
                 initPlayerHandler(this.getApplicationContext(), "SongActivity",

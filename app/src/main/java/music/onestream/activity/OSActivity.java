@@ -1,9 +1,9 @@
 package music.onestream.activity;
 
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
@@ -27,9 +27,9 @@ public class OSActivity extends AppCompatActivity {
     }
 
     public PlayerActionsHandler initPlayerHandler(Context context, String parentClass,
-                                  Button loginButton, FloatingActionButton fabIO, FloatingActionButton prev,
-                                  FloatingActionButton next, FloatingActionButton rewind,
-                                  FloatingActionButton random, SeekBar seekbar, ListView mainList) {
+                              Button loginButton, ImageButton fabIO, ImageButton prev,
+                              ImageButton next, ImageButton rewind,
+                              ImageButton random, SeekBar seekbar, ListView mainList) {
 
         playerHandler = new PlayerActionsHandler(context, fabIO, prev, next,
                 rewind, random, loginButton, mainList, seekbar, parentClass);
