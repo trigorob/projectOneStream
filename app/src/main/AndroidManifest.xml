@@ -34,10 +34,12 @@
             android:label="SortingActivity">
         </activity>
         <activity
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.EditPlaylistActivity"
             android:label="EditPlaylistActivity">
         </activity>
         <activity
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.AddSongsActivity"
             android:label=".AddSongsActivity">
         </activity>

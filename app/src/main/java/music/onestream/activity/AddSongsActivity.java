@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import music.onestream.playlist.Playlist;
 import music.onestream.R;
@@ -76,7 +79,7 @@ public class AddSongsActivity extends Activity {
                 }
             });
 
-            EditText textFilter = (EditText) findViewById(R.id.songFilterAS);
+            final EditText textFilter = (EditText) findViewById(R.id.songFilterAS);
             textFilter.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
@@ -88,6 +91,26 @@ public class AddSongsActivity extends Activity {
                 public void afterTextChanged(Editable s) {}
                 @Override
                 public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+            });
+
+            textFilter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    textFilter.setCursorVisible(true);
+                    textFilter.requestFocus();
+                }
+            });
+
+            textFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if(actionId== EditorInfo.IME_ACTION_DONE){
+                        //Clear focus here from edittext
+                        textFilter.clearFocus();
+                        textFilter.setCursorVisible(false);
+                    }
+                    return false;
+                }
             });
 
             Button back = (Button) findViewById(R.id.discardNewPlaylistChanges);

@@ -6,11 +6,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -127,6 +130,26 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             @Override
             public void afterTextChanged(Editable s) {
                 playlist.setName(s.toString());
+            }
+        });
+
+        playlistTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playlistTitle.setCursorVisible(true);
+                playlistTitle.requestFocus();
+            }
+        });
+
+        playlistTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId== EditorInfo.IME_ACTION_DONE){
+                    //Clear focus here from edittext
+                    playlistTitle.clearFocus();
+                    playlistTitle.setCursorVisible(false);
+                }
+                return false;
             }
         });
 

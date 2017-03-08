@@ -15,12 +15,14 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -172,7 +174,7 @@ private ViewPager mViewPager;
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                playlistHandler.getPlaylists());
 
-        EditText textFilter = (EditText) findViewById(R.id.songFilter);
+        final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
@@ -193,6 +195,25 @@ private ViewPager mViewPager;
             public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
            });
 
+        textFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textFilter.setCursorVisible(true);
+                textFilter.requestFocus();
+            }
+        });
+
+        textFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId== EditorInfo.IME_ACTION_DONE){
+                    //Clear focus here from edittext
+                    textFilter.clearFocus();
+                    textFilter.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
         //TODO: Implement. Placeholder so we dont have to make lists visible/invisible
         googleAdapter = new SongAdapter(this,R.layout.songlayout,
                 new ArrayList<Song>());

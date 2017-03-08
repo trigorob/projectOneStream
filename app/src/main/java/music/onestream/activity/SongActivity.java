@@ -141,7 +141,6 @@ public class SongActivity extends OSActivity {
         getPlayerHandler().setButtonColors(textColor);
         albumName.setTextColor(textColor);
         artistName.setTextColor(textColor);
-        //black = -13552330
     }
 
     private void initMainList() {

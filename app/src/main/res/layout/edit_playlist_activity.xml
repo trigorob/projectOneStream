@@ -9,6 +9,11 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
     <EditText android:id="@+id/playListName"
+        android:maxLines="1"
+        android:cursorVisible="false"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:imeOptions="actionDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Playlist Name" />
