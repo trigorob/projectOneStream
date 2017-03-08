@@ -62,28 +62,29 @@
         android:layout_gravity="bottom"
         android:layout_weight="100">
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
+            android:id="@+id/RewindSV"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            app:srcCompat="@drawable/rewind"
+            android:layout_marginBottom="16dp"
+            android:clickable="true" />
+
+        <ImageButton
             android:id="@+id/PrevSV"
             android:layout_height="wrap_content"
-            app:backgroundTint="@android:color/black"
+            android:backgroundTint="@android:color/transparent"
             android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_media_previous"
+            app:srcCompat="@drawable/previous"
             android:clickable="true"
             android:layout_marginBottom="16dp"
             android:layout_width="wrap_content" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/RewindSV"
-            app:backgroundTint="@android:color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            app:srcCompat="@android:drawable/ic_media_rew"
-            android:layout_marginBottom="16dp"
-            android:clickable="true" />
 
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/fabIOSV"
             android:height="100dp"
             android:layout_width="wrap_content"
@@ -91,22 +92,22 @@
             android:layout_gravity="start|bottom"
             android:layout_marginBottom="16dp"
             android:clickable="true"
-            app:backgroundTint="@android:color/black"
-            android:src="@android:drawable/ic_media_play"/>
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/play"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/NextSV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            app:backgroundTint="@android:color/black"
-            app:srcCompat="@android:drawable/ic_media_next"
+            android:backgroundTint="@android:color/transparent"
+            app:srcCompat="@drawable/skip"
             android:layout_marginBottom="16dp"
             android:clickable="true" />
 
-        <android.support.design.widget.FloatingActionButton
+        <ImageButton
             android:id="@+id/RandomSV"
-            app:backgroundTint="@android:color/black"
+            android:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
