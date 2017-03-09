@@ -22,7 +22,7 @@
             android:id="@+id/ListViewPL"
             android:choiceMode="singleChoice"
             android:layout_width="match_parent"
-            android:layout_height="450dp">
+            android:layout_height="410dp">
         </ListView>
 
         <Button
@@ -34,6 +34,14 @@
             android:visibility="invisible">
         </Button>
 
+        <SeekBar
+            android:id="@+id/seekBarPL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ListViewPL"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="13dp" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -41,12 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="88dp"
         android:layout_gravity="bottom"
-        android:layout_weight="100">
-        <SeekBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/seekBarPL"/>
-    </LinearLayout>
+        android:layout_weight="100"></LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
