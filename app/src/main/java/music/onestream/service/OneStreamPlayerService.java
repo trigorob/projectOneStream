@@ -186,7 +186,7 @@ public class OneStreamPlayerService extends Service {
         else {
             builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
         }
-        style.setShowActionsInCompactView(0, 1, 2);
+        style.setShowActionsInCompactView(1, 2, 3);
 
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
