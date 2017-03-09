@@ -116,7 +116,7 @@ public class OneStreamPlayerService extends Service {
         {
             mediaController.getTransportControls().skipToNext();
             mediaController.getTransportControls().play();
-            if (!playerHandler.isRandomNext()) {
+            if (playerHandler.isRandomNext()) {
                 playerHandler.playRandomSong();
             }
             else {
