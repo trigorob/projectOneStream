@@ -289,7 +289,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                if (fabIO != null) {
+                    fabIO.setImageResource(R.drawable.pause);
+                }
             }
 
             @Override
