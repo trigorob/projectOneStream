@@ -185,6 +185,19 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
+    public void serviceIconPausePlay(boolean isPlaying) {
+        if (serviceInit) {
+            Intent intent = new Intent(context, OneStreamPlayerService.class);
+            if (isPlaying) {
+                intent.setAction(OneStreamPlayerService.ACTION_ICON_PLAY);
+            }
+            else {
+                intent.setAction(OneStreamPlayerService.ACTION_ICON_PAUSE);
+            }
+            context.startService(intent);
+        }
+    }
+
     public void initListeners() {
 
         fabIO.setOnClickListener(new View.OnClickListener() {
@@ -369,6 +382,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         return mp != null && mp.isPlaying();
     }
 
+    public boolean isPlaying() {
+        return isPlayerPlaying() || isSpotifyPlaying();
+    }
+
     public void updateSeekBar() {
         try {
             if (isPlayerPlaying()) {
@@ -417,7 +434,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
             Playlist p = new Playlist("", "", ((SongAdapter) mainList.getAdapter()).getSongs());
-
             b.putSerializable("Playlist", p);
             //Don't use the actual index here, because we might be filtering the list
             b.putSerializable("songIndex", ((SongAdapter) mainList.getAdapter()).getSongs().indexOf(currentSong));
@@ -510,6 +526,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             currentSongPosition = (int) spotPlayer.getPlaybackState().positionMs;
         }
         fabIO.setImageResource(R.drawable.play);
+        serviceIconPausePlay(false);
     }
 
     public void resumeSong(int songIndex)
@@ -527,6 +544,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             } else {
                 playSong(songIndex);
             }
+            serviceIconPausePlay(true);
         }
         mainList.setSelection(songIndex);
     }

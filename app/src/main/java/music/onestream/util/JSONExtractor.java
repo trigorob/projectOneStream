@@ -60,6 +60,7 @@ public class JSONExtractor {
             String album = "";
             String artist = "";
             String name = "";
+            String uri = "";
             String albumArt = null;
 
             ArrayList<Song> tempList = new ArrayList<Song>();
@@ -68,6 +69,7 @@ public class JSONExtractor {
                 try {
                     jsonObject = (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
                     name = (String) jsonObject.get("name");
+                    uri = (String) jsonObject.get("uri");
                     artist = (String) jsonObject.getJSONArray("artists").getJSONObject(0).get("name");
                     jsonObject = jsonObject.getJSONObject("album");
                     album = (String) jsonObject.get("name");
@@ -86,8 +88,7 @@ public class JSONExtractor {
                 if (album == null || album.equals("")) {
                     album = "<Unknown>";
                 }
-                Song song = new Song(name, (String) jsonObject.get("uri"),
-                        artist, album, "Spotify", spotifySongOffset + i, albumArt);
+                Song song = new Song(name, uri, artist, album, "Spotify", spotifySongOffset + i, albumArt);
 
                 jsonObject = jsonObject.getJSONArray("images").getJSONObject(0);
                 albumArt = (String) jsonObject.get("url");

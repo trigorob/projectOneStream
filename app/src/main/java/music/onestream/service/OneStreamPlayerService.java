@@ -11,11 +11,13 @@ import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v7.app.NotificationCompat;
 
 import music.onestream.activity.PlaylistActivity;
 import music.onestream.R;
 import music.onestream.activity.SongActivity;
 import music.onestream.activity.OneStreamActivity;
+import music.onestream.song.Song;
 import music.onestream.util.PlayerActionsHandler;
 
 /**
@@ -30,7 +32,12 @@ public class OneStreamPlayerService extends Service {
     public static final String ACTION_NEXT = "action_next";
     public static final String ACTION_PREVIOUS = "action_previous";
     public static final String ACTION_REWIND = "action_rewind";
+    public static final String ACTION_SHUFFLE = "action_shuffle";
     public static final String ACTION_STOP = "action_stop";
+
+    public static final String ACTION_ICON_PAUSE = "action_icon_paues";
+    public static final String ACTION_ICON_PLAY = "action_icon_play";
+
 
 
     private String currentActivity = "";
@@ -70,6 +77,15 @@ public class OneStreamPlayerService extends Service {
             mediaController.getTransportControls().pause();
         }
 
+        else if (action.equalsIgnoreCase(ACTION_ICON_PAUSE))
+        {
+            mediaController.getTransportControls().pause();
+        }
+        else if (action.equalsIgnoreCase(ACTION_ICON_PLAY))
+        {
+            mediaController.getTransportControls().play();
+        }
+
         else if (action.equalsIgnoreCase(ACTION_PLAY))
         {
             mediaController.getTransportControls().play();
@@ -80,6 +96,21 @@ public class OneStreamPlayerService extends Service {
         {
             mediaController.getTransportControls().pause();
             playerHandler.stopSong();
+        }
+        else if (action.equalsIgnoreCase(ACTION_REWIND))
+        {
+            mediaController.getTransportControls().play();
+            playerHandler.playSong(playerHandler.getCurrentSongListPosition());
+        }
+        else if (action.equalsIgnoreCase(ACTION_SHUFFLE))
+        {
+            playerHandler.setRandomNext(!playerHandler.isRandomNext());
+            if (playerHandler.isPlaying()) {
+                buildNotification(generateAction(android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE));
+            }
+            else {
+                buildNotification(generateAction(R.drawable.play, "Play", ACTION_PLAY));
+            }
         }
         else if (action.equalsIgnoreCase(ACTION_NEXT))
         {
@@ -119,32 +150,56 @@ public class OneStreamPlayerService extends Service {
     }
 
     private void buildNotification(Notification.Action action) {
-        Notification.MediaStyle style = new Notification.MediaStyle();
+        NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle();
         Intent intent = new Intent(getApplicationContext(), OneStreamPlayerService.class);
-        //Play/Pause
         intent.setAction(ACTION_STOP);
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
-        Notification.Builder builder = new Notification.Builder(this)
+
+        android.support.v4.app.NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.logo)
                 .setShowWhen(false)
                 .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.logo))
                 .setDeleteIntent(pendingIntent)
-                .setStyle(style)
-                .setContentTitle("OneStream");
+                .setOngoing(true);
 
-        builder.addAction(generateAction(android.R.drawable.ic_media_previous, "Previous", ACTION_PREVIOUS));
+        if (playerHandler.getCurrentSongListPosition() != -1) {
+            Song currentSong = playerHandler.getCurrentSong(playerHandler.getCurrentSongListPosition());
+            builder.setContentTitle(currentSong.getName());
+            builder.setContentText(currentSong.getArtist());
+            builder.setSubText(currentSong.getAlbum());
+        }
+
+        builder.setStyle(style);
+
+        builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(ACTION_REWIND));
+        builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(ACTION_PREVIOUS));
         if (action.title.equals("Pause")) {
-            builder.addAction(action);
+            builder.addAction(android.R.drawable.ic_media_pause, "Pause", generatePendingIntent(ACTION_PAUSE));
         }
         else {
-            builder.addAction(generateAction(android.R.drawable.ic_media_play, "Play", ACTION_PLAY));
+            builder.addAction(R.drawable.play, "Play", generatePendingIntent(ACTION_PLAY));
         }
-        builder.addAction(generateAction(android.R.drawable.ic_media_next, "Next", ACTION_NEXT));
+        builder.addAction(R.drawable.skip, "Next", generatePendingIntent(ACTION_NEXT));
+        if (!playerHandler.isRandomNext()) {
+            builder.addAction(R.drawable.shuffle, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+        }
+        else {
+            builder.addAction(android.R.drawable.ic_menu_more, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+        }
         style.setShowActionsInCompactView(0, 1, 2);
 
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
+    }
+
+    private PendingIntent generatePendingIntent(String action) {
+        Intent resultIntent = new Intent(getApplicationContext(), OneStreamPlayerService.class);
+        resultIntent.setAction(action);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getService(getApplicationContext(), 0, resultIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+        return resultPendingIntent;
     }
 
     @Override

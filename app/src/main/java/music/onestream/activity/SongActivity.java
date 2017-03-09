@@ -57,6 +57,7 @@ public class SongActivity extends OSActivity {
         super.onResume();
         if (!playerHandler.isPlayerPlaying() && !playerHandler.isSpotifyPlaying()) {
             playerHandler.playSong(playerHandler.getCurrentSongListPosition());
+            playerHandler.serviceIconPausePlay(true);
         }
     }
 

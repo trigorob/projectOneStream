@@ -68,7 +68,7 @@ public class Song implements Serializable {
     @Override
     public boolean equals(Object other)
     {
-       return (((Song) other).getUri().equals(this.getUri()));
+        return (((Song) other).getUri().equals(this.getUri()));
     }
 
 }
