@@ -460,6 +460,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         fabIO.setImageResource(R.drawable.stop);
         mainList.setSelection(songIndex);
         setSongViewDisplay(currentSong);
+        serviceIconPausePlay(true);
     }
 
     public void setSongViewDisplay(Song song) {
