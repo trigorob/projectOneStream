@@ -174,7 +174,7 @@ public class OneStreamPlayerService extends Service {
         builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(ACTION_REWIND));
         builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(ACTION_PREVIOUS));
         if (action.title.equals("Pause")) {
-            builder.addAction(android.R.drawable.ic_media_pause, "Pause", generatePendingIntent(ACTION_PAUSE));
+            builder.addAction(R.drawable.pause, "Pause", generatePendingIntent(ACTION_PAUSE));
         }
         else {
             builder.addAction(R.drawable.play, "Play", generatePendingIntent(ACTION_PLAY));
@@ -184,7 +184,7 @@ public class OneStreamPlayerService extends Service {
             builder.addAction(R.drawable.shuffle, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
         }
         else {
-            builder.addAction(android.R.drawable.ic_menu_more, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+            builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
         }
         style.setShowActionsInCompactView(0, 1, 2);
 

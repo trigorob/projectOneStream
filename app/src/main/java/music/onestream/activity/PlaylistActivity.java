@@ -55,10 +55,13 @@ public class PlaylistActivity extends OSActivity {
             Song s = playlist.getSongInfo().get(i);
             if (s.getType().equals("Local")) {
                 /*     Looks a bit silly but we always have 12chars extra in our URI.
-                Android is a bit buggy this way. Need to remove those to get correct path
-                Since we don't use it anywhere else, it's not worth keeping elsewhere*/
+                *Android Emulators* are a bit buggy this way. Need to remove those to get correct path
+                Since we don't use it anywhere else, it's not worth keeping elsewhere
+                We use the album art uri for the phones. DONT TOUCH THESE
+                */
                 File f = new File(dir + s.getUri().substring(12));
-                if (f.exists() && !f.isDirectory()) {
+                File f2 = new File(s.getAlbumArt());
+                if (f.exists() || f2.exists()) {
                     playlistAdapter.add(s);
                 }
             }

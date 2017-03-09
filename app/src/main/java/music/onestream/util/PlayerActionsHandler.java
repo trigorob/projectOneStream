@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.ColorFilter;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -251,7 +249,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                     else
                     {
                         randomNext = true;
-                        random.setImageResource(R.drawable.notrandom);
+                        random.setImageResource(R.drawable.shuffleoff);
                     }
                 };
             }});
@@ -457,7 +455,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         else {
             //Play google song here
         }
-        fabIO.setImageResource(R.drawable.stop);
+        fabIO.setImageResource(R.drawable.pause);
         mainList.setSelection(songIndex);
         setSongViewDisplay(currentSong);
         serviceIconPausePlay(true);
@@ -536,12 +534,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             if (currentSongType.equals("Local")) {
                 mp.seekTo(currentSongPosition);
                 mp.start(); // starting mediaplayer
-                fabIO.setImageResource(R.drawable.stop);
+                fabIO.setImageResource(R.drawable.pause);
 
             } else if (currentSongType.equals("Spotify")) {
                spotPlayer.resume(opCallback);
                 spotPlayer.playUri(opCallback, spotPlayer.getMetadata().contextUri, 0, currentSongPosition);
-                fabIO.setImageResource(R.drawable.stop);
+                fabIO.setImageResource(R.drawable.pause);
             } else {
                 playSong(songIndex);
             }
