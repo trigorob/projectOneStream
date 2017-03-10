@@ -21,7 +21,7 @@ public class MusicLoaderService extends AsyncTask {
         Object[] retObject = new Object[2];
         retObject[0] = "MusicLoaderService";
         retObject[1] = result;
-        PlaylistHandler.addToArtistsAlbums((ArrayList<Song>) result, this.SAR);
+        PlaylistHandler.addToArtistsAlbums((ArrayList<Song>)((Playlist) result).getSongInfo(), this.SAR);
         SAR.processFinish(retObject);
     }
 
