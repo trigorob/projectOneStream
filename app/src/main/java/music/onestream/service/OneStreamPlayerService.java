@@ -190,7 +190,7 @@ public class OneStreamPlayerService extends Service {
 
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, builder.build());
+        startForeground(1, builder.build());
     }
 
     private PendingIntent generatePendingIntent(String action) {
@@ -263,6 +263,7 @@ public class OneStreamPlayerService extends Service {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(1);
                 Intent intent = new Intent(getApplicationContext(), OneStreamPlayerService.class);
+                stopForeground(true);
                 stopService(intent);
             }
         });
@@ -270,6 +271,7 @@ public class OneStreamPlayerService extends Service {
 
     @Override
     public void onDestroy() {
+        stopForeground(true);
         super.onDestroy();
     }
 
