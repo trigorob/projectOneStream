@@ -321,7 +321,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         {
             spotPlayer.pause(opCallback);
         }
-        if (mp.isPlaying())
+        if (isPlayerPlaying())
         {
             mp.stop();
         }
@@ -379,7 +379,13 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public boolean isPlayerPlaying()
     {
-        return mp != null && mp.isPlaying();
+        try {
+            return mp != null && mp.isPlaying();
+        }
+        catch (IllegalStateException e)
+        {
+            return false;
+        }
     }
 
     public boolean isPlaying() {
@@ -499,7 +505,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
-                next.performClick();
+                nextSong();
             }});
         seekBar.setMax(mp.getDuration());
     }
@@ -701,7 +707,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
         if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
-            next.performClick();
+            nextSong();
         }
         else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
             seekBar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
@@ -723,6 +729,14 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     @Override
-    public void onPlaybackError(Error error) {}
+    public void onPlaybackError(Error error) {
+        //If a song has a broken link, remove it from the list of songs so it doesn't cause any more trouble
+        if (error.toString().equals("kSpErrorFailed")) {
+            Song invalidSong = getCurrentSong(currentSongListPosition);
+            OneStreamActivity.getPlaylistHandler().getList("Spotify").removeSongItem(invalidSong);
+            OneStreamActivity.getPlaylistHandler().getCombinedList().removeSongItem(invalidSong);
+            OneStreamActivity.notifyAdapters();
+        }
+    }
 
 }
