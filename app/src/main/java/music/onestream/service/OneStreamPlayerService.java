@@ -280,6 +280,8 @@ public class OneStreamPlayerService extends Service {
         super.onTaskRemoved(rootIntent);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(1);
+        stopForeground(true);
+        stopSelf();
     }
 
 }
