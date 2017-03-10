@@ -57,6 +57,9 @@ public class OneStreamActivity extends OSActivity {
     private static ArrayAdapter<Song> spotifyAdapter;
     private static ArrayAdapter<Playlist> playlistAdapter;
     private static ArrayAdapter<Song> googleAdapter;
+    private static ArrayAdapter<Song> combinedAdapter;
+    private static ArrayAdapter<Playlist> artistsAdapter;
+    private static ArrayAdapter<Playlist> albumsAdapter;
 
 /**
  * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -141,8 +144,19 @@ private ViewPager mViewPager;
     }
 
     public static void initPlaylistAdapter(Context context) {
+        boolean refreshView = false;
+        if (mainList.getAdapter().equals(playlistAdapter))
+        {
+            refreshView = true;
+        }
         playlistAdapter = new PlaylistAdapter(context, R.layout.songlayout,
                 playlistHandler.getPlaylists());
+        playlistAdapter.notifyDataSetChanged();
+        mainList.invalidateViews();
+        if (refreshView)
+        {
+            mainList.setAdapter(playlistAdapter);
+        }
     }
 
     public static void notifyAdapters() {
@@ -162,6 +176,18 @@ private ViewPager mViewPager;
         {
             googleAdapter.notifyDataSetChanged();
         }
+        if (combinedAdapter != null)
+        {
+            combinedAdapter.notifyDataSetChanged();
+        }
+        if (artistsAdapter != null)
+        {
+            artistsAdapter.notifyDataSetChanged();
+        }
+        if (albumsAdapter != null)
+        {
+            albumsAdapter.notifyDataSetChanged();
+        }
         mainList.invalidateViews();
     }
 
@@ -174,12 +200,19 @@ private ViewPager mViewPager;
                 playlistHandler.getList("Spotify").getSongInfo());
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                playlistHandler.getPlaylists());
+        combinedAdapter = new SongAdapter(this, R.layout.songlayout,
+                playlistHandler.getCombinedList().getSongInfo());
+        artistsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
+                playlistHandler.getArtists());
+        albumsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
+                playlistHandler.getAlbums());
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                if (mViewPager.getCurrentItem() == 3)
+                int page = mViewPager.getCurrentItem();
+                if (page == 3 || page == 5 || page == 6)
                 {
                     ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
                 }
@@ -224,11 +257,13 @@ private ViewPager mViewPager;
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                if (mViewPager.getCurrentItem() == 3)
+                int page = mViewPager.getCurrentItem();
+                if (page == 3 || page == 5 || page == 6)
                 {
                     Intent playlist = new Intent(view.getContext(), PlaylistActivity.class);
                     Bundle b = new Bundle();
-                    b.putSerializable("Playlist", playlistHandler.getPlaylists().get(position));
+                    Playlist p = ((PlaylistAdapter) mainList.getAdapter()).getItem(position);
+                    b.putSerializable("Playlist", p);
                     playlist.putExtras(b);
                     playerHandler.onDestroy();
                     startActivityForResult(playlist, 0);
@@ -273,14 +308,8 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
         String domain =  settings.getString("domain", "Admin");
 
-        ArrayList<ArrayAdapter> adapters = new ArrayList<ArrayAdapter>();
-        adapters.add(adapter);
-        adapters.add(spotifyAdapter);
-        adapters.add(playlistAdapter);
-        adapters.add(googleAdapter);
-
         playlistHandler = new PlaylistHandler(this.getApplicationContext(), playerHandler,
-                sortType, directory, directoryChanged, domain ,adapters);
+                sortType, directory, directoryChanged, domain);
 
         if (sortOnLoad)
         {
@@ -329,17 +358,21 @@ private ViewPager mViewPager;
                 playerHandler.setCurrentSongListPosition(-1);
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
-                        mainList.setAdapter(adapter);
+                        mainList.setAdapter(combinedAdapter);
                         setLoginButtonVisible(false, loginButton);;
                         break;
                     case 1:
+                        mainList.setAdapter(adapter);
+                        setLoginButtonVisible(false, loginButton);;
+                        break;
+                    case 2:
                         mainList.setAdapter(spotifyAdapter);
                         if (playerHandler.isSpotifyLoggedOut() && spotifyAdapter.getCount() == 0)
                         {
                             setLoginButtonVisible(true, loginButton);;
                         }
                         break;
-                    case 2:
+                    case 4:
                         //Todo: change to googlemusicStrings
                         if ((playlistHandler.getList("Spotify") == null))
                         {
@@ -349,6 +382,14 @@ private ViewPager mViewPager;
                         break;
                     case 3:
                         mainList.setAdapter(playlistAdapter);
+                        setLoginButtonVisible(false, loginButton);;
+                        break;
+                    case 5:
+                        mainList.setAdapter(artistsAdapter);
+                        setLoginButtonVisible(false, loginButton);;
+                        break;
+                    case 6:
+                        mainList.setAdapter(albumsAdapter);
                         setLoginButtonVisible(false, loginButton);;
                         break;
                 }

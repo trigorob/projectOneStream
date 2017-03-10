@@ -1,11 +1,13 @@
 package music.onestream.playlist;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
 import com.spotify.sdk.android.player.Connectivity;
 
+import music.onestream.musicgetter.ArtistAlbumMusicLoader;
 import music.onestream.song.Song;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.musicgetter.LocalMusicGetter;
@@ -36,21 +38,21 @@ public class PlaylistHandler implements AsyncResponse {
     private static Playlist spotifyListContent;
     private static ArrayList<Playlist> playlists;
     private static Playlist combinedList;
-    private final ArrayList<ArrayAdapter> adapters;
+
+    private static ArrayList<Playlist> artists;
+    private static ArrayList<Playlist> albums;
 
     private Context context;
 
 
     public PlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
-                           String type, String directory, boolean directoryChanged, String domain,
-    ArrayList<ArrayAdapter> adapters) {
+                           String type, String directory, boolean directoryChanged, String domain) {
         this.context = appContext;
         this.playerHandler = playerHandler;
         this.sortType = type;
         this.directory = directory;
         this.directoryChanged = directoryChanged;
         this.domain = domain;
-        this.adapters = adapters;
 
         this.musicGetterHandler = new MusicGetterHandler();
         initSongLists();
@@ -114,14 +116,12 @@ public class PlaylistHandler implements AsyncResponse {
             ms = new MusicSorter(listContent.getSongInfo(), type);
             retVal = ms.getRetArr();
             listContent.setSongInfo((ArrayList<Song>) retVal[0]);
-            OneStreamActivity.notifyAdapters();
         }
         else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
         {
             ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
             retVal = ms.getRetArr();
             spotifyListContent.setSongInfo((ArrayList<Song>) retVal[0]);
-            OneStreamActivity.notifyAdapters();
         }
 
         else if (playlists != null && list.equals("Playlists"))
@@ -151,6 +151,11 @@ public class PlaylistHandler implements AsyncResponse {
         if (spotifyListContent == null)
         {
             spotifyListContent = new Playlist();
+        }
+        if (artists == null || albums == null)
+        {
+            artists = new ArrayList<Playlist>();
+            albums = new ArrayList<Playlist>();
         }
         getSpotifyLibrary();
 
@@ -232,12 +237,15 @@ public class PlaylistHandler implements AsyncResponse {
             playlists = (ArrayList<Playlist>) retVal;
             sortLists(sortType, "Playlists");
             OneStreamActivity.initPlaylistAdapter(context);
+        }
+
+        else if (type.equals("ArtistAlbumMusicLoader")) {
             OneStreamActivity.notifyAdapters();
         }
 
         else if (type.equals("MusicLoaderService")) {
             combinedList.addSongs(listContent.getSongInfo());
-            if (listContent.size() == totalLocalSongs) {
+                if (listContent.size() == totalLocalSongs) {
                 sortLists(sortType, "Local");
             }
             OneStreamActivity.notifyAdapters();
@@ -248,18 +256,38 @@ public class PlaylistHandler implements AsyncResponse {
             }
 
             for (Song song: tempList)
-            if (!spotifyListContent.getSongInfo().contains(song))
+            if (spotifyListContent.getSongInfo().contains(song))
             {
-                spotifyListContent.addSong(song);
-                combinedList.addSong(song);
+                tempList.remove(song);
             }
+            spotifyListContent.addSongs(tempList);
+            combinedList.addSongs(tempList);
             OneStreamActivity.notifyAdapters();
 
         }
     }
 
+
+    public static void addToArtistsAlbums(ArrayList<Song> songs, AsyncResponse SAR) {
+        Object[] params = new Object[3];
+        params[0] = artists;
+        params[1] = albums;
+        params[2] = songs;
+        ArtistAlbumMusicLoader aaml = new ArtistAlbumMusicLoader();
+        aaml.SAR = SAR;
+        aaml.execute(params);
+        OneStreamActivity.notifyAdapters();
+
+    }
+
     public ArrayList<Playlist> getPlaylists() {
         return playlists;
+    }
+    public ArrayList<Playlist> getArtists() {
+        return artists;
+    }
+    public ArrayList<Playlist> getAlbums() {
+        return albums;
     }
 
 }

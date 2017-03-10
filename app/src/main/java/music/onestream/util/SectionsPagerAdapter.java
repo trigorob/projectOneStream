@@ -31,8 +31,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
-        return 4;
+        // Show 7 total pages.
+        return 7;
     }
 
 
@@ -40,13 +40,19 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Local";
+                return "Library";
             case 1:
-                return "Spotify";
+                return "Local";
             case 2:
-                return "GoogleMusic";
+                return "Spotify";
             case 3:
                 return "Playlists";
+            case 4:
+                return "Google Music";
+            case 5:
+                return "Artists";
+            case 6:
+                return "Albums";
         }
         return null;
     }
