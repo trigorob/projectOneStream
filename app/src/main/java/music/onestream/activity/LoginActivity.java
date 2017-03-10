@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 //Authentication tool for GoogleMusic
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -34,7 +35,10 @@ public class LoginActivity extends FragmentActivity {
     @SuppressWarnings("SpellCheckingInspection")
     private static final String SPOTIFY_REDIRECT_URI = "testschema://callback";
     private static final int REQUEST_CODE = 1337;
+    private static final int GOOGLE_RESPONSE_CODE = 0;
+    private static final int GOOGLE_CACHE_CODE = -1;
     private static final int RC_SIGN_IN = 9001;
+    private static final int RC_GET_TOKEN = 9002;
     public static final String PREFS_NAME = "GoogleACCT";
 
     private static GoogleApiClient mGoogleApiClient;
@@ -43,8 +47,8 @@ public class LoginActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        String token = CredentialsHandler.getToken(this, "GoogleMusic");
 
-        String token = CredentialsHandler.getToken(this, "Spotify");
         Button spotifyLoginButton = (Button) findViewById(R.id.spotifyLoginLauncherButton);
         if (token == null) {
             spotifyLoginButton.setText(R.string.spotify_login_button);
@@ -100,6 +104,11 @@ public class LoginActivity extends FragmentActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    public void googleMusicGetToken() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_GET_TOKEN);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -110,8 +119,9 @@ public class LoginActivity extends FragmentActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    logMessage("Got token: " + response.getAccessToken());
-                    CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS, "Spotify");
+                    logMessage("Login Success!");
+                    CredentialsHandler.setToken(this, response.getAccessToken(),
+                            response.getExpiresIn(), TimeUnit.SECONDS, "Spotify");
                     startMainActivity(response.getAccessToken());
                     break;
 
@@ -124,16 +134,28 @@ public class LoginActivity extends FragmentActivity {
                 default:
                     logError("Auth result: " + response.getType());
             }
-        } else if (requestCode == RC_SIGN_IN) {
+        }
+        else if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
             if (result.isSuccess()) {
-                GoogleSignInAccount acct = result.getSignInAccount();
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                //editor.put("GoogleACCT", acct);
-                // Get account information
+                googleMusicGetToken();
                 return;
             }
+        }
+
+        else if (requestCode == RC_GET_TOKEN) {
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
+            if (result.isSuccess()) {
+                String idToken = result.getSignInAccount().getIdToken();
+                SharedPreferences.Editor editor = settings.edit();
+                CredentialsHandler.setToken(this, idToken,
+                        9999999, TimeUnit.SECONDS, "GoogleMusic");
+                startMainActivity(idToken);
+                //editor.put("GoogleACCT", acct);
+                // Get account information
+            }
+                return;
         }
     }
 

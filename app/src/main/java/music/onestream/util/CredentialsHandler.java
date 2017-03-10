@@ -1,6 +1,7 @@
 package music.onestream.util;
 
 
+import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +20,13 @@ public class CredentialsHandler {
         long now = System.currentTimeMillis();
         long expiresAt = now + unit.toMillis(expiresIn);
 
-        SharedPreferences sharedPref = getSpotifySharedPreferences(appContext);
+        SharedPreferences sharedPref;
+        if (service.equals("Spotify")) {
+           sharedPref = getSpotifySharedPreferences(appContext);
+        }
+        else {
+            sharedPref = getGoogleMusicSharedPreferences(appContext);
+        }
         SharedPreferences.Editor editor = sharedPref.edit();
         if (service.equals("Spotify")) {
             editor.putString(SPOTIFY_ACCESS_TOKEN, token);
@@ -38,12 +45,19 @@ public class CredentialsHandler {
     }
 
     private static SharedPreferences getGoogleMusicSharedPreferences(Context appContext) {
-        return appContext.getSharedPreferences(SPOTIFY_TOKEN_NAME, Context.MODE_PRIVATE);
+        return appContext.getSharedPreferences(GoogleMusic_TOKEN_NAME, Context.MODE_PRIVATE);
     }
 
     public static String getToken(Context context, String Service) {
         Context appContext = context.getApplicationContext();
-        SharedPreferences sharedPref = getGoogleMusicSharedPreferences(appContext);
+        SharedPreferences sharedPref = null;
+        if (Service.equals("GoogleMusic")) {
+            sharedPref = getGoogleMusicSharedPreferences(appContext);
+        }
+        else if (Service.equals("Spotify"))
+        {
+            sharedPref = getSpotifySharedPreferences(appContext);
+        }
 
         String token = null;
         long expiresAt = 0;
