@@ -136,4 +136,11 @@ public class PlaylistRecommendationsActivity extends Activity implements AsyncRe
             Toast.makeText(this, "Nothing found, try another song.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mainList.setAdapter(adapter);
+    }
+
 }

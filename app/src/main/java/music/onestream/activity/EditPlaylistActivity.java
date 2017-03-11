@@ -191,7 +191,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     }
 
     public boolean isListInDatabase() {
-        return (playlist != null && !newList && !playlist.getOwner().equals("") && previouslyExisting);
+        return (playlist != null && !newList && playlist.getOwner().equals(domain) && previouslyExisting);
     }
 
     private void handleDelete()
