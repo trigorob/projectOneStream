@@ -75,8 +75,15 @@ public class PlaylistRecommendationsActivity extends Activity implements AsyncRe
         textFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
-                ((SongAdapter) mainList.getAdapter()).notifyDataSetChanged();
+                if (mainList.getAdapter().equals(adapter)) {
+                    adapter.getFilter().filter(cs);
+                    adapter.notifyDataSetChanged();
+                }
+                else
+                {
+                    playlistAdapter.getFilter().filter(cs);
+                    playlistAdapter.notifyDataSetChanged();
+                }
                 mainList.invalidateViews();
             }
             @Override
