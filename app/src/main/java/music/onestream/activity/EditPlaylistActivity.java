@@ -21,7 +21,7 @@ import music.onestream.R;
 import music.onestream.playlist.Playlist;
 import music.onestream.song.SongAdapter;
 import music.onestream.util.AsyncResponse;
-import music.onestream.util.DatabaseActionsHandler;
+import music.onestream.util.RestServiceActionsHandler;
 
 /**
  * Created by ruspe_000 on 2017-02-03.
@@ -31,7 +31,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
 
     private static Playlist playlist;
     private static Playlist oldPlaylist;
-    private static DatabaseActionsHandler dba;
+    private static RestServiceActionsHandler restActionHandler;
     private static Playlist combinedList;
     private boolean newList = false;
     private static boolean previouslyExisting = false;
@@ -46,8 +46,8 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_playlist_activity);
-        dba = new DatabaseActionsHandler();
-        dba.SAR = this;
+        restActionHandler = new RestServiceActionsHandler();
+        restActionHandler.SAR = this;
         domain = getDomain();
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
@@ -202,7 +202,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             playlist.setName(oldPlaylist.getName());
             params[0] = "DeletePlaylist";
             params[1] = playlist;
-            dba.execute(params);
+            restActionHandler.execute(params);
 
             ArrayList<Playlist> playlists = OneStreamActivity.getPlaylistHandler().getPlaylists();
             if (playlists != null)
@@ -240,7 +240,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         }
         params[1] = playlist;
 
-        dba.execute(params);
+        restActionHandler.execute(params);
 
         playlist.setName(playlistTitle.getText().toString());
         if (playlists != null)

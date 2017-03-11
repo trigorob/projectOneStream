@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playlist_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:vmSafeMode="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <TextView android:id="@+id/filterDescPR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Click a song to recommend a playlist" />
+
+    <EditText
+        android:cursorVisible="false"
+        android:layout_width="match_parent"
+        android:maxLines="1"
+        android:imeOptions="actionDone"
+        android:gravity="end"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filterDescPR"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/songFilterPR"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
+
+        <ListView
+            android:cacheColorHint="@android:color/transparent"
+            android:background="@drawable/listbackground"
+            android:listSelector="#E0ECF8"
+            android:id="@+id/ListViewPR"
+            android:choiceMode="singleChoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
+

@@ -51,8 +51,14 @@
             android:name=".activity.SongActivity">
         </activity>
         <activity
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.OneStreamDomainActivity"
             android:label="OneStreamDomainActivity">
+        </activity>
+        <activity
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
+            android:name=".activity.PlaylistRecommendationsActivity"
+            android:label="PlaylistRecommendationsActivity">
         </activity>
         <activity android:name=".activity.LoginActivity">
             <intent-filter>

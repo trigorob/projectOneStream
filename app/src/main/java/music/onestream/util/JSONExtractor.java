@@ -103,6 +103,10 @@ public class JSONExtractor {
     }
 
     public static ArrayList<Playlist> processPlaylistJSON(String output) {
+        if (output == null)
+        {
+            return new ArrayList<Playlist>();
+        }
         ArrayList<Playlist> playlists = new ArrayList<Playlist>();
         try {
             Playlist playlist;

@@ -1,9 +1,7 @@
 package music.onestream.playlist;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import android.content.Context;
-import android.widget.ArrayAdapter;
 
 import com.spotify.sdk.android.player.Connectivity;
 
@@ -15,7 +13,7 @@ import music.onestream.musicgetter.MusicGetterHandler;
 import music.onestream.musicgetter.SpotifyMusicGetter;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.CredentialsHandler;
-import music.onestream.util.DatabaseActionsHandler;
+import music.onestream.util.RestServiceActionsHandler;
 import music.onestream.musicgetter.MusicLoaderService;
 import music.onestream.util.MusicSorter;
 import music.onestream.util.PlayerActionsHandler;
@@ -29,7 +27,7 @@ public class PlaylistHandler implements AsyncResponse {
     private String directory;
     private Boolean directoryChanged = false;
     private String sortType;
-    private static DatabaseActionsHandler dba;
+    private static RestServiceActionsHandler restActionHandler;
 
     private PlayerActionsHandler playerHandler;
     private MusicGetterHandler musicGetterHandler;
@@ -175,7 +173,7 @@ public class PlaylistHandler implements AsyncResponse {
     public static void resetPlaylists()
     {
         playlists = null;
-        dba = null;
+        restActionHandler = null;
     }
 
     public Boolean isDirectoryChanged() {
@@ -191,13 +189,13 @@ public class PlaylistHandler implements AsyncResponse {
     }
 
     public void getRemotePlaylists(String domain) {
-        if (dba == null && isConnected()) {
+        if (restActionHandler == null && isConnected()) {
             Object[] params = new Object[2];
             params[0] = "GetPlaylists";
             params[1] = domain;
-            dba = new DatabaseActionsHandler();
-            dba.SAR = this;
-            dba.execute(params);
+            restActionHandler = new RestServiceActionsHandler();
+            restActionHandler.SAR = this;
+            restActionHandler.execute(params);
         }
     }
 
@@ -232,7 +230,7 @@ public class PlaylistHandler implements AsyncResponse {
             return;
         }
         //Case where retrieved from DB. Only DB lists are playlist array
-        else if (type.equals("DatabaseActionsHandler"))
+        else if (type.equals("RestServiceActionsHandler"))
         {
             playlists = (ArrayList<Playlist>) retVal;
             sortLists(sortType, "Playlists");

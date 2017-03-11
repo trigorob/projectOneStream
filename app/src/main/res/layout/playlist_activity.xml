@@ -53,7 +53,7 @@
         <ImageButton
         android:id="@+id/PrevPL"
         android:layout_height="wrap_content"
-        app:backgroundTint="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
         android:layout_gravity="bottom|start"
         app:srcCompat="@drawable/previous"
         android:clickable="true"
@@ -62,7 +62,7 @@
 
         <ImageButton
             android:id="@+id/RewindPL"
-            app:backgroundTint="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
@@ -79,7 +79,7 @@
             android:layout_gravity="start|bottom"
             android:layout_marginTop="12dp"
             android:clickable="true"
-            app:backgroundTint="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
             android:src="@drawable/play"/>
 
         <ImageButton
@@ -87,14 +87,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|bottom"
-            app:backgroundTint="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
             app:srcCompat="@drawable/skip"
             android:layout_marginTop="12dp"
             android:clickable="true" />
 
         <ImageButton
             android:id="@+id/RandomPL"
-            app:backgroundTint="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
