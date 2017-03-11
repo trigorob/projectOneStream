@@ -40,7 +40,7 @@ public class AddSongsActivity extends Activity {
             if (combinedList == null)
             {
                 this.combinedList =  new Playlist
-                        ("", "", OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
+                        ("", "", OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
             }
 
             this.oldCombinedList = new Playlist();

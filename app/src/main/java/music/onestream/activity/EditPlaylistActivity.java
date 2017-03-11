@@ -61,7 +61,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         }
         else
         {
-            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
+            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
         }
 
         if (oldPlaylist == null) {

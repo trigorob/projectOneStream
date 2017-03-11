@@ -734,7 +734,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (error.toString().equals("kSpErrorFailed")) {
             Song invalidSong = getCurrentSong(currentSongListPosition);
             OneStreamActivity.getPlaylistHandler().getList("Spotify").removeSongItem(invalidSong);
-            OneStreamActivity.getPlaylistHandler().getCombinedList().removeSongItem(invalidSong);
+            OneStreamActivity.getPlaylistHandler().getList("Library").removeSongItem(invalidSong);
             OneStreamActivity.notifyAdapters();
         }
     }

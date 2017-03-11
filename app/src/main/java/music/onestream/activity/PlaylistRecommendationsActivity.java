@@ -47,7 +47,7 @@ public class PlaylistRecommendationsActivity extends Activity implements AsyncRe
 
     private void initSongList() {
         recommendedPlaylists = null;
-        ArrayList<Song> songs = OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo();
+        ArrayList<Song> songs = OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo();
 
         adapter = new SongAdapter(this, R.layout.songlayout, songs);
         mainList.setAdapter(adapter);

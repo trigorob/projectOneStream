@@ -22,21 +22,21 @@ import music.onestream.util.PlaylistSorter;
 public class PlaylistHandler implements AsyncResponse {
 
     private static int totalLocalSongs = 0;
-
     private String domain;
     private String directory;
     private Boolean directoryChanged = false;
     private String sortType;
+
     private static RestServiceActionsHandler restActionHandler;
 
     private PlayerActionsHandler playerHandler;
     private MusicGetterHandler musicGetterHandler;
 
-    private static Playlist listContent;
-    private static Playlist spotifyListContent;
-    private static ArrayList<Playlist> playlists;
-    private static Playlist combinedList;
+    private Playlist listContent;
+    private Playlist spotifyListContent;
+    private Playlist combinedList;
 
+    private static ArrayList<Playlist> playlists;
     private static ArrayList<Playlist> artists;
     private static ArrayList<Playlist> albums;
 
@@ -64,6 +64,10 @@ public class PlaylistHandler implements AsyncResponse {
         else if (type.equals("Spotify"))
         {
             return spotifyListContent;
+        }
+        else if (type.equals("Library"))
+        {
+            return combinedList;
         }
         else
         {
@@ -94,15 +98,14 @@ public class PlaylistHandler implements AsyncResponse {
         }
     }
 
-    public static Playlist getCombinedList() {
-        return combinedList;
-    }
-
     public void sortAllLists(String type)
     {
         sortLists(type, "Local");
         sortLists(type, "Spotify");
         sortLists(type, "Playlists");
+        sortLists(type, "Library");
+        sortLists(type, "Albums");
+        sortLists(type, "Artists");
     }
 
     public void sortLists(String type, String list) {
@@ -129,6 +132,35 @@ public class PlaylistHandler implements AsyncResponse {
             ps = new PlaylistSorter(playlists, type);
             retVal = ps.getRetArr();
             playlists = ((ArrayList<Playlist>) retVal[0]);
+
+        }
+
+        else if (combinedList != null && list.equals("Library"))
+        {
+
+            ms = new MusicSorter(combinedList.getSongInfo(), type);
+            retVal = ms.getRetArr();
+            combinedList.setSongInfo((ArrayList<Song>) retVal[0]);
+
+        }
+
+        else if (artists != null && list.equals("Artists"))
+        {
+
+            PlaylistSorter ps;
+            ps = new PlaylistSorter(artists, type);
+            retVal = ps.getRetArr();
+            artists = ((ArrayList<Playlist>) retVal[0]);
+
+        }
+
+        else if (albums != null && list.equals("Albums"))
+        {
+
+            PlaylistSorter ps;
+            ps = new PlaylistSorter(albums, type);
+            retVal = ps.getRetArr();
+            albums = ((ArrayList<Playlist>) retVal[0]);
 
         }
         OneStreamActivity.notifyAdapters();
@@ -249,10 +281,6 @@ public class PlaylistHandler implements AsyncResponse {
             OneStreamActivity.notifyAdapters();
         } else if (type.equals("SpotifyMusicGetter")) {
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;
-            if (tempList.size() < 20) {
-                sortLists(sortType, "Spotify");
-            }
-
             for (Song song: tempList)
             if (spotifyListContent.getSongInfo().contains(song))
             {
@@ -260,6 +288,12 @@ public class PlaylistHandler implements AsyncResponse {
             }
             spotifyListContent.addSongs(tempList);
             combinedList.addSongs(tempList);
+
+
+            if (tempList.size() < 20) {
+                sortLists(sortType, "Spotify");
+                sortLists(sortType, "Library");
+            }
             OneStreamActivity.notifyAdapters();
 
         }

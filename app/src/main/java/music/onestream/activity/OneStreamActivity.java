@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.spotify.sdk.android.player.Connectivity;
@@ -50,16 +48,17 @@ public class OneStreamActivity extends OSActivity {
     private static boolean songViewEnabled;
 
     private static PlaylistHandler playlistHandler;
+    private static int currentPage;
     private static ListView mainList;
 
     // variable declaration
-    private static ArrayAdapter<Song> adapter;
-    private static ArrayAdapter<Song> spotifyAdapter;
-    private static ArrayAdapter<Playlist> playlistAdapter;
-    private static ArrayAdapter<Song> googleAdapter;
-    private static ArrayAdapter<Song> combinedAdapter;
-    private static ArrayAdapter<Playlist> artistsAdapter;
-    private static ArrayAdapter<Playlist> albumsAdapter;
+    private static SongAdapter adapter;
+    private static SongAdapter spotifyAdapter;
+    private static PlaylistAdapter playlistAdapter;
+    private static SongAdapter googleAdapter;
+    private static SongAdapter combinedAdapter;
+    private static PlaylistAdapter artistsAdapter;
+    private static PlaylistAdapter albumsAdapter;
 
 /**
  * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -159,6 +158,8 @@ private ViewPager mViewPager;
         }
     }
 
+
+
     public static void notifyAdapters() {
         if (adapter != null)
         {
@@ -179,6 +180,10 @@ private ViewPager mViewPager;
         if (combinedAdapter != null)
         {
             combinedAdapter.notifyDataSetChanged();
+            if (currentPage == 0)
+            {
+                mainList.setAdapter(combinedAdapter);
+            }
         }
         if (artistsAdapter != null)
         {
@@ -191,6 +196,13 @@ private ViewPager mViewPager;
         mainList.invalidateViews();
     }
 
+    public boolean onPlaylistPage() {
+        return (currentPage == 3 || currentPage == 5 || currentPage == 6);
+    }
+
+    public boolean onLibraryPage() {
+        return (currentPage == 0);
+    }
 
     public void initListDisplay() {
 
@@ -198,21 +210,25 @@ private ViewPager mViewPager;
                 playlistHandler.getList("Local").getSongInfo());
         spotifyAdapter = new SongAdapter(this, R.layout.songlayout,
                 playlistHandler.getList("Spotify").getSongInfo());
+        combinedAdapter = new SongAdapter(this, R.layout.songlayout,
+                playlistHandler.getList("Library").getSongInfo());
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                playlistHandler.getPlaylists());
-        combinedAdapter = new SongAdapter(this, R.layout.songlayout,
-                playlistHandler.getCombinedList().getSongInfo());
         artistsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                 playlistHandler.getArtists());
         albumsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                 playlistHandler.getAlbums());
 
+        //TODO: Implement
+        googleAdapter = new SongAdapter(this,R.layout.songlayout,
+                new ArrayList<Song>());
+        mainList.setAdapter(adapter);
+
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                int page = mViewPager.getCurrentItem();
-                if (page == 3 || page == 5 || page == 6)
+                if (onPlaylistPage())
                 {
                     ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
                 }
@@ -248,17 +264,12 @@ private ViewPager mViewPager;
                 return false;
             }
         });
-        //TODO: Implement. Placeholder so we dont have to make lists visible/invisible
-        googleAdapter = new SongAdapter(this,R.layout.songlayout,
-                new ArrayList<Song>());
-        mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                int page = mViewPager.getCurrentItem();
-                if (page == 3 || page == 5 || page == 6)
+                if (onPlaylistPage())
                 {
                     Intent playlist = new Intent(view.getContext(), PlaylistActivity.class);
                     Bundle b = new Bundle();
@@ -352,7 +363,6 @@ private ViewPager mViewPager;
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-            //TODO: Google music case when appropriate
             @Override
             public void onPageSelected(int position) {
                 playerHandler.setCurrentSongListPosition(-1);
@@ -360,10 +370,12 @@ private ViewPager mViewPager;
                     case 0:
                         mainList.setAdapter(combinedAdapter);
                         setLoginButtonVisible(false, loginButton);;
+                        currentPage = 0;
                         break;
                     case 1:
                         mainList.setAdapter(adapter);
-                        setLoginButtonVisible(false, loginButton);;
+                        setLoginButtonVisible(false, loginButton);
+                        currentPage = 1;
                         break;
                     case 2:
                         mainList.setAdapter(spotifyAdapter);
@@ -371,6 +383,12 @@ private ViewPager mViewPager;
                         {
                             setLoginButtonVisible(true, loginButton);;
                         }
+                        currentPage = 2;
+                        break;
+                    case 3:
+                        mainList.setAdapter(playlistAdapter);
+                        setLoginButtonVisible(false, loginButton);
+                        currentPage = 3;
                         break;
                     case 4:
                         //Todo: change to googlemusicStrings
@@ -379,18 +397,17 @@ private ViewPager mViewPager;
                             setLoginButtonVisible(true, loginButton);;
                         }
                         mainList.setAdapter(googleAdapter);
-                        break;
-                    case 3:
-                        mainList.setAdapter(playlistAdapter);
-                        setLoginButtonVisible(false, loginButton);;
+                        currentPage = 4;
                         break;
                     case 5:
                         mainList.setAdapter(artistsAdapter);
-                        setLoginButtonVisible(false, loginButton);;
+                        setLoginButtonVisible(false, loginButton);
+                        currentPage = 5;
                         break;
                     case 6:
                         mainList.setAdapter(albumsAdapter);
-                        setLoginButtonVisible(false, loginButton);;
+                        setLoginButtonVisible(false, loginButton);
+                        currentPage = 6;
                         break;
                 }
             }
