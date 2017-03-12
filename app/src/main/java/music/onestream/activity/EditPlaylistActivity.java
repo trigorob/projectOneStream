@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -27,15 +29,15 @@ import music.onestream.util.RestServiceActionsHandler;
  * Created by ruspe_000 on 2017-02-03.
  */
 
-public class EditPlaylistActivity extends Activity implements AsyncResponse {
+public class EditPlaylistActivity extends AppCompatActivity implements AsyncResponse {
 
-    private static Playlist playlist;
-    private static Playlist oldPlaylist;
-    private static RestServiceActionsHandler restActionHandler;
-    private static Playlist combinedList;
+    private Playlist playlist;
+    private Playlist oldPlaylist;
+    private RestServiceActionsHandler restActionHandler;
+    private Playlist combinedList;
     private boolean newList = false;
-    private static boolean previouslyExisting = false;
-    private static String domain;
+    private boolean previouslyExisting = false;
+    private String domain;
 
     public String getDomain() {
         final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
@@ -49,12 +51,20 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         restActionHandler = new RestServiceActionsHandler();
         restActionHandler.SAR = this;
         domain = getDomain();
+        getSupportActionBar();
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         Playlist tempCombinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
-
-
         combinedList = new Playlist();
+
+        if (playlist != null && playlist.getName() != null)
+        {
+            setTitle(playlist.getName());
+        }
+        else
+        {
+            setTitle("Playlist Title");
+        }
         if (tempCombinedList != null)
         {
             combinedList.addSongs(tempCombinedList.getSongInfo());
@@ -130,6 +140,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             @Override
             public void afterTextChanged(Editable s) {
                 playlist.setName(s.toString());
+                setTitle(playlist.getName());
             }
         });
 

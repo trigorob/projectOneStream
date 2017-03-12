@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -24,7 +25,7 @@ import music.onestream.song.SongAdapter;
  * Created by ruspe_000 on 2017-02-13.
  */
 
-public class AddSongsActivity extends Activity {
+public class AddSongsActivity extends AppCompatActivity {
 
         private static Playlist playlist;
         private static Playlist oldPlaylist;
@@ -37,6 +38,15 @@ public class AddSongsActivity extends Activity {
             setContentView(R.layout.addsongs_activity);
 
             playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+            getSupportActionBar();
+            if (playlist.getName().equals(""))
+            {
+                setTitle("Playlist Title");
+            }
+            else
+            {
+                setTitle(playlist.getName());
+            }
             combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
             if (combinedList == null)
             {
