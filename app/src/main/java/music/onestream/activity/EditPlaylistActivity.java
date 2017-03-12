@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -164,7 +165,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
             }
         });
 
-        Button addSongsButton = (Button) findViewById(R.id.addSongsToPlaylist);
+        FloatingActionButton addSongsButton = (FloatingActionButton) findViewById(R.id.addSongsToPlaylist);
         addSongsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,7 +178,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
             }
         });
 
-        Button discardChangesButton = (Button) findViewById(R.id.discardNewPlaylist);
+        FloatingActionButton discardChangesButton = (FloatingActionButton) findViewById(R.id.discardNewPlaylist);
         discardChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,7 +186,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
             }
         });
 
-        Button saveChangesButton = (Button) findViewById(R.id.saveNewPlaylist);
+        FloatingActionButton saveChangesButton = (FloatingActionButton) findViewById(R.id.saveNewPlaylist);
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
