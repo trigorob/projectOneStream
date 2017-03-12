@@ -27,10 +27,10 @@ import music.onestream.song.SongAdapter;
 
 public class AddSongsActivity extends AppCompatActivity {
 
-        private static Playlist playlist;
-        private static Playlist oldPlaylist;
-        public static Playlist combinedList; //Contains song info
-        public static Playlist oldCombinedList;
+        private Playlist playlist;
+        private Playlist oldPlaylist;
+        public Playlist combinedList; //Contains song info
+        public Playlist oldCombinedList;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
