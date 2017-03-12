@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
     <TextView android:id="@+id/filterDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Filter Songs by Name/Artist/Album" />
+        android:hint="Filter Songs by Name/Artist/Album"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp"
+        android:layout_marginLeft="3dp"/>
 
         <EditText
             android:cursorVisible="false"
-            android:layout_width="match_parent"
+            android:layout_width="257dp"
             android:maxLines="1"
             android:imeOptions="actionDone"
             android:gravity="end"
             android:layout_height="wrap_content"
-            android:layout_below="@id/filterDesc"
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/songFilterAS"
-            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+            android:layout_below="@+id/filterDesc"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
 
     <TextView android:id="@+id/addInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Click on songs to add them to the playlist"/>
+        android:text="Click on songs to add them to the playlist"
+        android:layout_below="@+id/relativeLayout"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="3dp"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    <Button
-        android:id="@+id/saveNewPlaylistChanges"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Changes"/>
-
-    <Button
-        android:id="@+id/discardNewPlaylistChanges"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Revert Changes"/>
-    </LinearLayout>
 
     <ListView
         android:background="@drawable/listbackground"
@@ -54,10 +49,34 @@
         android:id="@+id/songList"
         android:choiceMode="singleChoice"
         android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
         android:cacheColorHint="#0000"
         android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/addInfo">
     </ListView>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/discardNewPlaylistChanges"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:text="Revert Changes"
+        android:layout_above="@+id/addInfo"
+        android:layout_alignStart="@+id/saveNewPlaylistChanges"
+        android:src="@drawable/undo"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/saveNewPlaylistChanges"
+        android:layout_width="60dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_height="match_parent"
+        android:src="@drawable/check"
+        />
+
+</RelativeLayout>

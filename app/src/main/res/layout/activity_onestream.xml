@@ -27,6 +27,7 @@
 
         <EditText
             android:layout_marginLeft ="90dp"
+            android:hint="Filter"
             android:maxLines="1"
             android:imeOptions="actionDone"
             android:cursorVisible="false"

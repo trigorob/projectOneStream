@@ -3,6 +3,7 @@ package music.onestream.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -113,7 +114,7 @@ public class AddSongsActivity extends Activity {
                 }
             });
 
-            Button back = (Button) findViewById(R.id.discardNewPlaylistChanges);
+            FloatingActionButton back = (FloatingActionButton) findViewById(R.id.discardNewPlaylistChanges);
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -125,7 +126,7 @@ public class AddSongsActivity extends Activity {
                     startActivityForResult(back, 0);
                 }
             });
-            Button save = (Button) findViewById(R.id.saveNewPlaylistChanges);
+            FloatingActionButton save = (FloatingActionButton) findViewById(R.id.saveNewPlaylistChanges);
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

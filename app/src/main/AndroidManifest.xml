@@ -41,7 +41,7 @@
         <activity
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.AddSongsActivity"
-            android:label=".AddSongsActivity">
+            android:label="AddSongsActivity">
         </activity>
         <activity
             android:name=".activity.PlaylistActivity"
