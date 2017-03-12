@@ -38,18 +38,18 @@
         android:gravity="right"
         android:layoutDirection="ltr">
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/discardNewPlaylist"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_height="52dp"
+            android:src="@drawable/trash"/>
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/saveNewPlaylist"
             android:layout_width="wrap_content"
             android:layout_marginRight="20dp"
             android:layout_height="52dp"
             android:src="@drawable/check">
         </android.support.design.widget.FloatingActionButton>
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/discardNewPlaylist"
-            android:layout_width="wrap_content"
-            android:layout_marginRight="20dp"
-            android:layout_height="52dp"
-            android:src="@drawable/trash"/>
         />
     </LinearLayout>
     <ListView
