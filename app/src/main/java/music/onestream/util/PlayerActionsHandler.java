@@ -635,7 +635,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                 Connectivity connectivity = getNetworkConnectivity(context);
                 spotPlayer.setConnectivityStatus(opCallback, connectivity);
             }
-        mp = new MediaPlayer();
             }
         };
 
