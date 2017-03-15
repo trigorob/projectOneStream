@@ -79,6 +79,7 @@ private ViewPager mViewPager;
     @Override
     public void onDestroy() {
         super.onDestroy();
+        playerHandler.onDestroy();
     }
 
     @Override

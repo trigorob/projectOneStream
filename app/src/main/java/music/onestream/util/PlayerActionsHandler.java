@@ -223,7 +223,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             Intent intent = new Intent(context, OneStreamPlayerService.class);
             intent.setAction(OneStreamPlayerService.ACTION_STOP);
             context.startService(intent);
-            context.stopService(new Intent(context, OneStreamPlayerService.class));
             serviceInit = false;
         }
     }
@@ -736,6 +735,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (spotPlayer != null) {
             spotPlayer.pause(opCallback);
         }
+        stopPlayerService();
     }
 
     //Interface required implementations
