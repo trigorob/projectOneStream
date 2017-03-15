@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -39,7 +38,7 @@ import music.onestream.playlist.Playlist;
 import music.onestream.playlist.PlaylistAdapter;
 import music.onestream.playlist.PlaylistHandler;
 import music.onestream.R;
-import music.onestream.util.SectionsPagerAdapter;
+import music.onestream.util.OneStreamActivityAdapter;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 
@@ -69,7 +68,7 @@ public class OneStreamActivity extends OSActivity {
  * may be best to switch to a
  * {@link android.support.v4.app.FragmentStatePagerAdapter}.
  */
-private SectionsPagerAdapter mSectionsPagerAdapter;
+private OneStreamActivityAdapter mSectionsPagerAdapter;
 
 /**
  * The {@link ViewPager} that will host the section contents.
@@ -122,7 +121,7 @@ private ViewPager mViewPager;
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new OneStreamActivityAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);

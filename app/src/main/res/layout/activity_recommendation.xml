@@ -2,33 +2,71 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/playlist_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:vmSafeMode="true">
+    android:vmSafeMode="true"
+    tools:context="music.onestream.activity.PlaylistRecommendationsActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarPR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize"
+            android:id="@+id/toolbarPR"
+            android:layout_weight="1">
+        <EditText
+            android:layout_marginLeft ="60dp"
+            android:hint="Filter"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:cursorVisible="false"
+            android:layout_width="120dp"
+            android:gravity="end"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/songFilterPR"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
+        </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_weight="1" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabsPR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:tabMode="scrollable"
+        app:tabPaddingStart="30dp"
+        app:tabPaddingEnd="30dp"/>
+
+</android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-    <TextView android:id="@+id/filterDescPR"
+        android:orientation="vertical"
+        android:paddingTop="115dp">
+    <TextView android:id="@+id/tabDescPR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Click a song to recommend a playlist" />
-
-    <EditText
-        android:cursorVisible="false"
-        android:layout_width="match_parent"
-        android:maxLines="1"
-        android:imeOptions="actionDone"
-        android:gravity="end"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/filterDescPR"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/songFilterPR"
-        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
+        android:text="Click a song to recommend a playlist" />
 
         <ListView
             android:cacheColorHint="@android:color/transparent"

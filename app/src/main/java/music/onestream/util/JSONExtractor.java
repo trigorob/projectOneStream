@@ -88,7 +88,7 @@ public class JSONExtractor {
             if (album == null || album.equals("")) {
                 album = "<Unknown>";
             }
-            Song song = new Song(name, uri, artist, album, "Spotify", spotifySongOffset + i, albumArt);
+            Song song = new Song(name, uri, artist, album, "Spotify", 1, albumArt);
 
             jsonObject = jsonObject.getJSONArray("images").getJSONObject(0);
             albumArt = (String) jsonObject.get("url");
@@ -130,7 +130,7 @@ public class JSONExtractor {
                             String album = (String) jsonObject.get("album");
                             String type = (String) jsonObject.get("type");
                             String albumArt = (String) jsonObject.get("albumArt");
-                            Song song = new Song(sName, uri, artist, album, type, i, albumArt);
+                            Song song = new Song(sName, uri, artist, album, type, 1, albumArt);
                             playlist.addSong(song);
                         }
                     }
