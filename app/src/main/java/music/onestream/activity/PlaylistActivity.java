@@ -80,6 +80,13 @@ public class PlaylistActivity extends OSActivity {
         String buttonText = "Login to Services to access Playlist: " + services;
         loginLauncherLinkerButton.setText(buttonText);
 
+        PlaylistActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerHandler.updateSeekBar();
+                mHandler.postDelayed(this, 1000);
+            }
+        });
     }
 
     private void initSongList() {
@@ -96,9 +103,13 @@ public class PlaylistActivity extends OSActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                    playerHandler.setCurrentSongListPosition(position);
-                    mainList.setItemChecked(position, true);
-                    playerHandler.playSong(position);
+                ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
+                OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
+                playerHandler.setCurrentListSize(songs.size());
+
+                playerHandler.setCurrentSongListPosition(position);
+                mainList.setItemChecked(position, true);
+                playerHandler.playSong(position);
             }});
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,14 +118,6 @@ public class PlaylistActivity extends OSActivity {
                 Intent settings = new Intent(v.getContext(), LoginActivity.class);
                 playerHandler.stopPlayerService();
                 startActivityForResult(settings, 0);
-            }
-        });
-        //Seekbar tracker
-        PlaylistActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                playerHandler.updateSeekBar();
-                mHandler.postDelayed(this, 1000);
             }
         });
     }
@@ -132,6 +135,7 @@ public class PlaylistActivity extends OSActivity {
                  initPlayerHandler(this.getApplicationContext(), "PlaylistActivity",
                          loginButton, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
+        playerHandler.setButtonColors(-1);
     }
 
     @Override
@@ -141,8 +145,6 @@ public class PlaylistActivity extends OSActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_edit_list) {
-            playerHandler.onDestroy();
-            playerHandler.stopPlayerService();
             Intent editList = new Intent(PlaylistActivity.this, EditPlaylistActivity.class);
             Bundle b = new Bundle();
             b.putSerializable("Playlist", playlist);
@@ -164,18 +166,16 @@ public class PlaylistActivity extends OSActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        playerHandler.onDestroy();
     }
     @Override
     protected void onPause() {
         super.onPause();
-        playerHandler.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        playerHandler.onResume();
+        initPlayerHandler();
     }
 
 }

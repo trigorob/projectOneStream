@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -21,10 +22,13 @@ import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Connectivity;
 import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Metadata;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
+
+import java.util.ArrayList;
 
 import music.onestream.service.OneStreamPlayerService;
 import music.onestream.playlist.Playlist;
@@ -46,15 +50,17 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
     static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
-    public final Context context;
-    private final ImageButton fabIO;
-    private final ImageButton prev;
-    private final ImageButton next;
-    private final ImageButton rewind;
-    private final ImageButton random;
-    private final Button loginButton;
-    final ListView mainList;
-    private final SeekBar seekBar;
+    public static PlayerActionsHandler instance;
+
+    public Context context;
+    private ImageButton fabIO;
+    private ImageButton prev;
+    private ImageButton next;
+    private ImageButton rewind;
+    private ImageButton random;
+    private Button loginButton;
+    ListView mainList;
+    private SeekBar seekBar;
 
     private boolean receiverIsRegistered;
     private boolean serviceInit;
@@ -64,10 +70,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     private SpotifyPlayer spotPlayer = null;
 
     private BroadcastReceiver mNetworkStateReceiver;
+    private Song currentSong;
 
     int currentSongListPosition = -1;
     private int currentSongPosition = -1;
     private String currentSongType = "";
+    private int currentListSize = 0;
     Boolean randomNext = false;
 
     private final Player.OperationCallback opCallback = new Player.OperationCallback() {
@@ -82,28 +90,55 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     };
 
-    public PlayerActionsHandler
-            (Context context, ImageButton play, ImageButton previous,
-             ImageButton next, ImageButton rewind, ImageButton random,
-             Button loginButton, ListView list, SeekBar seekBar, String parentClass)
-    {
-        this.context = context;
-        this.fabIO = play;
-        this.prev = previous;
-        this.next = next;
-        this.rewind = rewind;
-        this.random = random;
-        this.loginButton = loginButton;
-        this.mainList = list;
-        this.seekBar = seekBar;
-        this.mp = new MediaPlayer();
-        this.parentClass = parentClass;
+    public static PlayerActionsHandler initPlayerActionsHandler(Context context, ImageButton play,
+             ImageButton previous, ImageButton next, ImageButton rewind, ImageButton random,
+             Button loginButton, ListView list, SeekBar seekBar, String parentClass) {
 
-        serviceInit = false;
-        receiverIsRegistered = false;
+        if (instance == null) {
+            instance = new PlayerActionsHandler();
+            instance.mp = new MediaPlayer();
+            instance.receiverIsRegistered = false;
+        }
+        instance.initHandlerFields(context, play, previous, next, rewind,
+                random, loginButton,
+                list, seekBar, parentClass);
+        instance.initListeners();
+        instance.initPlayerService();
 
-        initListeners();
-        initPlayerService();
+        return instance;
+    }
+
+    private void initHandlerFields(Context context, ImageButton play, ImageButton previous,
+                                   ImageButton next, ImageButton rewind, ImageButton random,
+                                   Button loginButton, ListView list, SeekBar seekBar, String parentClass) {
+
+        instance.context = context;
+        instance.fabIO = play;
+        instance.prev = previous;
+        instance.next = next;
+        instance.rewind = rewind;
+        instance.random = random;
+        instance.loginButton = loginButton;
+        instance.mainList = list;
+        instance.seekBar = seekBar;
+        instance.parentClass = parentClass;
+        instance.serviceInit = false;
+
+        if (isPlaying())
+        {
+            instance.fabIO.setImageResource(R.drawable.pause);
+        }
+        if (currentSong != null) {
+            if (currentSong.getType().equals("Local")) {
+                seekBar.setMax(mp.getDuration());
+            } else if (currentSong.getType().equals("Spotify")) {
+                Metadata.Track track = spotPlayer.getMetadata().currentTrack;
+                if (track != null) {
+                    seekBar.setMax((int) track.durationMs);
+                }
+            }
+        }
+
     }
 
     public void setCurrentSongType(String type)
@@ -138,10 +173,20 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void setRandomNext(Boolean value)
     {
         this.randomNext = value;
+        if (!randomNext)
+        {
+            random.setImageResource(R.drawable.shuffle);
+        }
+        else {
+            random.setImageResource(R.drawable.shuffleoff);
+        }
     }
     public Boolean isRandomNext()
     {
         return this.randomNext;
+    }
+    public void setCurrentListSize(int size) {
+        currentListSize = size;
     }
 
     public MediaPlayer getMediaPlayer()
@@ -196,6 +241,19 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
+    public void serviceIconShuffle() {
+        if (serviceInit) {
+            Intent intent = new Intent(context, OneStreamPlayerService.class);
+            if (isRandomNext()) {
+                intent.setAction(OneStreamPlayerService.ACTION_ICON_SHUFFLE);
+            }
+            else {
+                intent.setAction(OneStreamPlayerService.ACTION_ICON_PAUSE);
+            }
+            context.startService(intent);
+        }
+    }
+
     public void initListeners() {
 
         fabIO.setOnClickListener(new View.OnClickListener() {
@@ -241,16 +299,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             @Override
             public void onClick(View view) {
                 {
-                    if (randomNext == true)
-                    {
-                        randomNext = false;
-                        random.setImageResource(R.drawable.shuffle);
-                    }
-                    else
-                    {
-                        randomNext = true;
-                        random.setImageResource(R.drawable.shuffleoff);
-                    }
+                    setRandomNext(!randomNext);
+                    serviceIconShuffle();
                 };
             }});
 
@@ -410,27 +460,26 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
-    public Song getCurrentSong(int songIndex) {
-        return (Song) mainList.getAdapter().getItem(songIndex);
+    public Song getCurrentSong() {
+        return currentSong;
     }
 
 
     // Play song
     public void playSong(int songIndex) {
         resetPlayers();
-        if (songIndex == -1 && mainList.getAdapter() != null && mainList.getAdapter().getCount() > 0)
+        if (songIndex == -1 || currentListSize == 0)
         {
             currentSongListPosition = 0;
             songIndex = 0;
-            mainList.setSelection(0);
         }
         else if (songIndex == -1)
         {
             return;
         }
-        Song currentSong = getCurrentSong(songIndex);
-        if (currentSong == null)
-        {
+
+        currentSong = OneStreamActivity.getPlaylistHandler().getCurrentSongs().get(songIndex);
+        if (currentSong == null) {
             return;
         }
         String type = currentSong.getType();
@@ -439,14 +488,13 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
-            Playlist p = new Playlist("", "", ((SongAdapter) mainList.getAdapter()).getSongs());
+            Playlist p = new Playlist("", "", (OneStreamActivity.getPlaylistHandler().getCurrentSongs()));
             b.putSerializable("Playlist", p);
             //Don't use the actual index here, because we might be filtering the list
-            b.putSerializable("songIndex", ((SongAdapter) mainList.getAdapter()).getSongs().indexOf(currentSong));
+            b.putSerializable("songIndex", (p.getSongInfo().indexOf(currentSong)));
             songActivity.putExtras(b);
             songActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(songActivity);
-            this.onDestroy();
             return;
         }
 
@@ -490,11 +538,20 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public void setButtonColors(int filter)
     {
-        fabIO.setColorFilter(filter);
-        prev.setColorFilter(filter);
-        random.setColorFilter(filter);
-        next.setColorFilter(filter);
-        rewind.setColorFilter(filter);
+        if (filter == -1) {
+            fabIO.setColorFilter(null);
+            prev.setColorFilter(null);
+            random.setColorFilter(null);
+            next.setColorFilter(null);
+            rewind.setColorFilter(null);
+        }
+        else {
+            fabIO.setColorFilter(filter);
+            prev.setColorFilter(filter);
+            random.setColorFilter(filter);
+            next.setColorFilter(filter);
+            rewind.setColorFilter(filter);
+        }
     }
 
     public void playLocalSong(Song currentSong) {
@@ -562,7 +619,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         {
             return;
         }
-        if (currentSongListPosition < mainList.getCount()-1) {
+        if (currentSongListPosition < currentListSize-1) {
             next = currentSongListPosition + 1;
         }
         else {
@@ -575,8 +632,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
 
     public void playRandomSong() {
-        if (mainList.getAdapter().getCount() > 0) {
-            int choice = (int) (Math.random() * mainList.getAdapter().getCount());
+        if (currentListSize > 0) {
+            int choice = (int) (Math.random() * currentListSize);
             playSong(choice);
             currentSongListPosition = choice;
         }
@@ -594,7 +651,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             next = currentSongListPosition - 1;
         }
         else {
-            next = mainList.getCount()-1;
+            next = currentListSize-1;
         }
         currentSongListPosition = next;
         playSong(next);
@@ -709,7 +766,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             nextSong();
         }
         else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
-            seekBar.setMax((int) spotPlayer.getMetadata().currentTrack.durationMs);
+            Metadata.Track track = spotPlayer.getMetadata().currentTrack;
+            if (track != null)
+            {
+                seekBar.setMax ((int) track.durationMs);
+            }
         }
     }
 
@@ -731,10 +792,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void onPlaybackError(Error error) {
         //If a song has a broken link, remove it from the list of songs so it doesn't cause any more trouble
         if (error.toString().equals("kSpErrorFailed")) {
-            Song invalidSong = getCurrentSong(currentSongListPosition);
+            Song invalidSong = getCurrentSong();
             OneStreamActivity.getPlaylistHandler().getList("Spotify").removeSongItem(invalidSong);
             OneStreamActivity.getPlaylistHandler().getList("Library").removeSongItem(invalidSong);
-            OneStreamActivity.notifyAdapters();
+            OneStreamActivity.invalidateList();
         }
     }
 

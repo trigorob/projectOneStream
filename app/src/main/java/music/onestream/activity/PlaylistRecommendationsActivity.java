@@ -50,6 +50,7 @@ public class PlaylistRecommendationsActivity extends Activity implements AsyncRe
         ArrayList<Song> songs = OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo();
 
         adapter = new SongAdapter(this, R.layout.songlayout, songs);
+        adapter.setNotifyOnChange(true);
         mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -77,12 +78,10 @@ public class PlaylistRecommendationsActivity extends Activity implements AsyncRe
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 if (mainList.getAdapter().equals(adapter)) {
                     adapter.getFilter().filter(cs);
-                    adapter.notifyDataSetChanged();
                 }
                 else
                 {
                     playlistAdapter.getFilter().filter(cs);
-                    playlistAdapter.notifyDataSetChanged();
                 }
                 mainList.invalidateViews();
             }
@@ -128,6 +127,7 @@ public class PlaylistRecommendationsActivity extends Activity implements AsyncRe
         if (resultList != null && resultList.size() > 0)
         {
             this.playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
+            playlistAdapter.setNotifyOnChange(true);
             mainList.setAdapter(playlistAdapter);
             mainList.invalidateViews();
         }

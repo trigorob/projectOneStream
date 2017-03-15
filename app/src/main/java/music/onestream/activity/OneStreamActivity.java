@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -78,7 +79,6 @@ private ViewPager mViewPager;
     @Override
     public void onDestroy() {
         super.onDestroy();
-        playerHandler.onDestroy();
     }
 
     @Override
@@ -91,13 +91,12 @@ private ViewPager mViewPager;
     @Override
     protected void onPause() {
         super.onPause();
-        playerHandler.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        playerHandler.onResume();
+        initPlayerHandler();
     }
 
     @Override
@@ -107,8 +106,6 @@ private ViewPager mViewPager;
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            playerHandler.destroyPlayers();
-            playerHandler.stopPlayerService();
             Intent settings = new Intent(mViewPager.getContext(), SettingsActivity.class);
             startActivityForResult(settings, 0);
 
@@ -150,7 +147,7 @@ private ViewPager mViewPager;
         }
         playlistAdapter = new PlaylistAdapter(context, R.layout.songlayout,
                 playlistHandler.getPlaylists());
-        playlistAdapter.notifyDataSetChanged();
+        playlistAdapter.setNotifyOnChange(true);
         mainList.invalidateViews();
         if (refreshView)
         {
@@ -158,50 +155,17 @@ private ViewPager mViewPager;
         }
     }
 
-
-
-    public static void notifyAdapters() {
-        if (adapter != null)
+    public static void invalidateList() {
+        if (combinedAdapter != null && currentPage == 0)
         {
-            adapter.notifyDataSetChanged();
-        }
-        if (spotifyAdapter != null)
-        {
-            spotifyAdapter.notifyDataSetChanged();
-        }
-        if (playlistAdapter != null)
-        {
-            playlistAdapter.notifyDataSetChanged();
-        }
-        if (googleAdapter != null)
-        {
-            googleAdapter.notifyDataSetChanged();
-        }
-        if (combinedAdapter != null)
-        {
-            combinedAdapter.notifyDataSetChanged();
-            if (currentPage == 0)
-            {
                 mainList.setAdapter(combinedAdapter);
-            }
-        }
-        if (artistsAdapter != null)
-        {
-            artistsAdapter.notifyDataSetChanged();
-        }
-        if (albumsAdapter != null)
-        {
-            albumsAdapter.notifyDataSetChanged();
+                mainList.setSelection(getPlayerHandler().getCurrentSongListPosition());
         }
         mainList.invalidateViews();
     }
 
     public boolean onPlaylistPage() {
         return (currentPage == 3 || currentPage == 5 || currentPage == 6);
-    }
-
-    public boolean onLibraryPage() {
-        return (currentPage == 0);
     }
 
     public void initListDisplay() {
@@ -218,6 +182,13 @@ private ViewPager mViewPager;
                 playlistHandler.getArtists());
         albumsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                 playlistHandler.getAlbums());
+
+        adapter.setNotifyOnChange(true);
+        spotifyAdapter.setNotifyOnChange(true);
+        combinedAdapter.setNotifyOnChange(true);
+        playlistAdapter.setNotifyOnChange(true);
+        artistsAdapter.setNotifyOnChange(true);
+        albumsAdapter.setNotifyOnChange(true);
 
         //TODO: Implement
         googleAdapter = new SongAdapter(this,R.layout.songlayout,
@@ -236,7 +207,6 @@ private ViewPager mViewPager;
                 {
                     ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
                 }
-                notifyAdapters();
                 mainList.invalidateViews();
             }
             @Override
@@ -276,10 +246,13 @@ private ViewPager mViewPager;
                     Playlist p = ((PlaylistAdapter) mainList.getAdapter()).getItem(position);
                     b.putSerializable("Playlist", p);
                     playlist.putExtras(b);
-                    playerHandler.onDestroy();
                     startActivityForResult(playlist, 0);
                 }
                 else {
+                    ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
+                    OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
+                    playerHandler.setCurrentListSize(songs.size());
+
                     playerHandler.setCurrentSongListPosition(position);
                     mainList.setItemChecked(position, true);
                     playerHandler.playSong(position);
@@ -299,6 +272,7 @@ private ViewPager mViewPager;
                 initPlayerHandler(this.getApplicationContext(), "OneStreamActivity",
                         loginButton, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
+        playerHandler.setButtonColors(-1);
     }
 
     public static boolean isSongViewEnabled() {
@@ -319,7 +293,7 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
         String domain =  settings.getString("domain", "Admin");
 
-        playlistHandler = new PlaylistHandler(this.getApplicationContext(), playerHandler,
+        playlistHandler = PlaylistHandler.initPlaylistHandler(this.getApplicationContext(), playerHandler,
                 sortType, directory, directoryChanged, domain);
 
         if (sortOnLoad)
@@ -351,8 +325,6 @@ private ViewPager mViewPager;
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playerHandler.destroyPlayers();
-                playerHandler.stopPlayerService();
                 Intent settings = new Intent(mViewPager.getContext(), LoginActivity.class);
                 startActivityForResult(settings, 0);
             }
@@ -365,7 +337,6 @@ private ViewPager mViewPager;
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
             @Override
             public void onPageSelected(int position) {
-                playerHandler.setCurrentSongListPosition(-1);
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
                         mainList.setAdapter(combinedAdapter);
@@ -471,6 +442,7 @@ private ViewPager mViewPager;
         @Override
         public void onResume() {
             super.onResume();
+            mainList.invalidateViews();
         }
 
     }

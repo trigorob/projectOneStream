@@ -35,25 +35,39 @@ public class PlaylistHandler implements AsyncResponse {
     private Playlist listContent;
     private Playlist spotifyListContent;
     private Playlist combinedList;
-
     private static ArrayList<Playlist> playlists;
     private static ArrayList<Playlist> artists;
     private static ArrayList<Playlist> albums;
 
+    private ArrayList<Song> currentSongs;
+
     private Context context;
+    private static PlaylistHandler instance;
 
 
-    public PlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
+    protected PlaylistHandler() {
+
+    }
+
+    public static PlaylistHandler initPlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
                            String type, String directory, boolean directoryChanged, String domain) {
-        this.context = appContext;
-        this.playerHandler = playerHandler;
-        this.sortType = type;
-        this.directory = directory;
-        this.directoryChanged = directoryChanged;
-        this.domain = domain;
 
-        this.musicGetterHandler = new MusicGetterHandler();
-        initSongLists();
+        if (instance != null)
+        {
+            instance.initSongLists();
+            return instance;
+        }
+        instance = new PlaylistHandler();
+        instance.context = appContext;
+        instance.playerHandler = playerHandler;
+        instance.sortType = type;
+        instance.directory = directory;
+        instance.directoryChanged = directoryChanged;
+        instance.domain = domain;
+
+        instance.musicGetterHandler = new MusicGetterHandler();
+        instance.initSongLists();
+        return instance;
     }
 
     public Playlist getList(String type) {
@@ -75,6 +89,15 @@ public class PlaylistHandler implements AsyncResponse {
         }
     }
 
+    public void setCurrentSongs(ArrayList<Song> list) {
+        this.currentSongs = list;
+    }
+
+    public ArrayList<Song> getCurrentSongs()
+    {
+        return currentSongs;
+    }
+
     public void setMusicDir(String dir)
     {
 
@@ -94,7 +117,6 @@ public class PlaylistHandler implements AsyncResponse {
             mls.SAR = this;
             mls.execute(params);
             localSongOffset+=20;
-            OneStreamActivity.notifyAdapters();
         }
     }
 
@@ -163,7 +185,7 @@ public class PlaylistHandler implements AsyncResponse {
             albums = ((ArrayList<Playlist>) retVal[0]);
 
         }
-        OneStreamActivity.notifyAdapters();
+        OneStreamActivity.invalidateList();
     }
 
     public void initSongLists() {
@@ -270,7 +292,7 @@ public class PlaylistHandler implements AsyncResponse {
         }
 
         else if (type.equals("ArtistAlbumMusicLoader")) {
-            OneStreamActivity.notifyAdapters();
+            OneStreamActivity.invalidateList();;
         }
 
         else if (type.equals("MusicLoaderService")) {
@@ -278,7 +300,7 @@ public class PlaylistHandler implements AsyncResponse {
                 if (listContent.size() == totalLocalSongs) {
                 sortLists(sortType, "Local");
             }
-            OneStreamActivity.notifyAdapters();
+            OneStreamActivity.invalidateList();
         } else if (type.equals("SpotifyMusicGetter")) {
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;
             for (Song song: tempList)
@@ -294,7 +316,7 @@ public class PlaylistHandler implements AsyncResponse {
                 sortLists(sortType, "Spotify");
                 sortLists(sortType, "Library");
             }
-            OneStreamActivity.notifyAdapters();
+            OneStreamActivity.invalidateList();
 
         }
     }
@@ -308,8 +330,6 @@ public class PlaylistHandler implements AsyncResponse {
         ArtistAlbumMusicLoader aaml = new ArtistAlbumMusicLoader();
         aaml.SAR = SAR;
         aaml.execute(params);
-        OneStreamActivity.notifyAdapters();
-
     }
 
     public ArrayList<Playlist> getPlaylists() {

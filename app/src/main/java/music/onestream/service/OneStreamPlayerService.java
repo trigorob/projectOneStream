@@ -35,8 +35,9 @@ public class OneStreamPlayerService extends Service {
     public static final String ACTION_SHUFFLE = "action_shuffle";
     public static final String ACTION_STOP = "action_stop";
 
-    public static final String ACTION_ICON_PAUSE = "action_icon_paues";
+    public static final String ACTION_ICON_PAUSE = "action_icon_pause";
     public static final String ACTION_ICON_PLAY = "action_icon_play";
+    public static final String ACTION_ICON_SHUFFLE = "action_icon_play";
 
 
 
@@ -84,6 +85,11 @@ public class OneStreamPlayerService extends Service {
         else if (action.equalsIgnoreCase(ACTION_ICON_PLAY))
         {
             mediaController.getTransportControls().play();
+        }
+        else if (action.equalsIgnoreCase(ACTION_ICON_SHUFFLE))
+        {
+            //This can be anything, Just need to rebuild the notification
+            mediaController.getTransportControls().skipToNext();
         }
 
         else if (action.equalsIgnoreCase(ACTION_PLAY))
@@ -163,7 +169,7 @@ public class OneStreamPlayerService extends Service {
                 .setOngoing(true);
 
         if (playerHandler.getCurrentSongListPosition() != -1) {
-            Song currentSong = playerHandler.getCurrentSong(playerHandler.getCurrentSongListPosition());
+            Song currentSong = playerHandler.getCurrentSong();
             builder.setContentTitle(currentSong.getName());
             builder.setContentText(currentSong.getArtist());
             builder.setSubText(currentSong.getAlbum());
@@ -180,11 +186,11 @@ public class OneStreamPlayerService extends Service {
             builder.addAction(R.drawable.play, "Play", generatePendingIntent(ACTION_PLAY));
         }
         builder.addAction(R.drawable.skip, "Next", generatePendingIntent(ACTION_NEXT));
-        if (!playerHandler.isRandomNext()) {
-            builder.addAction(R.drawable.shuffle, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+        if (playerHandler.isRandomNext()) {
+            builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
         }
         else {
-            builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+            builder.addAction(R.drawable.shuffle, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
         }
         style.setShowActionsInCompactView(1, 2, 3);
 
