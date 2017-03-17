@@ -83,7 +83,7 @@ public class LocalMusicGetter implements MusicGetter {
                     album = "<Unknown>";
                 }
                 Song song = new Song(filess.get(i), files.get(i).toURI().toString(),
-                        artist, album, "Local", i, files.get(i).getPath());
+                        artist, album, "Local", 0, files.get(i).getPath());
                 songs.add(song);
             }
         }

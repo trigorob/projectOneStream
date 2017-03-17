@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 
 import music.onestream.playlist.Playlist;
+import music.onestream.playlist.PlaylistHandler;
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
 
@@ -20,6 +21,7 @@ public class MusicLoaderService extends AsyncTask {
         Object[] retObject = new Object[2];
         retObject[0] = "MusicLoaderService";
         retObject[1] = result;
+        PlaylistHandler.addToArtistsAlbums((ArrayList<Song>)((Playlist) result).getSongInfo(), this.SAR);
         SAR.processFinish(retObject);
     }
 

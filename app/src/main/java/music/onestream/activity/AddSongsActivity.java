@@ -3,6 +3,8 @@ package music.onestream.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -23,12 +25,12 @@ import music.onestream.song.SongAdapter;
  * Created by ruspe_000 on 2017-02-13.
  */
 
-public class AddSongsActivity extends Activity {
+public class AddSongsActivity extends AppCompatActivity {
 
-        private static Playlist playlist;
-        private static Playlist oldPlaylist;
-        public static Playlist combinedList; //Contains song info
-        public static Playlist oldCombinedList;
+        private Playlist playlist;
+        private Playlist oldPlaylist;
+        public Playlist combinedList; //Contains song info
+        public Playlist oldCombinedList;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -36,11 +38,20 @@ public class AddSongsActivity extends Activity {
             setContentView(R.layout.addsongs_activity);
 
             playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+            getSupportActionBar();
+            if (playlist.getName().equals(""))
+            {
+                setTitle("Playlist Title");
+            }
+            else
+            {
+                setTitle(playlist.getName());
+            }
             combinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
             if (combinedList == null)
             {
                 this.combinedList =  new Playlist
-                        ("", "", OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
+                        ("", "", OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
             }
 
             this.oldCombinedList = new Playlist();
@@ -113,7 +124,7 @@ public class AddSongsActivity extends Activity {
                 }
             });
 
-            Button back = (Button) findViewById(R.id.discardNewPlaylistChanges);
+            FloatingActionButton back = (FloatingActionButton) findViewById(R.id.discardNewPlaylistChanges);
             back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -125,7 +136,7 @@ public class AddSongsActivity extends Activity {
                     startActivityForResult(back, 0);
                 }
             });
-            Button save = (Button) findViewById(R.id.saveNewPlaylistChanges);
+            FloatingActionButton save = (FloatingActionButton) findViewById(R.id.saveNewPlaylistChanges);
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

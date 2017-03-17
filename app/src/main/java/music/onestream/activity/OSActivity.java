@@ -7,6 +7,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
+import com.spotify.sdk.android.player.Player;
+
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.CredentialsHandler;
 
@@ -31,7 +33,7 @@ public class OSActivity extends AppCompatActivity {
                               ImageButton next, ImageButton rewind,
                               ImageButton random, SeekBar seekbar, ListView mainList) {
 
-        playerHandler = new PlayerActionsHandler(context, fabIO, prev, next,
+        playerHandler = PlayerActionsHandler.initPlayerActionsHandler(context, fabIO, prev, next,
                 rewind, random, loginButton, mainList, seekbar, parentClass);
 
         CredentialsHandler CH = new CredentialsHandler();

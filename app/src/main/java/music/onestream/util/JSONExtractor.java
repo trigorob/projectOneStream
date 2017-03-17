@@ -55,54 +55,58 @@ public class JSONExtractor {
 
     public static ArrayList<Song> processSpotifyJSON(String output, int spotifySongOffset) {
         try {
-            JSONObject jsonObject = new JSONObject(output);
-            JSONArray jArray = jsonObject.getJSONArray("items");
-            String album = "";
-            String artist = "";
-            String name = "";
-            String uri = "";
-            String albumArt = null;
+        JSONObject jsonObject = new JSONObject(output);
+        JSONArray jArray = jsonObject.getJSONArray("items");
+        String album = "";
+        String artist = "";
+        String name = "";
+        String uri = "";
+        String albumArt = null;
 
-            ArrayList<Song> tempList = new ArrayList<Song>();
+        ArrayList<Song> tempList = new ArrayList<Song>();
 
-            for (int i = 0; i < jArray.length(); i++) {
-                try {
-                    jsonObject = (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
-                    name = (String) jsonObject.get("name");
-                    uri = (String) jsonObject.get("uri");
-                    artist = (String) jsonObject.getJSONArray("artists").getJSONObject(0).get("name");
-                    jsonObject = jsonObject.getJSONObject("album");
-                    album = (String) jsonObject.get("name");
+        for (int i = 0; i < jArray.length(); i++) {
+            try {
+                jsonObject = (JSONObject) new JSONObject(jArray.get(i).toString()).get("track");
+                name = (String) jsonObject.get("name");
+                uri = (String) jsonObject.get("uri");
+                artist = (String) jsonObject.getJSONArray("artists").getJSONObject(0).get("name");
+                jsonObject = jsonObject.getJSONObject("album");
+                album = (String) jsonObject.get("name");
 
-                } catch (JSONException je) {
-                    if (jsonObject == null)
-                        artist = "<Unknown>";
-                    album = "<Unknown>";
-                } catch (NullPointerException NE) {
+            } catch (JSONException je) {
+                if (jsonObject == null)
                     artist = "<Unknown>";
-                    album = "<Unknown>";
-                }
-                if (artist == null || artist.equals("")) {
-                    artist = "<Unknown>";
-                }
-                if (album == null || album.equals("")) {
-                    album = "<Unknown>";
-                }
-                Song song = new Song(name, uri, artist, album, "Spotify", spotifySongOffset + i, albumArt);
-
-                jsonObject = jsonObject.getJSONArray("images").getJSONObject(0);
-                albumArt = (String) jsonObject.get("url");
-                song.setAlbumArt(albumArt);
-                tempList.add(song);
-
+                album = "<Unknown>";
+            } catch (NullPointerException NE) {
+                artist = "<Unknown>";
+                album = "<Unknown>";
             }
-            return tempList;
-        } catch (JSONException e) {
+            if (artist == null || artist.equals("")) {
+                artist = "<Unknown>";
+            }
+            if (album == null || album.equals("")) {
+                album = "<Unknown>";
+            }
+            Song song = new Song(name, uri, artist, album, "Spotify", 1, albumArt);
+
+            jsonObject = jsonObject.getJSONArray("images").getJSONObject(0);
+            albumArt = (String) jsonObject.get("url");
+            song.setAlbumArt(albumArt);
+            tempList.add(song);
+
         }
-        return null;
+        return tempList;
+    } catch (JSONException e) {
     }
+        return null;
+}
 
     public static ArrayList<Playlist> processPlaylistJSON(String output) {
+        if (output == null)
+        {
+            return new ArrayList<Playlist>();
+        }
         ArrayList<Playlist> playlists = new ArrayList<Playlist>();
         try {
             Playlist playlist;
@@ -126,7 +130,7 @@ public class JSONExtractor {
                             String album = (String) jsonObject.get("album");
                             String type = (String) jsonObject.get("type");
                             String albumArt = (String) jsonObject.get("albumArt");
-                            Song song = new Song(sName, uri, artist, album, type, i, albumArt);
+                            Song song = new Song(sName, uri, artist, album, type, 1, albumArt);
                             playlist.addSong(song);
                         }
                     }

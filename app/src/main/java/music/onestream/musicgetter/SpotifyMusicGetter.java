@@ -8,9 +8,9 @@ import music.onestream.playlist.PlaylistHandler;
 
 public class SpotifyMusicGetter implements MusicGetter {
 
-    int spotifySongOffset;
-    String token;
-    PlaylistHandler handler;
+    private int spotifySongOffset;
+    private String token;
+    private PlaylistHandler handler;
     private final int spotifySongCap = 1000;
 
     public SpotifyMusicGetter(String token, PlaylistHandler handler) {

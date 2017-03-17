@@ -9,15 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
+
 import music.onestream.activity.OneStreamActivity;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class RecommendationsAdapter extends FragmentPagerAdapter {
 
-    public SectionsPagerAdapter(FragmentManager fm)
+    public RecommendationsAdapter(FragmentManager fm)
     {
         super(fm);
     }
@@ -31,8 +33,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
-        return 4;
+        // Show 5 total pages.
+        return 5;
     }
 
 
@@ -40,13 +42,16 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Local";
+                return "Songs";
             case 1:
-                return "Spotify";
+                return "Recommendations";
             case 2:
-                return "GoogleMusic";
+                return "Top Songs";
             case 3:
-                return "Playlists";
+                return "Top Artists";
+            case 4:
+                return "Top Albums";
+
         }
         return null;
     }

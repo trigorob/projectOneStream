@@ -43,18 +43,17 @@ public class SongActivity extends OSActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        playerHandler.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        playerHandler.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        initPlayerHandler();
         if (!playerHandler.isPlayerPlaying() && !playerHandler.isSpotifyPlaying()) {
             playerHandler.playSong(playerHandler.getCurrentSongListPosition());
             playerHandler.serviceIconPausePlay(true);
@@ -80,7 +79,7 @@ public class SongActivity extends OSActivity {
         initMainList();
         initPlayerHandler();
 
-        Song song = playerHandler.getCurrentSong(playerHandler.getCurrentSongListPosition());
+        Song song = playerHandler.getCurrentSong();
         initDisplay(song);
     }
 

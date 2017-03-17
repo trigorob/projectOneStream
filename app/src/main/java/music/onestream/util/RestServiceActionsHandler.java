@@ -17,17 +17,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import music.onestream.playlist.Playlist;
+import music.onestream.song.Song;
 
 /**
  * Created by ruspe_000 on 2017-02-20.
  */
 
-public class DatabaseActionsHandler extends AsyncTask {
+public class RestServiceActionsHandler extends AsyncTask {
     public AsyncResponse SAR;
+    private Object result;
 
     protected void onPostExecute(Object result) {
         Object[] retObject = new Object[2];
-        retObject[0] = "DatabaseActionsHandler";
+        retObject[0] = "RestServiceActionsHandler";
         retObject[1] = result;
         SAR.processFinish(retObject);
     }
@@ -51,11 +53,39 @@ public class DatabaseActionsHandler extends AsyncTask {
             Playlist playlist = (Playlist) params[1];
             deletePlaylist(playlist);
         }
-        //We do this with a delete/create rather than an update mostly for batch loading/speed reasons
         else if (action.equals("UpdatePlaylist"))
         {
             Playlist playlist = (Playlist) params[1];
             createPlaylist(playlist, true);
+        }
+        else if (action.equals("GetRecommendations"))
+        {
+            Object[] retObj = new Object[2];
+            Song song = (Song) params[1];
+            retObj[0] = action;
+            retObj[1] = getPlaylistRecommendations(song);
+            return retObj;
+        }
+        else if (action.equals("GetTopSongs"))
+        {
+            Object[] retObj = new Object[2];
+            retObj[0] = action;
+            retObj[1] = getTopSongs();
+            return retObj;
+        }
+        else if (action.equals("GetTopArtists"))
+        {
+            Object[] retObj = new Object[2];
+            retObj[0] = action;
+            retObj[1] = getTopArtists();
+            return retObj;
+        }
+        else if (action.equals("GetTopAlbums"))
+        {
+            Object[] retObj = new Object[2];
+            retObj[0] = action;
+            retObj[1] = getTopAlbums();
+            return retObj;
         }
         return null;
     }
@@ -76,10 +106,64 @@ public class DatabaseActionsHandler extends AsyncTask {
             e.printStackTrace();
         }
         String json = JSONExtractor.extractJSON(conn);
-        if (json != null) {
-            return JSONExtractor.processPlaylistJSON(json);
+        return JSONExtractor.processPlaylistJSON(json);
+    }
+
+    public static ArrayList<Playlist> getTopArtists() {
+        HttpURLConnection conn = null;
+        try {
+            String urlString = "http://api-7328501912465276845-942591.appspot.com/OneStream/Artists/Top";
+            URL url = new URL(urlString);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("accept", "application/json");
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
+        String json = JSONExtractor.extractJSON(conn);
+        return JSONExtractor.processPlaylistJSON(json);
+    }
+
+    public static ArrayList<Playlist> getTopSongs() {
+        HttpURLConnection conn = null;
+        try {
+            String urlString = "http://api-7328501912465276845-942591.appspot.com/OneStream/Songs/Top";
+            URL url = new URL(urlString);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("accept", "application/json");
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String json = JSONExtractor.extractJSON(conn);
+        return JSONExtractor.processPlaylistJSON(json);
+    }
+
+    public static ArrayList<Playlist> getTopAlbums() {
+        HttpURLConnection conn = null;
+        try {
+            String urlString = "http://api-7328501912465276845-942591.appspot.com/OneStream/Albums/Top";
+            URL url = new URL(urlString);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("accept", "application/json");
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String json = JSONExtractor.extractJSON(conn);
+        return JSONExtractor.processPlaylistJSON(json);
     }
 
     private static void createPlaylist(Playlist playlist, boolean update) {
@@ -148,6 +232,31 @@ public class DatabaseActionsHandler extends AsyncTask {
                 conn.disconnect();
             }
         }
+    }
+
+    public static ArrayList<Playlist> getPlaylistRecommendations(Song song) {
+        HttpURLConnection conn = null;
+        try {
+            String songName =  URLEncoder.encode(song.getName(), "UTF-8");
+            String songArtist = URLEncoder.encode(song.getArtist(), "UTF-8");
+            String songAlbum = URLEncoder.encode(song.getAlbum(), "UTF-8");
+            String urlString =
+                    "http://api-7328501912465276845-942591.appspot.com" +
+                            "/OneStream/PlaylistRecommendations?name=" + songName
+                    + "&artist=" + songArtist + "&album=" +songAlbum;
+            URL url = new URL(urlString);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("accept", "application/json");
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String json = JSONExtractor.extractJSON(conn);
+        return JSONExtractor.processPlaylistJSON(json);
     }
 
 }

@@ -3,19 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_marginBottom="120dp"
-        android:text="@string/onestream_domain_explanation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/oneStreamDomainDescription"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
     <EditText
+        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
@@ -29,7 +18,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/confirmDomainButton"
-            android:layout_below="@id/oneStreamDomain"/>
+            android:layout_below="@id/oneStreamDomain"
+            android:layout_marginBottom="40dp"/>
 
-    </RelativeLayout>
+    <TextView
+        android:text="@string/onestream_domain_explanation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/oneStreamDomainDescription"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 //Authentication tool for GoogleMusic
@@ -49,14 +50,10 @@ public class LoginActivity extends FragmentActivity {
         setContentView(R.layout.activity_login);
         String token = CredentialsHandler.getToken(this, "GoogleMusic");
 
-        Button spotifyLoginButton = (Button) findViewById(R.id.spotifyLoginLauncherButton);
-        if (token == null) {
-            spotifyLoginButton.setText(R.string.spotify_login_button);
-        } else {
-            spotifyLoginButton.setText(R.string.spotify_logout_button);
-        }
+        ImageButton spotifyLoginButton = (ImageButton) findViewById(R.id.spotifyLoginLauncherButton);
 
-        Button back = (Button) findViewById(R.id.back);
+
+        ImageButton back = (ImageButton) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,12 +64,7 @@ public class LoginActivity extends FragmentActivity {
 
         //Todo: Actually get token/authentication and put it here
         token = CredentialsHandler.getToken(this, "GoogleMusic");
-        Button googleMusicLoginButton = (Button) findViewById(R.id.googleMusicLoginLauncherButton);
-        if (token == null) {
-            googleMusicLoginButton.setText(R.string.googlemusic_login_button);
-        } else {
-            googleMusicLoginButton.setText(R.string.googlemusic_logout_button);
-        }
+        ImageButton googleMusicLoginButton = (ImageButton) findViewById(R.id.googleMusicLoginLauncherButton);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(LoginActivity.this.getResources().getString(R.string.server_client_id))
@@ -82,7 +74,7 @@ public class LoginActivity extends FragmentActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso).enableAutoManage(this,null)
                 .build();
 
-        Button oneStreamDomainButton = (Button) findViewById(R.id.oneStreamDomainLauncherButton);
+        ImageButton oneStreamDomainButton = (ImageButton) findViewById(R.id.oneStreamDomainLauncherButton);
         oneStreamDomainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

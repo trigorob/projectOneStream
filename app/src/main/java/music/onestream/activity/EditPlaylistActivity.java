@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -21,21 +24,21 @@ import music.onestream.R;
 import music.onestream.playlist.Playlist;
 import music.onestream.song.SongAdapter;
 import music.onestream.util.AsyncResponse;
-import music.onestream.util.DatabaseActionsHandler;
+import music.onestream.util.RestServiceActionsHandler;
 
 /**
  * Created by ruspe_000 on 2017-02-03.
  */
 
-public class EditPlaylistActivity extends Activity implements AsyncResponse {
+public class EditPlaylistActivity extends AppCompatActivity implements AsyncResponse {
 
-    private static Playlist playlist;
-    private static Playlist oldPlaylist;
-    private static DatabaseActionsHandler dba;
-    private static Playlist combinedList;
+    private Playlist playlist;
+    private Playlist oldPlaylist;
+    private RestServiceActionsHandler restActionHandler;
+    private Playlist combinedList;
     private boolean newList = false;
-    private static boolean previouslyExisting = false;
-    private static String domain;
+    private boolean previouslyExisting = false;
+    private String domain;
 
     public String getDomain() {
         final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
@@ -46,22 +49,30 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_playlist_activity);
-        dba = new DatabaseActionsHandler();
-        dba.SAR = this;
+        restActionHandler = new RestServiceActionsHandler();
+        restActionHandler.SAR = this;
         domain = getDomain();
+        getSupportActionBar();
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         Playlist tempCombinedList = (Playlist) getIntent().getSerializableExtra("combinedList");
-
-
         combinedList = new Playlist();
+
+        if (playlist != null && playlist.getName() != null)
+        {
+            setTitle(playlist.getName());
+        }
+        else
+        {
+            setTitle("Playlist Title");
+        }
         if (tempCombinedList != null)
         {
             combinedList.addSongs(tempCombinedList.getSongInfo());
         }
         else
         {
-            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getCombinedList().getSongInfo());
+            combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
         }
 
         if (oldPlaylist == null) {
@@ -130,6 +141,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             @Override
             public void afterTextChanged(Editable s) {
                 playlist.setName(s.toString());
+                setTitle(playlist.getName());
             }
         });
 
@@ -153,7 +165,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             }
         });
 
-        Button addSongsButton = (Button) findViewById(R.id.addSongsToPlaylist);
+        FloatingActionButton addSongsButton = (FloatingActionButton) findViewById(R.id.addSongsToPlaylist);
         addSongsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +178,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             }
         });
 
-        Button discardChangesButton = (Button) findViewById(R.id.discardNewPlaylist);
+        FloatingActionButton discardChangesButton = (FloatingActionButton) findViewById(R.id.discardNewPlaylist);
         discardChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,7 +186,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             }
         });
 
-        Button saveChangesButton = (Button) findViewById(R.id.saveNewPlaylist);
+        FloatingActionButton saveChangesButton = (FloatingActionButton) findViewById(R.id.saveNewPlaylist);
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,7 +203,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
     }
 
     public boolean isListInDatabase() {
-        return (playlist != null && !newList && !playlist.getOwner().equals("") && previouslyExisting);
+        return (playlist != null && !newList && playlist.getOwner().equals(domain) && previouslyExisting);
     }
 
     private void handleDelete()
@@ -202,7 +214,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
             playlist.setName(oldPlaylist.getName());
             params[0] = "DeletePlaylist";
             params[1] = playlist;
-            dba.execute(params);
+            restActionHandler.execute(params);
 
             ArrayList<Playlist> playlists = OneStreamActivity.getPlaylistHandler().getPlaylists();
             if (playlists != null)
@@ -240,7 +252,7 @@ public class EditPlaylistActivity extends Activity implements AsyncResponse {
         }
         params[1] = playlist;
 
-        dba.execute(params);
+        restActionHandler.execute(params);
 
         playlist.setName(playlistTitle.getText().toString());
         if (playlists != null)

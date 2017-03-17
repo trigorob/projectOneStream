@@ -47,11 +47,14 @@ public class Playlist implements Serializable {
     }
     public void addSong(Song song)
     {
-        songInfo.add(song);
+        if (!songInfo.contains(song)) {
+            songInfo.add(song);
+        }
     }
     public void addSongs(ArrayList<Song> songs)
     {
         for (int i = 0; i < songs.size(); i++) {
+            if (!songInfo.contains(songs.get(i)))
             songInfo.add(songs.get(i));
         }
     }

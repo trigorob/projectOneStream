@@ -30,7 +30,6 @@ public class SettingsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-        final View view = (ViewPager) findViewById(R.id.container);
         final Button back = (Button) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +49,15 @@ public class SettingsActivity extends Activity {
                 b.putSerializable("combinedList", null);
                 playlist.putExtras(b);
                 startActivityForResult(playlist, 0);
+            }
+        });
+
+        final Button recommendation = (Button) findViewById(R.id.playlistRecommendationButton);
+        recommendation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent playlistRecommendations = new Intent(v.getContext(), PlaylistRecommendationsActivity.class);
+                startActivityForResult(playlistRecommendations, 0);
             }
         });
 

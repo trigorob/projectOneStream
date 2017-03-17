@@ -7,6 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import music.onestream.activity.OneStreamActivity;
+import music.onestream.playlist.PlaylistHandler;
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.JSONExtractor;
@@ -23,6 +25,7 @@ import music.onestream.util.JSONExtractor;
             Object[] retObject = new Object[2];
             retObject[0] = "SpotifyMusicGetter";
             retObject[1] = result;
+            PlaylistHandler.addToArtistsAlbums((ArrayList<Song>) result, this.SAR);
             SAR.processFinish(retObject);
         }
 

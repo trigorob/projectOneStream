@@ -9,14 +9,28 @@
     android:fitsSystemWindows="true"
     tools:context="music.onestream.activity.SettingsActivity">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
     <ToggleButton
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:textOn = "SongView Enabled"
         android:textOff = "SongView Disabled"
-        android:id="@+id/songViewToggleButton" />
+        android:id="@+id/songViewToggleButton"
+        android:layout_marginBottom="30dp"/>
 
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:text = "Playlist Recommendations"
+        android:id="@+id/playlistRecommendationButton" />
+    </LinearLayout>
 
     <Button
         android:layout_width="100dp"
