@@ -139,6 +139,40 @@ private ViewPager mViewPager;
         initButtonListeners();
     }
 
+    public static void notifyLocalAdapter() {
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+        }
+    }
+    public static void notifySpotifyAdapter() {
+        if (spotifyAdapter != null) {
+            spotifyAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+        }
+    }
+
+    public static void notifyGoogleAdapter() {
+        if (googleAdapter != null) {
+            googleAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+        }
+    }
+
+    public static void notifyArtistsAdapter() {
+        if (artistsAdapter != null) {
+            artistsAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+        }
+    }
+
+    public static void notifyAlbumsAdapter() {
+        if (albumsAdapter != null) {
+            albumsAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+        }
+    }
+
     public static void initPlaylistAdapter(Context context) {
         boolean refreshView = false;
         if (mainList.getAdapter().equals(playlistAdapter))
@@ -290,16 +324,28 @@ private ViewPager mViewPager;
         settings = getSharedPreferences("SORT-TYPE", 0);
         String sortType = settings.getString("sortType", "Default");
         boolean sortOnLoad = settings.getBoolean("sortOnLoad", false);
-        settings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
+        settings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
+        boolean spotifyLoginChanged = settings.getBoolean("spotifyLoginChanged", false);
         String domain =  settings.getString("domain", "Admin");
 
+        if (playlistHandler == null)
+        {
+            spotifyLoginChanged = true;
+        }
+
         playlistHandler = PlaylistHandler.initPlaylistHandler(this.getApplicationContext(), playerHandler,
-                sortType, directory, directoryChanged, domain);
+                sortType, directory, directoryChanged, domain, spotifyLoginChanged);
 
         if (sortOnLoad)
         {
             playlistHandler.sortAllLists(sortType);
             editor.putBoolean("sortOnLoad", false);
+            editor.commit();
+        }
+        if (spotifyLoginChanged)
+        {
+            editor = settings.edit();
+            editor.putBoolean("spotifyLoginChanged", false);
             editor.commit();
         }
 

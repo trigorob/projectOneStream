@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 
 import music.onestream.playlist.Playlist;
+import music.onestream.playlist.PlaylistHandler;
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
 
@@ -14,7 +15,6 @@ import music.onestream.util.AsyncResponse;
 
 public class ArtistAlbumMusicLoader extends AsyncTask {
     public AsyncResponse SAR;
-
     private ArrayList<Playlist> artists;
     private ArrayList<Playlist> albums;
 

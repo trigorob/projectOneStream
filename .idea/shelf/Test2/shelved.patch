@@ -1,0 +1,213 @@
+Index: app/src/main/java/music/onestream/playlist/PlaylistHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/music/onestream/playlist/PlaylistHandler.java	(date 1489618684000)
++++ app/src/main/java/music/onestream/playlist/PlaylistHandler.java	
+@@ -26,6 +26,7 @@
+     private String directory;
+     private Boolean directoryChanged = false;
+     private String sortType;
++    private Boolean spotifyLoginChanged;
+ 
+     private static RestServiceActionsHandler restActionHandler;
+ 
+@@ -50,22 +51,23 @@
+     }
+ 
+     public static PlaylistHandler initPlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
+-                           String type, String directory, boolean directoryChanged, String domain) {
++                           String type, String directory, boolean directoryChanged, String domain, boolean spotifyLoginChanged) {
+ 
+-        if (instance != null)
++        if (instance == null)
+         {
+-            instance.initSongLists();
+-            return instance;
+-        }
+-        instance = new PlaylistHandler();
++            instance = new PlaylistHandler();
++            instance.musicGetterHandler = new MusicGetterHandler();
++        }
++
++        instance.directory = directory;
+         instance.context = appContext;
+         instance.playerHandler = playerHandler;
+         instance.sortType = type;
+         instance.directory = directory;
+         instance.directoryChanged = directoryChanged;
+         instance.domain = domain;
++        instance.spotifyLoginChanged = spotifyLoginChanged;
+ 
+-        instance.musicGetterHandler = new MusicGetterHandler();
+         instance.initSongLists();
+         return instance;
+     }
+@@ -109,14 +111,15 @@
+         listContent.setSongInfo(new ArrayList<Song>());
+         int localSongOffset= 0;
+         while (localSongOffset < totalListContent.size()) {
+-            Object[] params = new Object[3];
++            Object[] params = new Object[4];
+             params[0] = totalListContent;
+             params[1] = listContent;
+             params[2] = localSongOffset;
++            params[3] = combinedList;
+             MusicLoaderService mls = new MusicLoaderService();
+             mls.SAR = this;
+             mls.execute(params);
+-            localSongOffset+=20;
++            localSongOffset+=50;
+         }
+     }
+ 
+@@ -139,12 +142,14 @@
+             ms = new MusicSorter(listContent.getSongInfo(), type);
+             retVal = ms.getRetArr();
+             listContent.setSongInfo((ArrayList<Song>) retVal[0]);
++            OneStreamActivity.notifyLocalAdapter();
+         }
+         else if (spotifyListContent != null && spotifyListContent.size() > 0 && list.equals("Spotify"))
+         {
+             ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
+             retVal = ms.getRetArr();
+             spotifyListContent.setSongInfo((ArrayList<Song>) retVal[0]);
++            OneStreamActivity.notifySpotifyAdapter();
+         }
+ 
+         else if (playlists != null && list.equals("Playlists"))
+@@ -154,7 +159,6 @@
+             ps = new PlaylistSorter(playlists, type);
+             retVal = ps.getRetArr();
+             playlists = ((ArrayList<Playlist>) retVal[0]);
+-
+         }
+ 
+         else if (combinedList != null && list.equals("Library"))
+@@ -163,7 +167,7 @@
+             ms = new MusicSorter(combinedList.getSongInfo(), type);
+             retVal = ms.getRetArr();
+             combinedList.setSongInfo((ArrayList<Song>) retVal[0]);
+-
++            OneStreamActivity.invalidateList();
+         }
+ 
+         else if (artists != null && list.equals("Artists"))
+@@ -173,7 +177,7 @@
+             ps = new PlaylistSorter(artists, type);
+             retVal = ps.getRetArr();
+             artists = ((ArrayList<Playlist>) retVal[0]);
+-
++            OneStreamActivity.notifyArtistsAdapter();
+         }
+ 
+         else if (albums != null && list.equals("Albums"))
+@@ -183,10 +187,10 @@
+             ps = new PlaylistSorter(albums, type);
+             retVal = ps.getRetArr();
+             albums = ((ArrayList<Playlist>) retVal[0]);
++            OneStreamActivity.notifyAlbumsAdapter();
++        }
+ 
+-        }
++    }
+-        OneStreamActivity.invalidateList();
+-    }
+ 
+     public void initSongLists() {
+ 
+@@ -195,6 +199,11 @@
+             listContent = new Playlist();
+         }
+ 
++        if (combinedList == null)
++        {
++            combinedList = new Playlist();
++        }
++
+         if (listContent.size() == 0 || isDirectoryChanged()) {
+             setMusicDir(directory);
+             directoryChanged();
+@@ -211,11 +220,6 @@
+         }
+         getSpotifyLibrary();
+ 
+-        if (combinedList == null)
+-        {
+-            combinedList = new Playlist();
+-        }
+-
+         if (playlists == null || playlists.size() == 0)
+         {
+             playlists = new ArrayList<Playlist>();
+@@ -223,6 +227,10 @@
+         }
+     }
+ 
++    public void onResume() {
++        initSongLists();
++    }
++
+     //Only call this when you change domains
+     public static void resetPlaylists()
+     {
+@@ -235,12 +243,8 @@
+     }
+ 
+     public void directoryChanged() {
+-        if (directoryChanged) {
+-            directoryChanged = false;
+-            return;
++        directoryChanged = !directoryChanged;
+-        }
++    }
+-        directoryChanged = true;
+-    }
+ 
+     public void getRemotePlaylists(String domain) {
+         if (restActionHandler == null && isConnected()) {
+@@ -265,7 +269,8 @@
+         CredentialsHandler CH = new CredentialsHandler();
+         final String accessToken = CH.getToken(context, "Spotify");
+ 
+-        if (accessToken != null && isConnected() && spotifyListContent.size() == 0) {
++        if (accessToken != null && isConnected() && spotifyLoginChanged) {
++            spotifyLoginChanged = false;
+             spotifyListContent = new Playlist();
+             musicGetterHandler.setSpotifyMusicGetter(new SpotifyMusicGetter(accessToken, this));
+             musicGetterHandler.initSpotifyMusicGetter();
+@@ -292,15 +297,17 @@
+         }
+ 
+         else if (type.equals("ArtistAlbumMusicLoader")) {
+-            OneStreamActivity.invalidateList();;
++            OneStreamActivity.notifyArtistsAdapter();
++            OneStreamActivity.notifyAlbumsAdapter();
+         }
+ 
+         else if (type.equals("MusicLoaderService")) {
+-            combinedList.addSongs(listContent.getSongInfo());
+                 if (listContent.size() == totalLocalSongs) {
+                 sortLists(sortType, "Local");
++                addToArtistsAlbums(listContent.getSongInfo(), this);
+             }
+             OneStreamActivity.invalidateList();
++            OneStreamActivity.notifyLocalAdapter();
+         } else if (type.equals("SpotifyMusicGetter")) {
+             ArrayList<Song> tempList = (ArrayList<Song>) retVal;
+             for (Song song: tempList)
+@@ -312,10 +319,12 @@
+             combinedList.addSongs(tempList);
+ 
+ 
+-            if (tempList.size() < 20) {
++            if (tempList.size() < 100) {
+                 sortLists(sortType, "Spotify");
+                 sortLists(sortType, "Library");
++                addToArtistsAlbums(spotifyListContent.getSongInfo(), this);
+             }
++            OneStreamActivity.notifySpotifyAdapter();
+             OneStreamActivity.invalidateList();
+ 
+         }

@@ -242,7 +242,7 @@ public class RestServiceActionsHandler extends AsyncTask {
             String songAlbum = URLEncoder.encode(song.getAlbum(), "UTF-8");
             String urlString =
                     "http://api-7328501912465276845-942591.appspot.com" +
-                            "/OneStream/PlaylistRecommendations?name=" + songName
+                            "/OneStream/Playlists/Recommendations?name=" + songName
                     + "&artist=" + songArtist + "&album=" +songAlbum;
             URL url = new URL(urlString);
             conn = (HttpURLConnection) url.openConnection();

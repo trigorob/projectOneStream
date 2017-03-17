@@ -41,7 +41,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
     private String domain;
 
     public String getDomain() {
-        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
+        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
         return domainSettings.getString("domain", "Admin");
     }
 

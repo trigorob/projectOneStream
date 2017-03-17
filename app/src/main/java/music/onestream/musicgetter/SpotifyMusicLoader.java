@@ -25,7 +25,6 @@ import music.onestream.util.JSONExtractor;
             Object[] retObject = new Object[2];
             retObject[0] = "SpotifyMusicGetter";
             retObject[1] = result;
-            PlaylistHandler.addToArtistsAlbums((ArrayList<Song>) result, this.SAR);
             SAR.processFinish(retObject);
         }
 

@@ -85,8 +85,10 @@ public class LoginActivity extends FragmentActivity {
     }
 
     public void onSpotifyLoginButtonClicked(View view) {
-            final AuthenticationRequest request = new AuthenticationRequest.Builder(SPOTIFY_ID, AuthenticationResponse.Type.TOKEN, SPOTIFY_REDIRECT_URI)
-                    .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read", "playlist-read-private", "streaming"}).setShowDialog(true)
+            final AuthenticationRequest request = new AuthenticationRequest.Builder(SPOTIFY_ID,
+                    AuthenticationResponse.Type.TOKEN, SPOTIFY_REDIRECT_URI)
+                    .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read",
+                            "playlist-read-private", "streaming"}).setShowDialog(true)
                     .build();
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
@@ -112,6 +114,11 @@ public class LoginActivity extends FragmentActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     logMessage("Login Success!");
+                    SharedPreferences settings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("spotifyLoginChanged", true);
+                    editor.commit();
+
                     CredentialsHandler.setToken(this, response.getAccessToken(),
                             response.getExpiresIn(), TimeUnit.SECONDS, "Spotify");
                     startMainActivity(response.getAccessToken());

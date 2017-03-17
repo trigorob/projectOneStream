@@ -21,27 +21,28 @@ public class MusicLoaderService extends AsyncTask {
         Object[] retObject = new Object[2];
         retObject[0] = "MusicLoaderService";
         retObject[1] = result;
-        PlaylistHandler.addToArtistsAlbums((ArrayList<Song>)((Playlist) result).getSongInfo(), this.SAR);
         SAR.processFinish(retObject);
     }
 
-    //This is the async process that gets songs. It only gets 50 right now.
-    //Need to change this so it gets first 20 offset, then next 20 ater scrolled to bottom of list.
+    //This is the async process that gets songs. It gets 50/thread
     @Override
     protected Playlist doInBackground(Object[] params) {
         ArrayList<Song> totalListContent = (ArrayList<Song>) params[0];
         Playlist listContent = (Playlist) params[1];
         int offset = (int) params[2];
+        Playlist combinedList = (Playlist) params[3];
+
 
         if (listContent.size() < totalListContent.size())
         {
-            for (int i = offset; i < 20+offset; i++)
+            for (int i = offset; i < 50+offset; i++)
             {
                 if (listContent.size() == totalListContent.size())
                 {
                     return listContent;
                 }
                 listContent.addSong(totalListContent.get(i));
+                combinedList.addSong(totalListContent.get(i));
             }
         }
 

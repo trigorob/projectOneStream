@@ -26,7 +26,7 @@ public class OneStreamDomainActivity extends Activity {
         final EditText oneStreamDomain = (EditText) findViewById(R.id.oneStreamDomain);
         Button confirmDomainButton = (Button) findViewById(R.id.confirmDomainButton);
 
-        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_DOMAIN", 0);
+        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
         String oldDomain = domainSettings.getString("domain", "Admin");
         oneStreamDomain.setText(oldDomain);
 

@@ -7,10 +7,7 @@ package music.onestream.musicgetter;
 import android.media.MediaMetadataRetriever;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.util.*;
-
-import music.onestream.R;
 import music.onestream.song.Song;
 
 public class LocalMusicGetter implements MusicGetter {
@@ -48,29 +45,29 @@ public class LocalMusicGetter implements MusicGetter {
         ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()) {
             File[] listFiles = dir.listFiles();
-            for (File file : listFiles) {
-                if (file.isFile()) {
-                    String fname = file.getName();
-                    fname = getFileIfValid(fname);
-                    if (fname != null) {
-                        files.add(file);
-                        filess.add(fname);
-                        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                        mmr.setDataSource(file.getPath());
-                        String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                        String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                        artists.add(artistName);
-                        albums.add(albumName);
+            int pos = 0;
+                while (pos < listFiles.length) {
+                    File file = listFiles[pos];
+                    if (file.isFile()) {
+                        String fname = file.getName();
+                        fname = getFileIfValid(fname);
+                        if (fname != null) {
+                            files.add(file);
+                            filess.add(fname);
+                            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                            mmr.setDataSource(file.getPath());
+                            String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                            String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                            artists.add(artistName);
+                            albums.add(albumName);
+                        }
+                    } else if (file.isDirectory()) {
+                        fileNames(file.getPath());
                     }
-                }
-                else if (file.isDirectory())
-                {
-                    fileNames(file.getPath());
-                }
+                    pos++;
             }
             String artist;
             String album;
-            String albumArtString;
             for (int i = 0; i < files.size(); i++) {
                 artist = artists.get(i);
                 album = albums.get(i);
