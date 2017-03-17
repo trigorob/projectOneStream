@@ -241,7 +241,7 @@ public class PlaylistHandler implements AsyncResponse {
                 sortLists(sortType, "Local");
             }
             OneStreamActivity.notifyAdapters();
-        } else if (type.equals("SpotifyMusicGetter")) {
+        } else if (type.equals("GoogleMusicGetter")) {
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;
             if (tempList.size() < 20) {
                 sortLists(sortType, "Spotify");

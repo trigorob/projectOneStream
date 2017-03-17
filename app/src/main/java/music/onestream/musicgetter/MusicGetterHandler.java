@@ -8,7 +8,7 @@ public class MusicGetterHandler {
 
     private SpotifyMusicGetter spotifyMusicGetter;
     private LocalMusicGetter localMusicGetter;
-    private GoogleMusicMusicGetter googleMusicMusicGetter;
+    private GoogleMusicGetter googleMusicGetter;
 
     public MusicGetterHandler()
     {
@@ -19,16 +19,16 @@ public class MusicGetterHandler {
         this.spotifyMusicGetter = spotifyMusicGetter;
     }
 
-    public void setGoogleMusicMusicGetter(GoogleMusicMusicGetter googleMusicMusicGetter) {
-        this.googleMusicMusicGetter = googleMusicMusicGetter;
+    public void setGoogleMusicGetter(GoogleMusicGetter googleMusicGetter) {
+        this.googleMusicGetter = googleMusicGetter;
     }
 
     public void setLocalMusicGetter(LocalMusicGetter localMusicGetter) {
         this.localMusicGetter = localMusicGetter;
     }
 
-    public GoogleMusicMusicGetter getGoogleMusicMusicGetter() {
-        return googleMusicMusicGetter;
+    public GoogleMusicGetter getGoogleMusicGetter() {
+        return googleMusicGetter;
     }
 
     public LocalMusicGetter getLocalMusicGetter() {
@@ -52,8 +52,8 @@ public class MusicGetterHandler {
     }
 
     public void initGoogleMusicGetter() {
-        if (googleMusicMusicGetter != null) {
-            googleMusicMusicGetter.init();
+        if (googleMusicGetter != null) {
+            googleMusicGetter.init();
         }
     }
 
