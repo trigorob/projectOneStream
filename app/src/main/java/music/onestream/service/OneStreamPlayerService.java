@@ -18,6 +18,7 @@ import music.onestream.R;
 import music.onestream.activity.SongActivity;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.song.Song;
+import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
 
 /**
@@ -25,21 +26,6 @@ import music.onestream.util.PlayerActionsHandler;
  */
 
 public class OneStreamPlayerService extends Service {
-
-    public static final String ACTION_INIT = "action_init";
-    public static final String ACTION_PLAY = "action_play";
-    public static final String ACTION_PAUSE = "action_pause";
-    public static final String ACTION_NEXT = "action_next";
-    public static final String ACTION_PREVIOUS = "action_previous";
-    public static final String ACTION_REWIND = "action_rewind";
-    public static final String ACTION_SHUFFLE = "action_shuffle";
-    public static final String ACTION_STOP = "action_stop";
-
-    public static final String ACTION_ICON_PAUSE = "action_icon_pause";
-    public static final String ACTION_ICON_PLAY = "action_icon_play";
-    public static final String ACTION_ICON_SHUFFLE = "action_icon_play";
-
-
 
     private String currentActivity = "";
     private MediaSession session;
@@ -66,7 +52,7 @@ public class OneStreamPlayerService extends Service {
 
         String action = intent.getAction();
 
-        if (action.equalsIgnoreCase(ACTION_INIT))
+        if (action.equalsIgnoreCase(Constants.ACTION_INIT))
         {
             if (intent.getExtras().get("currentActivity").equals("OneStreamActivity")) {
                 currentActivity = "OneStreamActivity";
@@ -78,47 +64,47 @@ public class OneStreamPlayerService extends Service {
             mediaController.getTransportControls().pause();
         }
 
-        else if (action.equalsIgnoreCase(ACTION_ICON_PAUSE))
+        else if (action.equalsIgnoreCase(Constants.ACTION_ICON_PAUSE))
         {
             mediaController.getTransportControls().pause();
         }
-        else if (action.equalsIgnoreCase(ACTION_ICON_PLAY))
+        else if (action.equalsIgnoreCase(Constants.ACTION_ICON_PLAY))
         {
             mediaController.getTransportControls().play();
         }
-        else if (action.equalsIgnoreCase(ACTION_ICON_SHUFFLE))
+        else if (action.equalsIgnoreCase(Constants.ACTION_ICON_SHUFFLE))
         {
             //This can be anything, Just need to rebuild the notification
             mediaController.getTransportControls().skipToNext();
         }
 
-        else if (action.equalsIgnoreCase(ACTION_PLAY))
+        else if (action.equalsIgnoreCase(Constants.ACTION_PLAY))
         {
             mediaController.getTransportControls().play();
             playerHandler.resumeSong(playerHandler.getCurrentSongListPosition());
 
         }
-        else if (action.equalsIgnoreCase(ACTION_PAUSE))
+        else if (action.equalsIgnoreCase(Constants.ACTION_PAUSE))
         {
             mediaController.getTransportControls().pause();
             playerHandler.stopSong();
         }
-        else if (action.equalsIgnoreCase(ACTION_REWIND))
+        else if (action.equalsIgnoreCase(Constants.ACTION_REWIND))
         {
             mediaController.getTransportControls().play();
             playerHandler.playSong(playerHandler.getCurrentSongListPosition());
         }
-        else if (action.equalsIgnoreCase(ACTION_SHUFFLE))
+        else if (action.equalsIgnoreCase(Constants.ACTION_SHUFFLE))
         {
             playerHandler.setRandomNext(!playerHandler.isRandomNext());
             if (playerHandler.isPlaying()) {
-                buildNotification(generateAction(android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE));
+                buildNotification(generateAction(android.R.drawable.ic_media_pause, "Pause", Constants.ACTION_PAUSE));
             }
             else {
-                buildNotification(generateAction(R.drawable.play, "Play", ACTION_PLAY));
+                buildNotification(generateAction(R.drawable.play, "Play", Constants.ACTION_PLAY));
             }
         }
-        else if (action.equalsIgnoreCase(ACTION_NEXT))
+        else if (action.equalsIgnoreCase(Constants.ACTION_NEXT))
         {
             mediaController.getTransportControls().skipToNext();
             mediaController.getTransportControls().play();
@@ -129,18 +115,18 @@ public class OneStreamPlayerService extends Service {
                 playerHandler.nextSong();
             }
         }
-        else if (action.equalsIgnoreCase(ACTION_REWIND))
+        else if (action.equalsIgnoreCase(Constants.ACTION_REWIND))
         {
             mediaController.getTransportControls().rewind();
             playerHandler.playSong(playerHandler.getCurrentSongListPosition());
         }
-        else if (action.equalsIgnoreCase(ACTION_PREVIOUS))
+        else if (action.equalsIgnoreCase(Constants.ACTION_PREVIOUS))
         {
             mediaController.getTransportControls().skipToPrevious();
             mediaController.getTransportControls().play();
             playerHandler.previousSong();
         }
-        else if (action.equalsIgnoreCase(ACTION_STOP))
+        else if (action.equalsIgnoreCase(Constants.ACTION_STOP))
         {
             mediaController.getTransportControls().stop();
             playerHandler.onPause();
@@ -158,7 +144,7 @@ public class OneStreamPlayerService extends Service {
     private void buildNotification(Notification.Action action) {
         NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle();
         Intent intent = new Intent(getApplicationContext(), OneStreamPlayerService.class);
-        intent.setAction(ACTION_STOP);
+        intent.setAction(Constants.ACTION_STOP);
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
 
         android.support.v4.app.NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
@@ -177,20 +163,20 @@ public class OneStreamPlayerService extends Service {
 
         builder.setStyle(style);
 
-        builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(ACTION_REWIND));
-        builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(ACTION_PREVIOUS));
+        builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(Constants.ACTION_REWIND));
+        builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(Constants.ACTION_PREVIOUS));
         if (action.title.equals("Pause")) {
-            builder.addAction(R.drawable.pause, "Pause", generatePendingIntent(ACTION_PAUSE));
+            builder.addAction(R.drawable.pause, "Pause", generatePendingIntent(Constants.ACTION_PAUSE));
         }
         else {
-            builder.addAction(R.drawable.play, "Play", generatePendingIntent(ACTION_PLAY));
+            builder.addAction(R.drawable.play, "Play", generatePendingIntent(Constants.ACTION_PLAY));
         }
-        builder.addAction(R.drawable.skip, "Next", generatePendingIntent(ACTION_NEXT));
+        builder.addAction(R.drawable.skip, "Next", generatePendingIntent(Constants.ACTION_NEXT));
         if (playerHandler.isRandomNext()) {
-            builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+            builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(Constants.ACTION_SHUFFLE));
         }
         else {
-            builder.addAction(R.drawable.shuffle, "Shuffle", generatePendingIntent(ACTION_SHUFFLE));
+            builder.addAction(R.drawable.shuffle, "Shuffle", generatePendingIntent(Constants.ACTION_SHUFFLE));
         }
         style.setShowActionsInCompactView(1, 2, 3);
 
@@ -235,31 +221,31 @@ public class OneStreamPlayerService extends Service {
             @Override
             public void onPlay() {
                 super.onPlay();
-                buildNotification(generateAction(android.R.drawable.ic_media_pause, "Pause", ACTION_PAUSE));
+                buildNotification(generateAction(android.R.drawable.ic_media_pause, "Pause", Constants.ACTION_PAUSE));
             }
 
             @Override
             public void onPause() {
                 super.onPause();
-                buildNotification(generateAction(android.R.drawable.ic_media_play, "Play", ACTION_PLAY));
+                buildNotification(generateAction(android.R.drawable.ic_media_play, "Play", Constants.ACTION_PLAY));
             }
 
             @Override
             public void onSkipToNext() {
                 super.onSkipToNext();
-                buildNotification(generateAction(android.R.drawable.ic_media_next, "Next", ACTION_NEXT));
+                buildNotification(generateAction(android.R.drawable.ic_media_next, "Next", Constants.ACTION_NEXT));
             }
 
             @Override
             public void onRewind() {
                 super.onRewind();
-                buildNotification(generateAction(android.R.drawable.ic_media_rew, "Rewind", ACTION_REWIND));
+                buildNotification(generateAction(android.R.drawable.ic_media_rew, "Rewind", Constants.ACTION_REWIND));
             }
 
             @Override
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
-                buildNotification(generateAction(android.R.drawable.ic_media_rew, "Rewind", ACTION_REWIND));
+                buildNotification(generateAction(android.R.drawable.ic_media_rew, "Rewind", Constants.ACTION_REWIND));
             }
 
             @Override

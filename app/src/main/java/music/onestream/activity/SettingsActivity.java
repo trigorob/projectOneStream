@@ -19,10 +19,9 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import java.io.File;
 
 import music.onestream.R;
+import music.onestream.util.Constants;
 
 public class SettingsActivity extends Activity {
-
-    private static final String PREFS_NAME = "dirInfo";
 
     /**
      * Called when the activity is first created.
@@ -62,8 +61,8 @@ public class SettingsActivity extends Activity {
         });
 
         final ToggleButton songViewToggle = (ToggleButton) findViewById(R.id.songViewToggleButton);
-        SharedPreferences settings = getSharedPreferences("SongView", 0);
-        if (settings.getBoolean("SongView", false) == true)
+        SharedPreferences settings = getSharedPreferences(Constants.songViewLoc, 0);
+        if (settings.getBoolean(Constants.songViewOn, false) == true)
         {
             songViewToggle.setChecked(true);
         }
@@ -71,22 +70,22 @@ public class SettingsActivity extends Activity {
         songViewToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    SharedPreferences settings = getSharedPreferences("SongView", 0);
+                    SharedPreferences settings = getSharedPreferences(Constants.songViewLoc, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     if (songViewToggle.isChecked())
                     {
-                        editor.putBoolean("SongView", true);
+                        editor.putBoolean(Constants.songViewOn, true);
                     }
                     else
                     {
-                        editor.putBoolean("SongView", false);
+                        editor.putBoolean(Constants.songViewOn, false);
                     }
                     editor.commit();
                 }
             });
 
-        settings = getSharedPreferences("dirInfo", 0);
-        final String directory = settings.getString("dir", "N/A");
+        settings = getSharedPreferences(Constants.dirInfoLoc, 0);
+        final String directory = settings.getString(Constants.directory, Constants.defaultDirectory);
         TextView directoryTxt = (TextView) findViewById(R.id.dirName);
         directoryTxt.setText(directory);
 
@@ -122,14 +121,15 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 final TextView eTxt = (TextView) findViewById(R.id.dirName);
-                eTxt.setText("N/A");
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                eTxt.setText(Constants.defaultDirectory);
+                SharedPreferences settings = getSharedPreferences(Constants.dirInfoLoc, 0);
                 SharedPreferences.Editor editor = settings.edit();
-                if (!settings.getString("dir", "N/A").equals("N/A"))
+                if (!settings.getString(Constants.directory, Constants.defaultDirectory)
+                        .equals(Constants.defaultDirectory))
                 {
-                    editor.putBoolean("directoryChanged", true);
+                    editor.putBoolean(Constants.directoryChanged, true);
                 }
-                editor.putString("dir", "N/A");
+                editor.putString(Constants.directory, Constants.defaultDirectory);
                 editor.commit();
             }
         });
@@ -150,10 +150,10 @@ public class SettingsActivity extends Activity {
                         if (files.length > 0) {
                             eTxt.setText(files[0].toString());
 
-                            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                            SharedPreferences settings = getSharedPreferences(Constants.dirInfoLoc, 0);
                             SharedPreferences.Editor editor = settings.edit();
-                            editor.putString("dir", files[0]);
-                            editor.putBoolean("directoryChanged", true);
+                            editor.putString(Constants.directory, files[0]);
+                            editor.putBoolean(Constants.directoryChanged, true);
                             editor.commit();
                         }
                     }

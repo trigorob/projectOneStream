@@ -1,6 +1,7 @@
 package music.onestream.musicgetter;
 
 import music.onestream.playlist.PlaylistHandler;
+import music.onestream.util.Constants;
 
 /**
  * Created by ruspe_000 on 2017-02-26.
@@ -11,7 +12,6 @@ public class SpotifyMusicGetter implements MusicGetter {
     private int spotifySongOffset;
     private String token;
     private PlaylistHandler handler;
-    private final int spotifySongCap = 1000;
 
     public SpotifyMusicGetter(String token, PlaylistHandler handler) {
         this.spotifySongOffset = 0;
@@ -21,14 +21,14 @@ public class SpotifyMusicGetter implements MusicGetter {
     @Override
     public void init() {
 
-        while (spotifySongOffset < spotifySongCap) {
+        while (spotifySongOffset < Constants.spotifySongCap) {
             SpotifyMusicLoader spotifyMusicLoader = new SpotifyMusicLoader();
             spotifyMusicLoader.SAR = handler;
             Object[] params = new Object[2];
             params[0] = token;
             params[1] = spotifySongOffset;
             spotifyMusicLoader.execute(params);
-            spotifySongOffset += 50;
+            spotifySongOffset += Constants.spotifyLoadStepSize;
         }
     }
 }

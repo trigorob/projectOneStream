@@ -24,31 +24,20 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.concurrent.TimeUnit;
 
+import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
 import music.onestream.R;
 
 public class LoginActivity extends FragmentActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
-
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String SPOTIFY_ID = "0785a1e619c34d11b2f50cb717c27da0";
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String SPOTIFY_REDIRECT_URI = "testschema://callback";
-    private static final int REQUEST_CODE = 1337;
-    private static final int GOOGLE_RESPONSE_CODE = 0;
-    private static final int GOOGLE_CACHE_CODE = -1;
-    private static final int RC_SIGN_IN = 9001;
-    private static final int RC_GET_TOKEN = 9002;
-    public static final String PREFS_NAME = "GoogleACCT";
-
     private static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        String token = CredentialsHandler.getToken(this, "GoogleMusic");
+        String token = CredentialsHandler.getToken(this, Constants.googleMusic);
 
         ImageButton spotifyLoginButton = (ImageButton) findViewById(R.id.spotifyLoginLauncherButton);
 
@@ -63,7 +52,7 @@ public class LoginActivity extends FragmentActivity {
         });
 
         //Todo: Actually get token/authentication and put it here
-        token = CredentialsHandler.getToken(this, "GoogleMusic");
+        token = CredentialsHandler.getToken(this, Constants.googleMusic);
         ImageButton googleMusicLoginButton = (ImageButton) findViewById(R.id.googleMusicLoginLauncherButton);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -85,22 +74,22 @@ public class LoginActivity extends FragmentActivity {
     }
 
     public void onSpotifyLoginButtonClicked(View view) {
-            final AuthenticationRequest request = new AuthenticationRequest.Builder(SPOTIFY_ID,
-                    AuthenticationResponse.Type.TOKEN, SPOTIFY_REDIRECT_URI)
+            final AuthenticationRequest request = new AuthenticationRequest.Builder(Constants.SPOTIFY_ID,
+                    AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
                     .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read",
                             "playlist-read-private", "streaming"}).setShowDialog(true)
                     .build();
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+        AuthenticationClient.openLoginActivity(this, Constants.REQUEST_CODE, request);
     }
 
     public void onGoogleMusicLoginButtonClicked(View view) {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
     }
 
     public void googleMusicGetToken() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_GET_TOKEN);
+        startActivityForResult(signInIntent, Constants.RC_GET_TOKEN);
     }
 
     @Override
@@ -108,19 +97,19 @@ public class LoginActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == Constants.REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
                     logMessage("Login Success!");
-                    SharedPreferences settings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
+                    SharedPreferences settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
                     SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean("spotifyLoginChanged", true);
+                    editor.putBoolean(Constants.spotifyLoginChanged, true);
                     editor.commit();
 
                     CredentialsHandler.setToken(this, response.getAccessToken(),
-                            response.getExpiresIn(), TimeUnit.SECONDS, "Spotify");
+                            response.getExpiresIn(), TimeUnit.SECONDS, Constants.spotify);
                     startMainActivity(response.getAccessToken());
                     break;
 
@@ -134,7 +123,7 @@ public class LoginActivity extends FragmentActivity {
                     logError("Auth result: " + response.getType());
             }
         }
-        else if (requestCode == RC_SIGN_IN) {
+        else if (requestCode == Constants.RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
             if (result.isSuccess()) {
                 googleMusicGetToken();
@@ -142,14 +131,14 @@ public class LoginActivity extends FragmentActivity {
             }
         }
 
-        else if (requestCode == RC_GET_TOKEN) {
-            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        else if (requestCode == Constants.RC_GET_TOKEN) {
+            SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
             if (result.isSuccess()) {
                 String idToken = result.getSignInAccount().getIdToken();
                 SharedPreferences.Editor editor = settings.edit();
                 CredentialsHandler.setToken(this, idToken,
-                        9999999, TimeUnit.SECONDS, "GoogleMusic");
+                        9999999, TimeUnit.SECONDS, Constants.googleMusic);
                 startMainActivity(idToken);
                 //editor.put("GoogleACCT", acct);
                 // Get account information
@@ -160,7 +149,7 @@ public class LoginActivity extends FragmentActivity {
 
     private void startMainActivity(String token) {
         Intent intent = OneStreamActivity.createIntent(this);
-        intent.putExtra("SPOTIFY_TOKEN", token);
+        intent.putExtra(Constants.spotifyToken, token);
         startActivity(intent);
         finish();
     }

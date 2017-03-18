@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -37,18 +36,12 @@ import music.onestream.song.Song;
 import music.onestream.activity.SongActivity;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.musicgetter.ImageGetter;
-import music.onestream.song.SongAdapter;
-
 
 /**
  * Created by ruspe_000 on 2017-02-21.
  */
 
 public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Player.NotificationCallback, ConnectionStateCallback, AsyncResponse {
-
-
-    private static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
-    static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
 
     public static PlayerActionsHandler instance;
 
@@ -129,9 +122,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             instance.fabIO.setImageResource(R.drawable.pause);
         }
         if (currentSong != null) {
-            if (currentSong.getType().equals("Local")) {
+            if (currentSong.getType().equals(Constants.local)) {
                 seekBar.setMax(mp.getDuration());
-            } else if (currentSong.getType().equals("Spotify")) {
+            } else if (currentSong.getType().equals(Constants.spotify)) {
                 Metadata.Track track = spotPlayer.getMetadata().currentTrack;
                 if (track != null) {
                     seekBar.setMax((int) track.durationMs);
@@ -202,7 +195,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void initPlayerService() {
         if (!serviceInit) {
             Intent intent = new Intent(context, OneStreamPlayerService.class);
-            intent.setAction(OneStreamPlayerService.ACTION_INIT);
+            intent.setAction(Constants.ACTION_INIT);
             intent.putExtra("currentActivity", parentClass);
             context.startService(intent);
             serviceInit = true;
@@ -212,7 +205,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void changePlayerServiceAdapter() {
         if (serviceInit) {
             Intent intent = new Intent(context, OneStreamPlayerService.class);
-            intent.setAction(OneStreamPlayerService.ACTION_INIT);
+            intent.setAction(Constants.ACTION_INIT);
             intent.putExtra("currentActivity", parentClass);
             context.startService(intent);
         }
@@ -221,7 +214,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void stopPlayerService() {
         if (serviceInit) {
             Intent intent = new Intent(context, OneStreamPlayerService.class);
-            intent.setAction(OneStreamPlayerService.ACTION_STOP);
+            intent.setAction(Constants.ACTION_STOP);
             context.startService(intent);
             serviceInit = false;
         }
@@ -231,10 +224,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (serviceInit) {
             Intent intent = new Intent(context, OneStreamPlayerService.class);
             if (isPlaying) {
-                intent.setAction(OneStreamPlayerService.ACTION_ICON_PLAY);
+                intent.setAction(Constants.ACTION_ICON_PLAY);
             }
             else {
-                intent.setAction(OneStreamPlayerService.ACTION_ICON_PAUSE);
+                intent.setAction(Constants.ACTION_ICON_PAUSE);
             }
             context.startService(intent);
         }
@@ -244,10 +237,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (serviceInit) {
             Intent intent = new Intent(context, OneStreamPlayerService.class);
             if (isRandomNext()) {
-                intent.setAction(OneStreamPlayerService.ACTION_ICON_SHUFFLE);
+                intent.setAction(Constants.ACTION_ICON_SHUFFLE);
             }
             else {
-                intent.setAction(OneStreamPlayerService.ACTION_ICON_PAUSE);
+                intent.setAction(Constants.ACTION_ICON_PAUSE);
             }
             context.startService(intent);
         }
@@ -269,7 +262,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                         }
                     }
                     else {
-                        if (currentSongType.equals("Local")) {
+                        if (currentSongType.equals(Constants.local)) {
                             if (!mp.isPlaying()) {
                                 resumeSong(currentSongListPosition);
                             } else //Stop song.
@@ -277,7 +270,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                                 stopSong();
                             }
                         }
-                        else if (currentSongType.equals("Spotify"))
+                        else if (currentSongType.equals(Constants.spotify))
                         {
                             if (!spotPlayer.getPlaybackState().isPlaying) {
                                 resumeSong(currentSongListPosition);
@@ -350,11 +343,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mp != null && fromUser && currentSongType.equals("Local")){
+                if(mp != null && fromUser && currentSongType.equals(Constants.local)){
                     currentSongPosition = progress;
                     mp.seekTo(currentSongPosition);
                 }
-                else if (fromUser && currentSongType.equals("Spotify"))
+                else if (fromUser && currentSongType.equals(Constants.spotify))
                 {
                     currentSongPosition = progress;
                     spotPlayer.resume(opCallback);
@@ -378,7 +371,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public void initSpotifyPlayer(String accessToken) {
 
-        Config playerConfig = new Config(context, accessToken, CLIENT_ID);
+        Config playerConfig = new Config(context, accessToken, Constants.CLIENT_ID);
         playerConfig.useCache(false); //Prevent memory leaks from spotify!
         // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
         // the second argument in order to refcount it properly. Note that the method
@@ -392,7 +385,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                 player.setConnectivityStatus(opCallback, getNetworkConnectivity(context));
                 player.addNotificationCallback(PlayerActionsHandler.this);
                 player.addConnectionStateCallback(PlayerActionsHandler.this);
-                player.login(CredentialsHandler.getToken(context, "Spotify"));
+                player.login(CredentialsHandler.getToken(context, Constants.spotify));
             }
 
             @Override
@@ -483,7 +476,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
         String type = currentSong.getType();
 
-        if (!this.parentClass.equals("SongActivity") && OneStreamActivity.isSongViewEnabled()) {
+        if (!this.parentClass.equals(Constants.songActivity) && OneStreamActivity.isSongViewEnabled()) {
 
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
@@ -498,15 +491,14 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
 
 
-        if (type.equals("Local")) {
+        if (type.equals(Constants.local)) {
             playLocalSong(currentSong);
         }
 
-        else if (type.equals("Spotify") && spotPlayer != null) {
+        else if (type.equals(Constants.spotify) && spotPlayer != null) {
             playSpotifySong(currentSong);
         }
 
-        //Remote mp3 link example
         else {
             //Play google song here
         }
@@ -517,9 +509,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     public void setSongViewDisplay(Song song) {
-        if (this.parentClass.equals("SongActivity")) {
+        if (this.parentClass.equals(Constants.songActivity)) {
             SongActivity.initDisplay(song);
-            if (!song.getType().equals("Local"))
+            if (song.getType().equals(Constants.spotify))
             {
                 String url = song.getAlbumArt();
                 Object[] params = new Object[1];
@@ -528,7 +520,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                 imageGetter.SAR = this;
                 imageGetter.execute(params);
             }
-            else if (song.getType().equals("Local"))
+            else if (song.getType().equals(Constants.local))
             {
                 SongActivity.setLocalAlbumArt(song);
             }
@@ -557,7 +549,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         mp.reset();
         mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
         mp.start();
-        currentSongType = "Local";
+        currentSongType = Constants.local;
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
@@ -570,20 +562,20 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         spotPlayer.refreshCache();
         if (!spotPlayer.isLoggedIn())
         {
-            spotPlayer.login(CredentialsHandler.getToken(context, "Spotify"));
+            spotPlayer.login(CredentialsHandler.getToken(context, Constants.spotify));
         }
         spotPlayer.playUri(opCallback, currentSong.getUri(),0,0);
-        currentSongType = "Spotify";
+        currentSongType = Constants.spotify;
     }
 
     public void stopSong() {
 
-        if (currentSongType.equals("Local"))
+        if (currentSongType.equals(Constants.local))
         {
             mp.pause();
             currentSongPosition = mp.getCurrentPosition();
         }
-        else if ((currentSongType.equals("Spotify")))
+        else if ((currentSongType.equals(Constants.spotify)))
         {
             spotPlayer.pause(opCallback);
             currentSongPosition = (int) spotPlayer.getPlaybackState().positionMs;
@@ -595,12 +587,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void resumeSong(int songIndex)
     {
         if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
-            if (currentSongType.equals("Local")) {
+            if (currentSongType.equals(Constants.local)) {
                 mp.seekTo(currentSongPosition);
                 mp.start(); // starting mediaplayer
                 fabIO.setImageResource(R.drawable.pause);
 
-            } else if (currentSongType.equals("Spotify")) {
+            } else if (currentSongType.equals(Constants.spotify)) {
                spotPlayer.resume(opCallback);
                 spotPlayer.playUri(opCallback, spotPlayer.getMetadata().contextUri, 0, currentSongPosition);
                 fabIO.setImageResource(R.drawable.pause);
@@ -671,11 +663,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(mp != null && fromUser && currentSongType.equals("Local")){
+        if(mp != null && fromUser && currentSongType.equals(Constants.local)){
             setCurrentSongPosition(progress);
             mp.seekTo(progress);
         }
-        else if (spotPlayer!= null && fromUser && currentSongType.equals("Spotify"))
+        else if (spotPlayer!= null && fromUser && currentSongType.equals(Constants.spotify))
         {
             setCurrentSongPosition(progress);
             spotPlayer.resume(opCallback);
@@ -791,10 +783,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     @Override
     public void onPlaybackError(Error error) {
         //If a song has a broken link, remove it from the list of songs so it doesn't cause any more trouble
-        if (error.toString().equals("kSpErrorFailed")) {
+        if (error.toString().equals(Constants.spotifyPlaybackFailed)) {
             Song invalidSong = getCurrentSong();
-            OneStreamActivity.getPlaylistHandler().getList("Spotify").removeSongItem(invalidSong);
-            OneStreamActivity.getPlaylistHandler().getList("Library").removeSongItem(invalidSong);
+            OneStreamActivity.getPlaylistHandler().getList(Constants.spotify).removeSongItem(invalidSong);
+            OneStreamActivity.getPlaylistHandler().getList(Constants.library).removeSongItem(invalidSong);
             OneStreamActivity.invalidateList();
         }
     }

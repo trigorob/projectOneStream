@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
+import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
 import music.onestream.util.JSONExtractor;
 
@@ -30,15 +31,16 @@ public class GoogleMusicLoader extends AsyncTask{
     protected Object doInBackground(Object[] params) {
         ArrayList<Song> result = null;
         // String token = (String) params[0];
-        String token = CredentialsHandler.getToken(___, "GoogleMusic");
+        //String token = CredentialsHandler.getToken(context, "GoogleMusic");
         String offset = ((Integer) params[1]).toString();
 
 
         try {
-            String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit=50";
+            String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit=" +
+                    Constants.googleLoadStepSize;
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Authorization", "Bearer " + token);
+            //conn.setRequestProperty("Authorization", "Bearer " + token);
             conn.setRequestMethod("GET");
             conn.setRequestProperty("accept", "application/json");
             //Get the songs as an object

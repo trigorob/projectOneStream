@@ -1,0 +1,159 @@
+package music.onestream.util;
+
+/**
+ * Created by ruspe_000 on 2017-03-17.
+ */
+
+public class Constants {
+    /* UTIL CONSTANTS */
+    public static final String SPOTIFY_TOKEN_NAME = "webapi.credentials.access_token";
+    public static final String GoogleMusic_TOKEN_NAME = "webapi.credentials.access_token";
+    public static final String SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
+    public static final String GoogleMusic_ACCESS_TOKEN = "googlemusic_access_token";
+    public static final String EXPIRES_AT = "expires_at";
+    public static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
+    public static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
+    @SuppressWarnings("SpellCheckingInspection")
+    public static final String SPOTIFY_ID = "0785a1e619c34d11b2f50cb717c27da0";
+    @SuppressWarnings("SpellCheckingInspection")
+    public static final String SPOTIFY_REDIRECT_URI = "testschema://callback";
+    public static final int REQUEST_CODE = 1337;
+    public static final int GOOGLE_RESPONSE_CODE = 0;
+    public static final int GOOGLE_CACHE_CODE = -1;
+    public static final int RC_SIGN_IN = 9001;
+    public static final int RC_GET_TOKEN = 9002;
+    public static final String PREFS_NAME = "GoogleACCT";
+
+    /* Service Actions */
+    public static final String ACTION_INIT = "action_init";
+    public static final String ACTION_PLAY = "action_play";
+    public static final String ACTION_PAUSE = "action_pause";
+    public static final String ACTION_NEXT = "action_next";
+    public static final String ACTION_PREVIOUS = "action_previous";
+    public static final String ACTION_REWIND = "action_rewind";
+    public static final String ACTION_SHUFFLE = "action_shuffle";
+    public static final String ACTION_STOP = "action_stop";
+
+    public static final String ACTION_ICON_PAUSE = "action_icon_pause";
+    public static final String ACTION_ICON_PLAY = "action_icon_play";
+    public static final String ACTION_ICON_SHUFFLE = "action_icon_play";
+
+
+    /* Music Caps */
+    public static final int spotifySongCap = 1000;
+    public static final int localSongCap = 1000;
+    public static final int googleSongCap = 1000;
+
+    /*Loading step size*/
+    public static final int spotifyLoadStepSize = 50;
+    public static final int localLoadStepSize = 50;
+    public static final int googleLoadStepSize = 50;
+
+    /*Playlist default name */
+    public static String defaultPlaylistName = "Playlist Title";
+    public static String defaultArtistsAlbumSongName = "N/A";
+
+    /*Shared pref files*/
+    public static String oneStreamDomainLoc = "ONESTREAM_ACCOUNT";
+    public static String playlistChangeLoc = "PLAYLIST-CHANGE";
+    public static String sortTypeLoc = "SORT_TYPE";
+    public static String dirInfoLoc = "dirInfo";
+    public static String songViewLoc = "SongView";
+
+    /*Shared pref value locations*/
+    public static String playlistChanged = "PlaylistsChanged";
+    public static String domain = "domain";
+    public static String spotifyLoginChanged = "spotifyLoginChanged";
+    public static String sortOnLoad = "sortOnLoad";
+    public static String sortType = "sortType";
+    public static String directory = "dir";
+    public static String directoryChanged = "directoryChanged";
+    public static String songViewOn = "SongView";
+
+    /*Default sortType*/
+    public static String defaultSortType = "Default";
+    public static String defaultDirectory = "N/A";
+
+    /*Default domain*/
+    public static String defaultDomain = "Admin";
+
+    /*Service Names*/
+    public static String googleMusic = "GoogleMusic";
+    public static String spotify = "Spotify";
+    public static String local = "Local";
+    public static String library = "Library";
+    public static String playlists = "Playlists";
+    public static String artists = "Artists";
+    public static String albums = "Albums";
+
+    /*Spotify token*/
+    public static String spotifyToken = "SPOTIFY_TOKEN";
+
+    /*OneStreamActivity Tabs */
+    public static int OneStream_Library_Pos = 0;
+    public static String OneStream_Library = "Library";
+    public static int OneStream_Spotify_Pos = 2;
+    public static String OneStream_Spotify = "Spotify";
+    public static int OneStream_GoogleMusic_Pos = 4;
+    public static String OneStream_GoogleMusic = "GoogleMusic";
+    public static int OneStream_Playlists_Pos = 3;
+    public static String OneStream_Playlists = "Playlists";
+    public static int OneStream_Artists_Pos = 5;
+    public static String OneStream_Artists = "Artists";
+    public static int OneStream_Albums_Pos = 6;
+    public static String OneStream_Albums = "Album";
+    public static int OneStream_Local_Pos = 1;
+    public static String OneStream_Local = "Local";
+
+    /*OneStreamActivity Tabs */
+    public static int Recommendations_Songs_Pos = 0;
+    public static String Recommendations_Songs = "Songs";
+    public static int Recommendations_Playlists_Pos = 1;
+    public static String Recommendations_Playlists = "Recommendations";
+    public static int Recommendations_TopSongs_Pos = 2;
+    public static String Recommendations_TopSongs = "Top Songs";
+    public static int Recommendations_TopArtists_Pos = 3;
+    public static String Recommendations_TopArtists = "Top Artists";
+    public static int Recommendations_TopAlbums_Pos = 4;
+    public static String Recommendations_TopAlbums = "Top Albums";
+
+
+    /*Activity parent names*/
+    public static String oneStreamActivity = "OneStreamActivity";
+    public static String playlistActivity = "PlaylistActivity";
+    public static String songActivity = "SongActivity";
+
+    /*Recommendations Descriptions*/
+    public static String recommendationsSongsText = "Click a song to recommend a playlist";
+    public static String playlistRecommendationsText = "Click to open recommended playlist";
+    public static String recommendationsTopSongsText = "Click to open OneStream's top songs";
+    public static String recommendationsArtists = "Click to open OneStream users top 50 artists playlists";
+    public static String recommendationsAlbums = "Click to open OneStream users top 50 albums playlists";
+
+    /*Recommendations string getters */
+    public static String getRecommendations = "GetRecommendations";
+    public static String getTopSongs = "GetTopSongs";
+    public static String getTopArtists = "GetTopArtists";
+    public static String getTopAlbums = "GetTopAlbums";
+    public static String getRecommendationsFailedText = "Nothing found, try another song.";
+
+    /*RestServiceActionsCodes */
+    public static String getPlaylists = "GetPlaylists";
+    public static String createPlaylist = "CreatePlaylist";
+    public static String updatePlaylist = "UpdatePlaylist";
+    public static String deletePlaylist = "DeletePlaylist";
+    public static String restServiceActionsHandler = "RestServiceActionsHandler";
+
+    /*Album/Color constants */
+    public static int minColorDifference = 4000000;
+    public static int maxColor = 255;
+
+    /*Spotify Error*/
+    public static String spotifyPlaybackFailed = "kSpErrorFailed";
+
+    /*Getters and loaders*/
+    public static String artistsAlbumsMusicLoader = "ArtistAlbumMusicLoader";
+    public static String musicLoaderService = "MusicLoaderService";
+    public static String googleMusicGetter = "GoogleMusicGetter";
+    public static String spotifyMusicGetter = "SpotifyMusicGetter";
+}

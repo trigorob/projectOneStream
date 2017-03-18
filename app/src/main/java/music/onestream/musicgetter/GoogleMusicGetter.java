@@ -1,6 +1,7 @@
 package music.onestream.musicgetter;
 
 import music.onestream.playlist.PlaylistHandler;
+import music.onestream.util.Constants;
 
 /**
  * Created by ruspe_000 on 2017-02-03.
@@ -10,7 +11,6 @@ public class GoogleMusicGetter implements MusicGetter {
     int gmusicSongOffset;
     String token;
     PlaylistHandler handler;
-    private final int spotifySongCap = 1000;
 
     public GoogleMusicGetter(String token, PlaylistHandler handler) {
         this.gmusicSongOffset = 0;
@@ -20,14 +20,14 @@ public class GoogleMusicGetter implements MusicGetter {
     @Override
     public void init() {
 
-        while (gmusicSongOffset < spotifySongCap) {
+        while (gmusicSongOffset < Constants.spotifySongCap) {
             SpotifyMusicLoader spotifyMusicLoader = new SpotifyMusicLoader();
             spotifyMusicLoader.SAR = handler;
             Object[] params = new Object[2];
             params[0] = token;
             params[1] = gmusicSongOffset;
             spotifyMusicLoader.execute(params);
-            gmusicSongOffset += 50;
+            gmusicSongOffset += Constants.googleLoadStepSize;
         }
     }
 

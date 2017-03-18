@@ -30,6 +30,7 @@ import music.onestream.playlist.PlaylistAdapter;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 import music.onestream.util.AsyncResponse;
+import music.onestream.util.Constants;
 import music.onestream.util.RecommendationsAdapter;
 import music.onestream.util.RestServiceActionsHandler;
 
@@ -50,7 +51,7 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Recommendations");
+        setTitle(Constants.Recommendations_Playlists);
         setContentView(R.layout.activity_recommendation);
 
         mainList = (ListView) findViewById(R.id.ListViewPR);
@@ -77,23 +78,23 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
                 TextView description = (TextView) findViewById(R.id.tabDescPR);
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
-                        description.setText("Click a song to recommend a playlist");
+                        description.setText(Constants.recommendationsSongsText);
                         mainList.setAdapter(adapter);
                         break;
                     case 1:
-                        description.setText("Click to open recommended playlist");
+                        description.setText(Constants.playlistRecommendationsText);
                         mainList.setAdapter(playlistAdapter);
                         break;
                     case 2:
-                        description.setText("Click to open OneStream's top songs");
+                        description.setText(Constants.recommendationsTopSongsText);
                         mainList.setAdapter(topSongsAdapter);
                         break;
                     case 3:
-                        description.setText("Click to open OneStream users top 50 artists playlists");
+                        description.setText(Constants.recommendationsArtists);
                         mainList.setAdapter(topArtistsAdapter);
                         break;
                     case 4:
-                        description.setText("Click to open OneStream users top 50 albums playlists");
+                        description.setText(Constants.recommendationsAlbums);
                         mainList.setAdapter(topAlbumsAdapter);
                         break;
                 }
@@ -105,7 +106,6 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
     }
 
     private void initSongList() {
-        ArrayList<Playlist> recommendedPlaylists = null;
         ArrayList<Song> songs = OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo();
 
         adapter = new SongAdapter(this, R.layout.songlayout, songs);
@@ -115,9 +115,9 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
             topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
             topAlbumsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
 
-            getTopRecommendations("Songs");
-            getTopRecommendations("Artists");
-            getTopRecommendations("Albums");
+            getTopRecommendations(Constants.getTopSongs);
+            getTopRecommendations(Constants.getTopArtists);
+            getTopRecommendations(Constants.getTopAlbums);
         }
         adapter.setNotifyOnChange(true);
         mainList.setAdapter(adapter);
@@ -184,7 +184,7 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
     public void getTopRecommendations(String type) {
             RestServiceActionsHandler restActionHandler = new RestServiceActionsHandler();
             Object[] params = new Object[2];
-            params[0] = "GetTop" + type;
+            params[0] = type;
             restActionHandler.SAR = this;
             restActionHandler.execute(params);
     }
@@ -192,7 +192,7 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
     public void getPlaylistRecommendations(Song song) {
         RestServiceActionsHandler restActionHandler = new RestServiceActionsHandler();
         Object[] params = new Object[2];
-        params[0] = "GetRecommendations";
+        params[0] = Constants.getRecommendations;
         params[1] = song;
         restActionHandler.SAR = this;
         restActionHandler.execute(params);
@@ -204,31 +204,31 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
         ArrayList<Playlist> resultList = (ArrayList<Playlist>) ((Object[]) result[1])[1];
         if (resultList != null && resultList.size() > 0)
         {
-            if (type.equals("GetRecommendations")) {
+            if (type.equals(Constants.getRecommendations)) {
                 playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
                 playlistAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
                 mViewPager.setCurrentItem(1);
             }
-            else if (type.equals("GetTopSongs")) {
+            else if (type.equals(Constants.getTopSongs)) {
                 topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
                 topSongsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
             }
-            else if (type.equals("GetTopArtists")) {
+            else if (type.equals(Constants.getTopArtists)) {
                 topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
                 topArtistsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
             }
-            else if (type.equals("GetTopAlbums")) {
+            else if (type.equals(Constants.getTopAlbums)) {
                 topAlbumsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
                 topAlbumsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
             }
         }
-        else if (type.equals("GetRecommendations"))
+        else if (type.equals(Constants.getRecommendations))
         {
-            Toast.makeText(this, "Nothing found, try another song.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, Constants.getRecommendationsFailedText, Toast.LENGTH_SHORT).show();
         }
     }
 

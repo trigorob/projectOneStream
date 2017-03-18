@@ -8,6 +8,7 @@ import music.onestream.playlist.Playlist;
 import music.onestream.playlist.PlaylistHandler;
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
+import music.onestream.util.Constants;
 
 /**
  * Created by ruspe_000 on 2017-03-09.
@@ -34,7 +35,7 @@ public class ArtistAlbumMusicLoader extends AsyncTask {
     @Override
     protected void onPostExecute(Object result) {
         Object[] retObject = new Object[2];
-        retObject[0] = "ArtistAlbumMusicLoader";
+        retObject[0] = Constants.artistsAlbumsMusicLoader;
         SAR.processFinish(retObject);
     }
 

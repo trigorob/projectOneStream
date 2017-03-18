@@ -20,6 +20,7 @@ import music.onestream.playlist.Playlist;
 import music.onestream.R;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
+import music.onestream.util.Constants;
 
 /**
  * Created by ruspe_000 on 2017-02-13.
@@ -41,7 +42,7 @@ public class AddSongsActivity extends AppCompatActivity {
             getSupportActionBar();
             if (playlist.getName().equals(""))
             {
-                setTitle("Playlist Title");
+                setTitle(Constants.defaultPlaylistName);
             }
             else
             {
@@ -51,7 +52,7 @@ public class AddSongsActivity extends AppCompatActivity {
             if (combinedList == null)
             {
                 this.combinedList =  new Playlist
-                        ("", "", OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
+                        ("", "", OneStreamActivity.getPlaylistHandler().getList(Constants.library).getSongInfo());
             }
 
             this.oldCombinedList = new Playlist();

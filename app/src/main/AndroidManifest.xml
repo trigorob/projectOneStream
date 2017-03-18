@@ -59,7 +59,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.PlaylistRecommendationsActivity"
-            android:label="PlaylistRecommendationsActivity">
+            android:label="Recommendations">
         </activity>
         <activity android:name=".activity.LoginActivity">
             <intent-filter>

@@ -42,19 +42,19 @@ public class OneStreamActivityAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Library";
+                return Constants.OneStream_Library;
             case 1:
-                return "Local";
+                return Constants.OneStream_Local;
             case 2:
-                return "Spotify";
+                return Constants.OneStream_Spotify;
             case 3:
-                return "Playlists";
+                return Constants.OneStream_Playlists;
             case 4:
-                return "Google Music";
+                return Constants.OneStream_GoogleMusic;
             case 5:
-                return "Artists";
+                return Constants.OneStream_Artists;
             case 6:
-                return "Albums";
+                return Constants.OneStream_Albums;
         }
         return null;
     }

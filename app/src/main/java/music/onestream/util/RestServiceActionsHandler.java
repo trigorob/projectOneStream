@@ -29,7 +29,7 @@ public class RestServiceActionsHandler extends AsyncTask {
 
     protected void onPostExecute(Object result) {
         Object[] retObject = new Object[2];
-        retObject[0] = "RestServiceActionsHandler";
+        retObject[0] = Constants.restServiceActionsHandler;
         retObject[1] = result;
         SAR.processFinish(retObject);
     }
@@ -38,27 +38,27 @@ public class RestServiceActionsHandler extends AsyncTask {
     protected Object doInBackground(Object[] params) {
         String action = (String) params[0];
 
-        if (action.equals("GetPlaylists"))
+        if (action.equals(Constants.getPlaylists))
         {
             String owner = (String) params[1];
             return getPlaylists(owner);
         }
-        else if (action.equals("CreatePlaylist"))
+        else if (action.equals(Constants.createPlaylist))
         {
             Playlist playlist = (Playlist) params[1];
             createPlaylist(playlist, false);
         }
-        else if (action.equals("DeletePlaylist"))
+        else if (action.equals(Constants.deletePlaylist))
         {
             Playlist playlist = (Playlist) params[1];
             deletePlaylist(playlist);
         }
-        else if (action.equals("UpdatePlaylist"))
+        else if (action.equals(Constants.updatePlaylist))
         {
             Playlist playlist = (Playlist) params[1];
             createPlaylist(playlist, true);
         }
-        else if (action.equals("GetRecommendations"))
+        else if (action.equals(Constants.getRecommendations))
         {
             Object[] retObj = new Object[2];
             Song song = (Song) params[1];
@@ -66,21 +66,21 @@ public class RestServiceActionsHandler extends AsyncTask {
             retObj[1] = getPlaylistRecommendations(song);
             return retObj;
         }
-        else if (action.equals("GetTopSongs"))
+        else if (action.equals(Constants.getTopSongs))
         {
             Object[] retObj = new Object[2];
             retObj[0] = action;
             retObj[1] = getTopSongs();
             return retObj;
         }
-        else if (action.equals("GetTopArtists"))
+        else if (action.equals(Constants.getTopArtists))
         {
             Object[] retObj = new Object[2];
             retObj[0] = action;
             retObj[1] = getTopArtists();
             return retObj;
         }
-        else if (action.equals("GetTopAlbums"))
+        else if (action.equals(Constants.getTopAlbums))
         {
             Object[] retObj = new Object[2];
             retObj[0] = action;

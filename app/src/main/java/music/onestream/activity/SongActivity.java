@@ -20,6 +20,7 @@ import music.onestream.R;
 import music.onestream.song.SongAdapter;
 import music.onestream.playlist.Playlist;
 import music.onestream.song.Song;
+import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
 
 /**
@@ -131,10 +132,10 @@ public class SongActivity extends OSActivity {
         View rootView = albumArt.getRootView();
         int backgroundColor = getAverageColor(bitmap);
         rootView.setBackgroundColor(backgroundColor);
-        int textColor = Color.rgb(255-Color.red(backgroundColor),
-                255-Color.green(backgroundColor),
-                255-Color.blue(backgroundColor));
-        if (Math.abs(textColor - backgroundColor)<= 2500000)
+        int textColor = Color.rgb(Constants.maxColor-Color.red(backgroundColor),
+                Constants.maxColor-Color.green(backgroundColor),
+                Constants.maxColor-Color.blue(backgroundColor));
+        if (Math.abs(textColor - backgroundColor)<= Constants.minColorDifference)
         {
             textColor = Color.WHITE;
         }
@@ -157,7 +158,7 @@ public class SongActivity extends OSActivity {
         final ImageButton next = (ImageButton) findViewById(R.id.NextSV);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarSV);
         playerHandler =
-                initPlayerHandler(this.getApplicationContext(), "SongActivity",
+                initPlayerHandler(this.getApplicationContext(), Constants.songActivity,
                         null, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
 

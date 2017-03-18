@@ -9,10 +9,11 @@ import android.media.MediaMetadataRetriever;
 import java.io.*;
 import java.util.*;
 import music.onestream.song.Song;
+import music.onestream.util.Constants;
 
 public class LocalMusicGetter implements MusicGetter {
     ArrayList<Song> songs;
-    String directory = "N/A";
+    String directory = Constants.defaultDirectory;
     public LocalMusicGetter(String directory)
     {
         this.directory = directory;
@@ -73,14 +74,14 @@ public class LocalMusicGetter implements MusicGetter {
                 album = albums.get(i);
                 if (artist == null ||artist.equals(""))
                 {
-                    artist = "<Unknown>";
+                    artist = Constants.defaultArtistsAlbumSongName;
                 }
                 if (album == null || album.equals(""))
                 {
-                    album = "<Unknown>";
+                    album =  Constants.defaultArtistsAlbumSongName;
                 }
                 Song song = new Song(filess.get(i), files.get(i).toURI().toString(),
-                        artist, album, "Local", 0, files.get(i).getPath());
+                        artist, album, Constants.local, 0, files.get(i).getPath());
                 songs.add(song);
             }
         }
@@ -90,7 +91,7 @@ public class LocalMusicGetter implements MusicGetter {
     @Override
     public void init() {
         this.songs = new ArrayList<Song>();
-        if (!directory.equals("N/A")) {
+        if (!directory.equals(Constants.defaultDirectory)) {
             this.songs = fileNames(directory);
         }
     }

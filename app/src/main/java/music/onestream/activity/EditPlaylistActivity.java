@@ -24,6 +24,7 @@ import music.onestream.R;
 import music.onestream.playlist.Playlist;
 import music.onestream.song.SongAdapter;
 import music.onestream.util.AsyncResponse;
+import music.onestream.util.Constants;
 import music.onestream.util.RestServiceActionsHandler;
 
 /**
@@ -41,8 +42,8 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
     private String domain;
 
     public String getDomain() {
-        final SharedPreferences domainSettings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
-        return domainSettings.getString("domain", "Admin");
+        final SharedPreferences domainSettings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
+        return domainSettings.getString(Constants.domain, Constants.defaultDomain);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
         }
         else
         {
-            setTitle("Playlist Title");
+            setTitle(Constants.defaultPlaylistName);
         }
         if (tempCombinedList != null)
         {
@@ -121,7 +122,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
 
         final EditText playlistTitle = (EditText) findViewById(R.id.playListName);
         if (playlist.getName() == null || playlist.getName().equals("")) {
-            playlistTitle.setText("Playlist Title");
+            playlistTitle.setText(Constants.defaultPlaylistName);
         }
         else
         {
@@ -196,9 +197,9 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
     }
 
     private void setPlaylistsChangedFlag(boolean value) {
-        SharedPreferences settings = getSharedPreferences("PLAYLIST-CHANGE", 0);
+        SharedPreferences settings = getSharedPreferences(Constants.playlistChangeLoc, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("PlaylistsChanged", value);
+        editor.putBoolean(Constants.playlistChanged, value);
         editor.commit();
     }
 

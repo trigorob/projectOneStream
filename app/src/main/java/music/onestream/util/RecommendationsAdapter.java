@@ -42,15 +42,15 @@ public class RecommendationsAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Songs";
+                return Constants.Recommendations_Songs;
             case 1:
-                return "Recommendations";
+                return Constants.Recommendations_Playlists;
             case 2:
-                return "Top Songs";
+                return Constants.Recommendations_TopSongs;
             case 3:
-                return "Top Artists";
+                return Constants.Recommendations_TopArtists;
             case 4:
-                return "Top Albums";
+                return Constants.Recommendations_TopAlbums;
 
         }
         return null;

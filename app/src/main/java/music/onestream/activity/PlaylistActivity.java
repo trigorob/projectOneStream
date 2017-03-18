@@ -21,6 +21,7 @@ import music.onestream.R;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 import music.onestream.playlist.Playlist;
+import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
 
 /**
@@ -53,7 +54,7 @@ public class PlaylistActivity extends OSActivity {
         String dir = (Environment.getExternalStorageDirectory().toString());
         for (int i = 0; i < playlist.getSongInfo().size(); i++){
             Song s = playlist.getSongInfo().get(i);
-            if (s.getType().equals("Local")) {
+            if (s.getType().equals(Constants.local)) {
                 /*     Looks a bit silly but we always have 12chars extra in our URI.
                 *Android Emulators* are a bit buggy this way. Need to remove those to get correct path
                 Since we don't use it anywhere else, it's not worth keeping elsewhere
@@ -65,11 +66,11 @@ public class PlaylistActivity extends OSActivity {
                     playlistAdapter.add(s);
                 }
             }
-            else if (s.getType().equals("Spotify") && playerHandler.isSpotifyLoggedOut() && spotifyAvailable)
+            else if (s.getType().equals(Constants.spotify) && playerHandler.isSpotifyLoggedOut() && spotifyAvailable)
             {
                 loginLauncherLinkerButton.setVisibility(View.VISIBLE);
                 mainList.setVisibility(View.INVISIBLE);
-                services += " Spotify ";
+                services += " " + Constants.spotify + " ";
                 spotifyAvailable = false;
             }
             //TODO: Add google case for not logged in here
@@ -109,7 +110,7 @@ public class PlaylistActivity extends OSActivity {
 
                 playerHandler.setCurrentSongListPosition(position);
                 mainList.setItemChecked(position, true);
-                playerHandler.playSong(position);
+                playerHandler.playSong(songs.indexOf(mainList.getAdapter().getItem(position)));
             }});
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +133,7 @@ public class PlaylistActivity extends OSActivity {
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBarPL);
 
         playerHandler =
-                 initPlayerHandler(this.getApplicationContext(), "PlaylistActivity",
+                 initPlayerHandler(this.getApplicationContext(), Constants.playlistActivity,
                          loginButton, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
         playerHandler.setButtonColors(-1);

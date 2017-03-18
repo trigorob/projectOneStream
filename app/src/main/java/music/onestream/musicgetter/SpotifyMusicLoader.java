@@ -11,6 +11,7 @@ import music.onestream.activity.OneStreamActivity;
 import music.onestream.playlist.PlaylistHandler;
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
+import music.onestream.util.Constants;
 import music.onestream.util.JSONExtractor;
 
 /**
@@ -23,7 +24,7 @@ import music.onestream.util.JSONExtractor;
         @Override
         protected void onPostExecute(Object result) {
             Object[] retObject = new Object[2];
-            retObject[0] = "SpotifyMusicGetter";
+            retObject[0] = Constants.spotifyMusicGetter;
             retObject[1] = result;
             SAR.processFinish(retObject);
         }
@@ -36,7 +37,8 @@ import music.onestream.util.JSONExtractor;
             String token = (String) params[0];
             String offset = ((Integer) params[1]).toString();
             try {
-                String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit=50";
+                String urlString = "https://api.spotify.com/v1/me/tracks?offset=" + offset + "&limit="
+                        + Constants.spotifyLoadStepSize;
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Authorization", "Bearer " + token);

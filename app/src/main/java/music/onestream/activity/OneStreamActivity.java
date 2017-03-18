@@ -33,6 +33,7 @@ import android.widget.ListView;
 
 import com.spotify.sdk.android.player.Connectivity;
 
+import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.playlist.Playlist;
 import music.onestream.playlist.PlaylistAdapter;
@@ -131,7 +132,7 @@ private ViewPager mViewPager;
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(0);
+        mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
 
         initPlayerHandler();
         initPlaylistHandler();
@@ -190,7 +191,7 @@ private ViewPager mViewPager;
     }
 
     public static void invalidateList() {
-        if (combinedAdapter != null && currentPage == 0)
+        if (combinedAdapter != null && currentPage == Constants.OneStream_Library_Pos)
         {
                 mainList.setAdapter(combinedAdapter);
                 mainList.setSelection(getPlayerHandler().getCurrentSongListPosition());
@@ -199,17 +200,19 @@ private ViewPager mViewPager;
     }
 
     public boolean onPlaylistPage() {
-        return (currentPage == 3 || currentPage == 5 || currentPage == 6);
+        return (currentPage == Constants.OneStream_Playlists_Pos
+                || currentPage == Constants.OneStream_Artists_Pos ||
+                currentPage == Constants.OneStream_Albums_Pos);
     }
 
     public void initListDisplay() {
 
         adapter = new SongAdapter(this, R.layout.songlayout,
-                playlistHandler.getList("Local").getSongInfo());
+                playlistHandler.getList(Constants.local).getSongInfo());
         spotifyAdapter = new SongAdapter(this, R.layout.songlayout,
-                playlistHandler.getList("Spotify").getSongInfo());
+                playlistHandler.getList(Constants.spotify).getSongInfo());
         combinedAdapter = new SongAdapter(this, R.layout.songlayout,
-                playlistHandler.getList("Library").getSongInfo());
+                playlistHandler.getList(Constants.library).getSongInfo());
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                playlistHandler.getPlaylists());
         artistsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
@@ -289,7 +292,7 @@ private ViewPager mViewPager;
 
                     playerHandler.setCurrentSongListPosition(position);
                     mainList.setItemChecked(position, true);
-                    playerHandler.playSong(position);
+                    playerHandler.playSong(songs.indexOf(mainList.getAdapter().getItem(position)));
                 }
             }});
     }
@@ -303,7 +306,7 @@ private ViewPager mViewPager;
         final ImageButton next = (ImageButton) findViewById(R.id.Next);
         final SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         playerHandler =
-                initPlayerHandler(this.getApplicationContext(), "OneStreamActivity",
+                initPlayerHandler(this.getApplicationContext(), Constants.oneStreamActivity,
                         loginButton, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
         playerHandler.setButtonColors(-1);
@@ -315,18 +318,18 @@ private ViewPager mViewPager;
 
     public void initPlaylistHandler() {
 
-        SharedPreferences settings = getSharedPreferences("SongView", 0);
-        songViewEnabled = settings.getBoolean("SongView", false);
-        settings = getSharedPreferences("dirInfo", 0);
-        String directory = settings.getString("dir", "N/A");
-        boolean directoryChanged = settings.getBoolean("directoryChanged", false);
+        SharedPreferences settings = getSharedPreferences(Constants.songViewLoc, 0);
+        songViewEnabled = settings.getBoolean(Constants.songViewOn, false);
+        settings = getSharedPreferences(Constants.dirInfoLoc, 0);
+        String directory = settings.getString(Constants.directory, Constants.defaultDirectory);
+        boolean directoryChanged = settings.getBoolean(Constants.directoryChanged, false);
         SharedPreferences.Editor editor = settings.edit();
-        settings = getSharedPreferences("SORT-TYPE", 0);
-        String sortType = settings.getString("sortType", "Default");
-        boolean sortOnLoad = settings.getBoolean("sortOnLoad", false);
-        settings = getSharedPreferences("ONESTREAM_ACCOUNT", 0);
-        boolean spotifyLoginChanged = settings.getBoolean("spotifyLoginChanged", false);
-        String domain =  settings.getString("domain", "Admin");
+        settings = getSharedPreferences(Constants.sortTypeLoc, 0);
+        String sortType = settings.getString(Constants.sortType, Constants.defaultSortType);
+        boolean sortOnLoad = settings.getBoolean(Constants.sortOnLoad, false);
+        settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
+        boolean spotifyLoginChanged = settings.getBoolean(Constants.spotifyLoginChanged, false);
+        String domain =  settings.getString(Constants.domain, Constants.defaultDomain);
 
         if (playlistHandler == null)
         {
@@ -339,13 +342,13 @@ private ViewPager mViewPager;
         if (sortOnLoad)
         {
             playlistHandler.sortAllLists(sortType);
-            editor.putBoolean("sortOnLoad", false);
+            editor.putBoolean(Constants.sortOnLoad, false);
             editor.commit();
         }
         if (spotifyLoginChanged)
         {
             editor = settings.edit();
-            editor.putBoolean("spotifyLoginChanged", false);
+            editor.putBoolean(Constants.spotifyLoginChanged, false);
             editor.commit();
         }
 
@@ -387,12 +390,12 @@ private ViewPager mViewPager;
                     case 0:
                         mainList.setAdapter(combinedAdapter);
                         setLoginButtonVisible(false, loginButton);;
-                        currentPage = 0;
+                        currentPage = Constants.OneStream_Library_Pos;
                         break;
                     case 1:
                         mainList.setAdapter(adapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = 1;
+                        currentPage = Constants.OneStream_Local_Pos;
                         break;
                     case 2:
                         mainList.setAdapter(spotifyAdapter);
@@ -400,31 +403,31 @@ private ViewPager mViewPager;
                         {
                             setLoginButtonVisible(true, loginButton);;
                         }
-                        currentPage = 2;
+                        currentPage = Constants.OneStream_Spotify_Pos;;
                         break;
                     case 3:
                         mainList.setAdapter(playlistAdapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = 3;
+                        currentPage = Constants.OneStream_Playlists_Pos;;
                         break;
                     case 4:
                         //Todo: change to googlemusicStrings
-                        if ((playlistHandler.getList("Spotify") == null))
+                        if ((playlistHandler.getList(Constants.spotify) == null))
                         {
                             setLoginButtonVisible(true, loginButton);;
                         }
                         mainList.setAdapter(googleAdapter);
-                        currentPage = 4;
+                        currentPage = Constants.OneStream_GoogleMusic_Pos;;
                         break;
                     case 5:
                         mainList.setAdapter(artistsAdapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = 5;
+                        currentPage = Constants.OneStream_Artists_Pos;
                         break;
                     case 6:
                         mainList.setAdapter(albumsAdapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = 6;
+                        currentPage = Constants.OneStream_Albums_Pos;
                         break;
                 }
             }
