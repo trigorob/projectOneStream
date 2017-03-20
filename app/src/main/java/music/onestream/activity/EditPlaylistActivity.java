@@ -76,9 +76,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
             combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
         }
 
-        if (oldPlaylist == null) {
-            previouslyExisting = getIntent().getBooleanExtra("previouslyExisting", false);
-        }
+        previouslyExisting = getIntent().getBooleanExtra("previouslyExisting", false);
 
         if (isListInDatabase())
         {
@@ -213,7 +211,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
         if (!newList) {
             playlist.setOwner(domain);
             playlist.setName(oldPlaylist.getName());
-            params[0] = "DeletePlaylist";
+            params[0] = Constants.deletePlaylist;
             params[1] = playlist;
             restActionHandler.execute(params);
 
@@ -244,10 +242,10 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
 
         if (!isListInDatabase()) {
             playlist.setName(playlistTitle.getText().toString());
-            params[0] = "CreatePlaylist";
+            params[0] = Constants.createPlaylist;
         }
         else {
-            params[0] = "UpdatePlaylist";
+            params[0] = Constants.updatePlaylist;
             params[2] = playlistTitle.getText().toString();
             params[3] = oldPlaylist.getName();
         }
@@ -258,12 +256,10 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
         playlist.setName(playlistTitle.getText().toString());
         if (playlists != null)
         {
-            if (oldPlaylist != null) {
-                playlists.remove(oldPlaylist);
+            if (playlists.contains(playlist)) {
+                playlists.remove(playlist);
             }
-            if (!playlists.contains(playlist)) {
-                playlists.add(playlist);
-            }
+            playlists.add(playlist);
         }
 
         setPlaylistsChangedFlag(true);

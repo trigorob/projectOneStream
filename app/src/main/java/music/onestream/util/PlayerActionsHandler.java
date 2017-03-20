@@ -122,9 +122,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             instance.fabIO.setImageResource(R.drawable.pause);
         }
         if (currentSong != null) {
-            if (currentSong.getType().equals(Constants.local)) {
+            if (isPlayerPlaying() && currentSong.getType().equals(Constants.local)) {
                 seekBar.setMax(mp.getDuration());
-            } else if (currentSong.getType().equals(Constants.spotify)) {
+            } else if (isSpotifyPlaying() && currentSong.getType().equals(Constants.spotify)) {
                 Metadata.Track track = spotPlayer.getMetadata().currentTrack;
                 if (track != null) {
                     seekBar.setMax((int) track.durationMs);
@@ -546,7 +546,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     }
 
     public void playLocalSong(Song currentSong) {
-        mp.reset();
+        if (isPlayerPlaying()) {
+            mp.reset();
+        }
         mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
         mp.start();
         currentSongType = Constants.local;

@@ -170,6 +170,7 @@ public class RestServiceActionsHandler extends AsyncTask {
         DataOutputStream dataOutputStream;
         HttpURLConnection conn = null;
         try {
+            System.setProperty("http.keepAlive", "false");
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(playlist);
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
@@ -178,6 +179,7 @@ public class RestServiceActionsHandler extends AsyncTask {
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setUseCaches( false );
+            conn.setDefaultUseCaches(false);
             conn.setRequestProperty( "charset", "utf-8");
             if (update) {
                 conn.setRequestMethod("PUT");
@@ -190,7 +192,6 @@ public class RestServiceActionsHandler extends AsyncTask {
             dataOutputStream = new DataOutputStream(conn.getOutputStream());
             dataOutputStream.write(data);
             dataOutputStream.close();
-            conn.getResponseCode();
         }
         catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -203,6 +204,11 @@ public class RestServiceActionsHandler extends AsyncTask {
         }
         finally {
             if (conn != null) {
+                try {
+                    conn.getResponseCode();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 conn.disconnect();
             }
         }
