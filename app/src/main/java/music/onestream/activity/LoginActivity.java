@@ -2,12 +2,14 @@ package music.onestream.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //Authentication tool for GoogleMusic
@@ -24,6 +26,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.concurrent.TimeUnit;
 
+import music.onestream.util.ColorCalculator;
 import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
 import music.onestream.R;
@@ -39,21 +42,11 @@ public class LoginActivity extends FragmentActivity {
         setContentView(R.layout.activity_login);
         String token = CredentialsHandler.getToken(this, Constants.googleMusic);
 
-        ImageButton spotifyLoginButton = (ImageButton) findViewById(R.id.spotifyLoginLauncherButton);
-
-
-        ImageButton back = (ImageButton) findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent back = new Intent(v.getContext(), SettingsActivity.class);
-                startActivityForResult(back, 0);
-            }
-        });
+        final ImageButton spotifyLoginButton = (ImageButton) findViewById(R.id.spotifyLoginLauncherButton);
 
         //Todo: Actually get token/authentication and put it here
         token = CredentialsHandler.getToken(this, Constants.googleMusic);
-        ImageButton googleMusicLoginButton = (ImageButton) findViewById(R.id.googleMusicLoginLauncherButton);
+        final ImageButton googleMusicLoginButton = (ImageButton) findViewById(R.id.googleMusicLoginLauncherButton);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(LoginActivity.this.getResources().getString(R.string.server_client_id))
@@ -63,7 +56,7 @@ public class LoginActivity extends FragmentActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso).enableAutoManage(this,null)
                 .build();
 
-        ImageButton oneStreamDomainButton = (ImageButton) findViewById(R.id.oneStreamDomainLauncherButton);
+        final ImageButton oneStreamDomainButton = (ImageButton) findViewById(R.id.oneStreamDomainLauncherButton);
         oneStreamDomainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

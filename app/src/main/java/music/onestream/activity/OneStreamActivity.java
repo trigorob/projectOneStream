@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
@@ -298,7 +299,7 @@ private ViewPager mViewPager;
     }
 
     private void initPlayerHandler() {
-        final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
+        final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButton);
         final ImageButton fabIO = (ImageButton) findViewById(R.id.fabIO);
         final ImageButton random = (ImageButton) findViewById(R.id.Random);
         final ImageButton rewind = (ImageButton) findViewById(R.id.Rewind);
@@ -354,9 +355,17 @@ private ViewPager mViewPager;
 
     }
 
-    public static void setLoginButtonVisible(boolean visible, Button loginButton) {
+    public static void setLoginButtonVisible(boolean visible, ImageButton loginButton) {
         if (visible) {
             loginButton.setVisibility(View.VISIBLE);
+            if (currentPage == Constants.OneStream_Spotify_Pos)
+            {
+                loginButton.setImageResource(R.drawable.spotify);
+            }
+            else if (currentPage == Constants.OneStream_GoogleMusic_Pos)
+            {
+                loginButton.setImageResource(R.drawable.googlemusic);
+            }
         }
         else {
             loginButton.setVisibility(View.INVISIBLE);
@@ -369,7 +378,7 @@ private ViewPager mViewPager;
 
     public void initButtonListeners() {
 
-        final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButton);
+        final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButton);
         setLoginButtonVisible(false, loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -388,46 +397,46 @@ private ViewPager mViewPager;
             public void onPageSelected(int position) {
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
-                        mainList.setAdapter(combinedAdapter);
-                        setLoginButtonVisible(false, loginButton);;
                         currentPage = Constants.OneStream_Library_Pos;
+                        mainList.setAdapter(combinedAdapter);
+                        setLoginButtonVisible(false, loginButton);
                         break;
                     case 1:
+                        currentPage = Constants.OneStream_Local_Pos;
                         mainList.setAdapter(adapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = Constants.OneStream_Local_Pos;
                         break;
                     case 2:
+                        currentPage = Constants.OneStream_Spotify_Pos;
                         mainList.setAdapter(spotifyAdapter);
                         if (playerHandler.isSpotifyLoggedOut() && spotifyAdapter.getCount() == 0)
                         {
-                            setLoginButtonVisible(true, loginButton);;
+                            setLoginButtonVisible(true, loginButton);
                         }
-                        currentPage = Constants.OneStream_Spotify_Pos;;
                         break;
                     case 3:
+                        currentPage = Constants.OneStream_Playlists_Pos;
                         mainList.setAdapter(playlistAdapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = Constants.OneStream_Playlists_Pos;;
                         break;
                     case 4:
-                        //Todo: change to googlemusicStrings
+                        //Todo: change to Googledapter
+                        currentPage = Constants.OneStream_GoogleMusic_Pos;
                         if ((playlistHandler.getList(Constants.spotify) == null))
                         {
-                            setLoginButtonVisible(true, loginButton);;
+                            setLoginButtonVisible(true, loginButton);
                         }
                         mainList.setAdapter(googleAdapter);
-                        currentPage = Constants.OneStream_GoogleMusic_Pos;;
                         break;
                     case 5:
+                        currentPage = Constants.OneStream_Artists_Pos;
                         mainList.setAdapter(artistsAdapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = Constants.OneStream_Artists_Pos;
                         break;
                     case 6:
+                        currentPage = Constants.OneStream_Albums_Pos;
                         mainList.setAdapter(albumsAdapter);
                         setLoginButtonVisible(false, loginButton);
-                        currentPage = Constants.OneStream_Albums_Pos;
                         break;
                 }
             }

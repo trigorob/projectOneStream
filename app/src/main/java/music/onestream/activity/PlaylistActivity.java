@@ -1,6 +1,7 @@
 package music.onestream.activity;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -9,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -32,7 +32,7 @@ public class PlaylistActivity extends OSActivity {
     private PlayerActionsHandler playerHandler;
     private Playlist playlist;
     private ListView mainList;
-    private Button loginLauncherLinkerButton;
+    private ImageButton loginLauncherLinkerButton;
     final Handler mHandler = new Handler();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class PlaylistActivity extends OSActivity {
         setContentView(R.layout.playlist_activity);
 
         mainList = (ListView) findViewById(R.id.ListViewPL);
-        loginLauncherLinkerButton = (Button) findViewById(R.id.loginLauncherLinkerButtonPL);
+        loginLauncherLinkerButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButtonPL);
 
         initPlayerHandler();
         initSongList();
@@ -69,17 +69,16 @@ public class PlaylistActivity extends OSActivity {
             else if (s.getType().equals(Constants.spotify) && playerHandler.isSpotifyLoggedOut() && spotifyAvailable)
             {
                 loginLauncherLinkerButton.setVisibility(View.VISIBLE);
+                loginLauncherLinkerButton.setImageResource(R.drawable.spotify);
                 mainList.setVisibility(View.INVISIBLE);
                 services += " " + Constants.spotify + " ";
                 spotifyAvailable = false;
             }
-            //TODO: Add google case for not logged in here
+            //Todo: Add button with google if not logged in && google songs in playlist
             else {
                 playlistAdapter.add(s);
             }
         }
-        String buttonText = "Login to Services to access Playlist: " + services;
-        loginLauncherLinkerButton.setText(buttonText);
 
         PlaylistActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -115,16 +114,14 @@ public class PlaylistActivity extends OSActivity {
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playerHandler.destroyPlayers();
                 Intent settings = new Intent(v.getContext(), LoginActivity.class);
-                playerHandler.stopPlayerService();
                 startActivityForResult(settings, 0);
             }
         });
     }
 
     private void initPlayerHandler() {
-        final Button loginButton = (Button) findViewById(R.id.loginLauncherLinkerButtonPL);
+        final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButtonPL);
         final ImageButton fabIO = (ImageButton) findViewById(R.id.fabIOPL);
         final ImageButton random = (ImageButton) findViewById(R.id.RandomPL);
         final ImageButton rewind = (ImageButton) findViewById(R.id.RewindPL);

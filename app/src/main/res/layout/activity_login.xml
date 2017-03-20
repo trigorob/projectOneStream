@@ -4,51 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activity.LoginActivity">
-    <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/back"
-        android:gravity="top"
-        android:text="Back"
-        android:onClick="goBack"
-        android:src="@drawable/back"
-        android:backgroundTint="@android:color/transparent"
-        />
-    <ImageButton
-        android:id="@+id/spotifyLoginLauncherButton"
-        android:src="@drawable/spotify"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:onClick="onSpotifyLoginButtonClicked"
-        android:backgroundTint="@android:color/transparent"
-        android:layout_below="@+id/back"
-        android:layout_centerHorizontal="true" />
-    <ImageButton
-        android:id="@+id/googleMusicLoginLauncherButton"
-        android:src="@drawable/googlemusic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onGoogleMusicLoginButtonClicked"
-        android:text="Login to Google Music"
-        android:backgroundTint="@android:color/transparent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-    <ImageButton
-        android:id="@+id/oneStreamDomainLauncherButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onSpotifyLoginButtonClicked"
-        android:text="@string/onestream_login_button"
-        android:backgroundTint="@android:color/transparent"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/logo"
-        android:layout_below="@+id/googleMusicLoginLauncherButton"
-        android:layout_alignStart="@+id/googleMusicLoginLauncherButton" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:id="@+id/google_logo_background"
+            android:background="#600"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/googleMusicLoginLauncherButton"
+                android:src="@drawable/googlemusic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onGoogleMusicLoginButtonClicked"
+                android:backgroundTint="@android:color/transparent" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/os_logo_background"
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:background="#84bd00"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/oneStreamDomainLauncherButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:src="@drawable/logo" />
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorHeader"
+        android:id="@+id/spotify_logo_background"
+        android:gravity="center">
+        <ImageButton
+            android:id="@+id/spotifyLoginLauncherButton"
+            android:src="@drawable/spotify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSpotifyLoginButtonClicked"
+            android:backgroundTint="@android:color/transparent" />
+    </LinearLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>

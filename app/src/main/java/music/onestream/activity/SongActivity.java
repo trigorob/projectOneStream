@@ -20,6 +20,7 @@ import music.onestream.R;
 import music.onestream.song.SongAdapter;
 import music.onestream.playlist.Playlist;
 import music.onestream.song.Song;
+import music.onestream.util.ColorCalculator;
 import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
 
@@ -41,6 +42,8 @@ public class SongActivity extends OSActivity {
     static ActionBar title;
     static Resources resources;
 
+    boolean startedSongActivity;
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -55,9 +58,10 @@ public class SongActivity extends OSActivity {
     protected void onResume() {
         super.onResume();
         initPlayerHandler();
-        if (!playerHandler.isPlayerPlaying() && !playerHandler.isSpotifyPlaying()) {
+        if (!playerHandler.isPlaying() && startedSongActivity) {
             playerHandler.playSong(playerHandler.getCurrentSongListPosition());
             playerHandler.serviceIconPausePlay(true);
+            startedSongActivity = false;
         }
     }
 
@@ -69,13 +73,12 @@ public class SongActivity extends OSActivity {
         mainList = (ListView) findViewById(R.id.ListViewSV);
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
 
-
-
         artistName = (TextView) findViewById(R.id.artistName);
         albumName = (TextView) findViewById(R.id.albumName);
         albumArt = (ImageView) findViewById(R.id.album);
         resources = this.getResources();
         title = getSupportActionBar();
+        startedSongActivity = true;
 
         initMainList();
         initPlayerHandler();
@@ -114,31 +117,16 @@ public class SongActivity extends OSActivity {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(song.getAlbumArt());
         byte[] art = mmr.getEmbeddedPicture();
-        Bitmap image = BitmapFactory.decodeByteArray(art, 0, art.length);
-
-        image = Bitmap.createScaledBitmap(image, 300, 300, false);
+        Bitmap image = ColorCalculator.getBitmapFromBytes(art);
         albumArt.setImageBitmap(image);
         setSongViewBackground(image);
     }
 
-    public static int getAverageColor(Bitmap bmp) {
-        bmp = bmp.copy(Bitmap.Config.ARGB_8888, true);
-        int intArray[] = new int[bmp.getWidth()*bmp.getHeight()];
-        bmp.getPixels(intArray, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
-        return intArray[0];
-    }
-
     public static void setSongViewBackground(Bitmap bitmap) {
         View rootView = albumArt.getRootView();
-        int backgroundColor = getAverageColor(bitmap);
+        int backgroundColor = ColorCalculator.getAverageColor(bitmap);
         rootView.setBackgroundColor(backgroundColor);
-        int textColor = Color.rgb(Constants.maxColor-Color.red(backgroundColor),
-                Constants.maxColor-Color.green(backgroundColor),
-                Constants.maxColor-Color.blue(backgroundColor));
-        if (Math.abs(textColor - backgroundColor)<= Constants.minColorDifference)
-        {
-            textColor = Color.WHITE;
-        }
+        int textColor = ColorCalculator.getColorInversion(backgroundColor);
         getPlayerHandler().setButtonColors(textColor);
         albumName.setTextColor(textColor);
         artistName.setTextColor(textColor);

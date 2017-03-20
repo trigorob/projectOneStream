@@ -46,7 +46,8 @@ public class RestServiceActionsHandler extends AsyncTask {
         else if (action.equals(Constants.createPlaylist))
         {
             Playlist playlist = (Playlist) params[1];
-            createPlaylist(playlist, false);
+            String name = (String) params[2];
+            createPlaylist(playlist, false, name);
         }
         else if (action.equals(Constants.deletePlaylist))
         {
@@ -56,7 +57,8 @@ public class RestServiceActionsHandler extends AsyncTask {
         else if (action.equals(Constants.updatePlaylist))
         {
             Playlist playlist = (Playlist) params[1];
-            createPlaylist(playlist, true);
+            String name = (String) params[3];
+            createPlaylist(playlist, true, name);
         }
         else if (action.equals(Constants.getRecommendations))
         {
@@ -166,7 +168,7 @@ public class RestServiceActionsHandler extends AsyncTask {
         return JSONExtractor.processPlaylistJSON(json);
     }
 
-    private static void createPlaylist(Playlist playlist, boolean update) {
+    private static void createPlaylist(Playlist playlist, boolean update, String name) {
         DataOutputStream dataOutputStream;
         HttpURLConnection conn = null;
         try {
@@ -174,7 +176,8 @@ public class RestServiceActionsHandler extends AsyncTask {
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(playlist);
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
-            String urlString = "http://api-7328501912465276845-942591.appspot.com/OneStream/Playlists";
+            String urlString = "http://api-7328501912465276845-942591.appspot.com/OneStream/Playlists?name=" +
+                   URLEncoder.encode(name, "UTF-8");
             URL url = new URL(urlString);
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);

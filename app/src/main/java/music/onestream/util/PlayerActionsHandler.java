@@ -51,7 +51,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     private ImageButton next;
     private ImageButton rewind;
     private ImageButton random;
-    private Button loginButton;
+    private ImageButton loginButton;
     ListView mainList;
     private SeekBar seekBar;
 
@@ -85,7 +85,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public static PlayerActionsHandler initPlayerActionsHandler(Context context, ImageButton play,
              ImageButton previous, ImageButton next, ImageButton rewind, ImageButton random,
-             Button loginButton, ListView list, SeekBar seekBar, String parentClass) {
+             ImageButton loginButton, ListView list, SeekBar seekBar, String parentClass) {
 
         if (instance == null) {
             instance = new PlayerActionsHandler();
@@ -103,7 +103,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     private void initHandlerFields(Context context, ImageButton play, ImageButton previous,
                                    ImageButton next, ImageButton rewind, ImageButton random,
-                                   Button loginButton, ListView list, SeekBar seekBar, String parentClass) {
+                                   ImageButton loginButton, ListView list, SeekBar seekBar, String parentClass) {
 
         instance.context = context;
         instance.fabIO = play;
@@ -120,6 +120,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (isPlaying())
         {
             instance.fabIO.setImageResource(R.drawable.pause);
+        }
+        if (isRandomNext())
+        {
+            instance.random.setImageResource(R.drawable.shuffleoff);
         }
         if (currentSong != null) {
             if (isPlayerPlaying() && currentSong.getType().equals(Constants.local)) {

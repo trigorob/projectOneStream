@@ -29,7 +29,7 @@ public class OSActivity extends AppCompatActivity {
     }
 
     public PlayerActionsHandler initPlayerHandler(Context context, String parentClass,
-                              Button loginButton, ImageButton fabIO, ImageButton prev,
+                              ImageButton loginButton, ImageButton fabIO, ImageButton prev,
                               ImageButton next, ImageButton rewind,
                               ImageButton random, SeekBar seekbar, ListView mainList) {
 

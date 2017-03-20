@@ -78,14 +78,14 @@
             android:layout_height="380dp">
         </ListView>
 
-        <Button
-            android:layout_height="60dp"
-            android:layout_width="100dp"
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:layout_centerHorizontal="true"
+            android:background="#FFFFFF"
             android:layout_marginTop="180dp"
-            android:text="Login to Service"
             android:id="@+id/loginLauncherLinkerButton">
-        </Button>
+        </ImageButton>
 
     </RelativeLayout>
 

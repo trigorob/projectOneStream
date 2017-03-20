@@ -246,9 +246,9 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
         }
         else {
             params[0] = Constants.updatePlaylist;
-            params[2] = playlistTitle.getText().toString();
             params[3] = oldPlaylist.getName();
         }
+        params[2] = playlistTitle.getText().toString();
         params[1] = playlist;
 
         restActionHandler.execute(params);
