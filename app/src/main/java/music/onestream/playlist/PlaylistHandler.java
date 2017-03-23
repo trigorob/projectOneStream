@@ -3,6 +3,7 @@ package music.onestream.playlist;
 import java.util.ArrayList;
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.spotify.sdk.android.player.Connectivity;
 
 import music.onestream.musicgetter.ArtistAlbumMusicLoader;
@@ -14,11 +15,13 @@ import music.onestream.musicgetter.SpotifyMusicGetter;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
+import music.onestream.util.JSONExtractor;
 import music.onestream.util.RestServiceActionsHandler;
 import music.onestream.musicgetter.MusicLoaderService;
 import music.onestream.util.MusicSorter;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.PlaylistSorter;
+import music.onestream.util.TinyDB;
 
 public class PlaylistHandler implements AsyncResponse {
 
@@ -41,6 +44,8 @@ public class PlaylistHandler implements AsyncResponse {
     private static ArrayList<Playlist> artists;
     private static ArrayList<Playlist> albums;
 
+    private boolean playlistCachingOn;
+
     private ArrayList<Song> currentSongs;
 
     private Context context;
@@ -52,7 +57,8 @@ public class PlaylistHandler implements AsyncResponse {
     }
 
     public static PlaylistHandler initPlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
-                           String type, String directory, boolean directoryChanged, String domain, boolean spotifyLoginChanged) {
+                           String type, String directory, boolean directoryChanged, String domain,
+                                                      boolean spotifyLoginChanged, boolean cachePlaylists) {
 
         if (instance == null)
         {
@@ -60,6 +66,7 @@ public class PlaylistHandler implements AsyncResponse {
             instance.musicGetterHandler = new MusicGetterHandler();
         }
 
+        instance.playlistCachingOn = cachePlaylists;
         instance.directory = directory;
         instance.context = appContext;
         instance.playerHandler = playerHandler;
@@ -194,7 +201,36 @@ public class PlaylistHandler implements AsyncResponse {
 
     }
 
+    public void getCachedLists() {
+        TinyDB tinyDB = new TinyDB(context);
+        ArrayList<Object> cachedLists = (tinyDB.getListObject(Constants.library, Object.class));
+        Gson gson = new Gson();
+        if (cachedLists != null && cachedLists.size() > 0)
+        {
+            combinedList = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists)).get(0);
+        }
+        cachedLists = (tinyDB.getListObject(Constants.spotify, Object.class));
+        if (cachedLists != null && cachedLists.size() > 0)
+        {
+            spotifyListContent = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists)).get(0);
+        }
+        cachedLists = (tinyDB.getListObject(Constants.local, Object.class));
+        if (cachedLists != null && cachedLists.size() > 0)
+        {
+            listContent = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists)).get(0);
+        }
+        cachedLists =(tinyDB.getListObject(Constants.playlists, Object.class));
+        if (cachedLists != null && cachedLists.size() > 0)
+        {
+            playlists = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists));
+        }
+    }
+
     public void initSongLists() {
+
+        if (playlistCachingOn) {
+            getCachedLists();
+        }
 
         if (listContent == null)
         {
@@ -276,7 +312,6 @@ public class PlaylistHandler implements AsyncResponse {
             spotifyListContent = new Playlist();
             musicGetterHandler.setSpotifyMusicGetter(new SpotifyMusicGetter(accessToken, this));
             musicGetterHandler.initSpotifyMusicGetter();
-            playerHandler.initSpotifyPlayer(accessToken);
         }
 
     }
@@ -333,8 +368,39 @@ public class PlaylistHandler implements AsyncResponse {
             }
             OneStreamActivity.notifySpotifyAdapter();
             OneStreamActivity.invalidateList();
-
         }
+        if (playlistCachingOn)
+        {
+            cacheResult(type);
+        }
+    }
+
+    //Dont calculate artist/albums: Do that at runtime for sanity purposes
+    public void cacheResult(String type) {
+        ArrayList<Object> listContainer = new ArrayList<Object>();
+        if (type.equals(Constants.spotifyMusicGetter)) {
+            listContainer.add(spotifyListContent);
+            cachePlaylist(listContainer, Constants.spotify);
+            listContainer.remove(0);
+            listContainer.add(combinedList);
+            cachePlaylist(listContainer, Constants.library);
+        }
+        else if (type.equals(Constants.musicLoaderService)) {
+            listContainer.add(listContent);
+            cachePlaylist(listContainer, Constants.local);
+            listContainer.remove(0);
+            listContainer.add(combinedList);
+            cachePlaylist(listContainer, Constants.library);
+        }
+        if (type.equals(Constants.restServiceActionsHandler)) {
+            listContainer.add(playlists);
+            cachePlaylist(listContainer, Constants.playlists);
+        }
+    }
+
+    public void cachePlaylist(ArrayList<Object> playlists, String type) {
+        TinyDB tinydb = new TinyDB(context);
+        tinydb.putListObject(type, playlists);
     }
 
 

@@ -84,6 +84,55 @@ public class SettingsActivity extends Activity {
                 }
             });
 
+
+        final ToggleButton cacheSongsToggle = (ToggleButton) findViewById(R.id.cacheSongs);
+        settings = getSharedPreferences(Constants.cacheSongsLoc, 0);
+        if (settings.getBoolean(Constants.cacheSongOn, false) == true)
+        {
+            songViewToggle.setChecked(true);
+        }
+
+        cacheSongsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences settings = getSharedPreferences(Constants.cacheSongsLoc, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                if (cacheSongsToggle.isChecked())
+                {
+                    editor.putBoolean(Constants.cacheSongOn, true);
+                }
+                else
+                {
+                    editor.putBoolean(Constants.cacheSongOn, false);
+                }
+                editor.commit();
+            }
+        });
+
+        final ToggleButton cachePlaylistsToggle = (ToggleButton) findViewById(R.id.cachePlaylists);
+        settings = getSharedPreferences(Constants.cachePlaylistsLoc, 0);
+        if (settings.getBoolean(Constants.cachePlaylistsOn, false))
+        {
+            cachePlaylistsToggle.setChecked(true);
+        }
+
+        cachePlaylistsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences settings = getSharedPreferences(Constants.cachePlaylistsLoc, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                if (cachePlaylistsToggle.isChecked())
+                {
+                    editor.putBoolean(Constants.cachePlaylistsOn, true);
+                }
+                else
+                {
+                    editor.putBoolean(Constants.cachePlaylistsOn, false);
+                }
+                editor.commit();
+            }
+        });
+
         settings = getSharedPreferences(Constants.dirInfoLoc, 0);
         final String directory = settings.getString(Constants.directory, Constants.defaultDirectory);
         TextView directoryTxt = (TextView) findViewById(R.id.dirName);

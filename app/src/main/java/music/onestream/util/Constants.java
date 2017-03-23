@@ -59,6 +59,8 @@ public class Constants {
     public static String sortTypeLoc = "SORT_TYPE";
     public static String dirInfoLoc = "dirInfo";
     public static String songViewLoc = "SongView";
+    public static String cacheSongsLoc = "CacheSongs";
+    public static String cachePlaylistsLoc = "CachePlaylists";
 
     /*Shared pref value locations*/
     public static String playlistChanged = "PlaylistsChanged";
@@ -69,6 +71,8 @@ public class Constants {
     public static String directory = "dir";
     public static String directoryChanged = "directoryChanged";
     public static String songViewOn = "SongView";
+    public static String cacheSongOn = "CacheSongs";
+    public static String cachePlaylistsOn = "CachePlaylists";
 
     /*Default sortType*/
     public static String defaultSortType = "Default";
@@ -86,8 +90,9 @@ public class Constants {
     public static String artists = "Artists";
     public static String albums = "Albums";
 
-    /*Spotify token*/
+    /*Tokens*/
     public static String spotifyToken = "SPOTIFY_TOKEN";
+    public static String googleToken = "GOOGLE_TOKEN";
 
     /*OneStreamActivity Tabs */
     public static int OneStream_Library_Pos = 0;

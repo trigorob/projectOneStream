@@ -115,7 +115,14 @@ public class JSONExtractor {
             JSONObject jsonObject;
             for (int i = 0; i < jArray.length(); i++) {
                 try {
-                    jsonObject = new JSONObject(jArray.get(i).toString());
+                    if (jArray.get(i).getClass().equals(JSONArray.class))
+                    {
+                        jArray = new JSONArray(jArray.get(i).toString());
+                        jsonObject = (JSONObject) jArray.get(0);
+                    }
+                    else {
+                        jsonObject = new JSONObject(jArray.get(i).toString());
+                    }
                     playlist = new Playlist();
                     playlist.setName((String) jsonObject.get("name"));
                     playlist.setOwner((String) jsonObject.get("owner"));
