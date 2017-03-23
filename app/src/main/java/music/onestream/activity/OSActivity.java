@@ -1,6 +1,8 @@
 package music.onestream.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -9,6 +11,10 @@ import android.widget.SeekBar;
 
 import com.spotify.sdk.android.player.Player;
 
+import java.util.ArrayList;
+
+import music.onestream.playlist.Playlist;
+import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.CredentialsHandler;
 
@@ -35,10 +41,17 @@ public class OSActivity extends AppCompatActivity {
 
         playerHandler = PlayerActionsHandler.initPlayerActionsHandler(context, fabIO, prev, next,
                 rewind, random, loginButton, mainList, seekbar, parentClass);
-
-        CredentialsHandler CH = new CredentialsHandler();
-        final String accessToken = CH.getToken(getBaseContext(), "Spotify");
-        playerHandler.initSpotifyPlayer(accessToken);
+        initSpotifyPlayer();
         return playerHandler;
     }
+
+    public void initSpotifyPlayer() {
+        CredentialsHandler CH = new CredentialsHandler();
+        final String accessToken = CH.getToken(getBaseContext(), "Spotify");
+
+        SharedPreferences settings = getSharedPreferences(Constants.cacheSongsLoc, 0);
+        Boolean songCachingOn = settings.getBoolean(Constants.cacheSongOn, false);
+        playerHandler.initSpotifyPlayer(accessToken, songCachingOn);
+    }
+
 }

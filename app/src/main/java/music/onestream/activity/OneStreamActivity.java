@@ -32,9 +32,17 @@ import android.widget.TextView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Connectivity;
 
 import music.onestream.util.Constants;
+import music.onestream.util.Logger;
+import music.onestream.util.LoginHandler;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.playlist.Playlist;
 import music.onestream.playlist.PlaylistAdapter;
@@ -44,7 +52,7 @@ import music.onestream.util.OneStreamActivityAdapter;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 
-public class OneStreamActivity extends OSActivity {
+public class OneStreamActivity extends OSAuthenticationActivity {
 
     private PlayerActionsHandler playerHandler;
     private static boolean songViewEnabled;
@@ -321,6 +329,8 @@ private ViewPager mViewPager;
 
         SharedPreferences settings = getSharedPreferences(Constants.songViewLoc, 0);
         songViewEnabled = settings.getBoolean(Constants.songViewOn, false);
+        settings = getSharedPreferences(Constants.cachePlaylistsLoc, 0);
+        boolean cachePlaylists = settings.getBoolean(Constants.cachePlaylistsOn, false);
         settings = getSharedPreferences(Constants.dirInfoLoc, 0);
         String directory = settings.getString(Constants.directory, Constants.defaultDirectory);
         boolean directoryChanged = settings.getBoolean(Constants.directoryChanged, false);
@@ -338,7 +348,7 @@ private ViewPager mViewPager;
         }
 
         playlistHandler = PlaylistHandler.initPlaylistHandler(this.getApplicationContext(), playerHandler,
-                sortType, directory, directoryChanged, domain, spotifyLoginChanged);
+                sortType, directory, directoryChanged, domain, spotifyLoginChanged, cachePlaylists);
 
         if (sortOnLoad)
         {
@@ -376,6 +386,22 @@ private ViewPager mViewPager;
         return playlistHandler;
     }
 
+    public void onLoginButtonClicked() {
+        if (currentPage == Constants.OneStream_Spotify_Pos) {
+            final AuthenticationRequest request = new AuthenticationRequest.Builder(Constants.SPOTIFY_ID,
+                    AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
+                    .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read",
+                            "playlist-read-private", "streaming"}).setShowDialog(true)
+                    .build();
+            AuthenticationClient.openLoginActivity(this, Constants.REQUEST_CODE, request);
+        }
+        else if (currentPage == Constants.OneStream_GoogleMusic_Pos)
+        {
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
+            startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
+        }
+    }
+
     public void initButtonListeners() {
 
         final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButton);
@@ -383,8 +409,7 @@ private ViewPager mViewPager;
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settings = new Intent(mViewPager.getContext(), LoginActivity.class);
-                startActivityForResult(settings, 0);
+                onLoginButtonClicked();
             }
         });
 
@@ -461,6 +486,30 @@ private ViewPager mViewPager;
 
     public static Intent createIntent(Context context) {
         return new Intent(context, OneStreamActivity.class);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        Logger logger = new Logger(getContext(), OneStreamActivity.class.getSimpleName());
+
+        String response = LoginHandler.handleLogin(requestCode, resultCode, intent, this.getApplicationContext());
+
+        if (response.equals("Error")) {
+            logger.logError("Login Failed");
+        } else if (response.equals("GoogleGetToken")) {
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
+            startActivityForResult(signInIntent, Constants.RC_GET_TOKEN);
+
+        } else if (response.contains("Token:")) {
+            logger.logMessage("Login Success!");
+            startMainActivity(response.substring(6), "Spotify");
+
+            SharedPreferences settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(Constants.spotifyLoginChanged, true);
+            editor.commit();
+        }
     }
 
     /**

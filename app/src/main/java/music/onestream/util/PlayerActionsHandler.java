@@ -373,10 +373,18 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
-    public void initSpotifyPlayer(String accessToken) {
+    public void initSpotifyPlayer(String accessToken, Boolean cachingOn) {
 
         Config playerConfig = new Config(context, accessToken, Constants.CLIENT_ID);
-        playerConfig.useCache(false); //Prevent memory leaks from spotify!
+
+        if (cachingOn) {
+            playerConfig.useCache(true);
+        }
+        else {
+            playerConfig.useCache(false);
+        }
+
+
         // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
         // the second argument in order to refcount it properly. Note that the method
         // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the

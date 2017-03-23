@@ -37,13 +37,14 @@ public class LocalMusicGetter implements MusicGetter {
         return null;
     }
 
-    public ArrayList<Song> fileNames(String directoryPath) {
+    public void loadLocalLibrary(String directoryPath) {
 
         File dir = new File(directoryPath);
         ArrayList<String> filess = new ArrayList<String>();
         ArrayList<String> artists = new ArrayList<String>();
         ArrayList<String> albums = new ArrayList<String>();
         ArrayList<File> files = new ArrayList<File>();
+        ArrayList<File> directories = new ArrayList<File>();
         if(dir.isDirectory()) {
             File[] listFiles = dir.listFiles();
             int pos = 0;
@@ -63,7 +64,7 @@ public class LocalMusicGetter implements MusicGetter {
                             albums.add(albumName);
                         }
                     } else if (file.isDirectory()) {
-                        fileNames(file.getPath());
+                        directories.add(file);
                     }
                     pos++;
             }
@@ -85,14 +86,17 @@ public class LocalMusicGetter implements MusicGetter {
                 songs.add(song);
             }
         }
-        return this.songs;
+        for (File file: directories)
+        {
+            loadLocalLibrary(file.getPath());
+        }
     }
 
     @Override
     public void init() {
         this.songs = new ArrayList<Song>();
         if (!directory.equals(Constants.defaultDirectory)) {
-            this.songs = fileNames(directory);
+            loadLocalLibrary(directory);
         }
     }
 }

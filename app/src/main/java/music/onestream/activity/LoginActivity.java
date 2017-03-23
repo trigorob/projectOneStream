@@ -30,31 +30,15 @@ import music.onestream.util.ColorCalculator;
 import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
 import music.onestream.R;
+import music.onestream.util.Logger;
+import music.onestream.util.LoginHandler;
 
-public class LoginActivity extends FragmentActivity {
-
-    private static final String TAG = LoginActivity.class.getSimpleName();
-    private static GoogleApiClient mGoogleApiClient;
+public class LoginActivity extends OSAuthenticationActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        String token = CredentialsHandler.getToken(this, Constants.googleMusic);
-
-        final ImageButton spotifyLoginButton = (ImageButton) findViewById(R.id.spotifyLoginLauncherButton);
-
-        //Todo: Actually get token/authentication and put it here
-        token = CredentialsHandler.getToken(this, Constants.googleMusic);
-        final ImageButton googleMusicLoginButton = (ImageButton) findViewById(R.id.googleMusicLoginLauncherButton);
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(LoginActivity.this.getResources().getString(R.string.server_client_id))
-                .requestEmail().build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).enableAutoManage(this,null)
-                .build();
 
         final ImageButton oneStreamDomainButton = (ImageButton) findViewById(R.id.oneStreamDomainLauncherButton);
         oneStreamDomainButton.setOnClickListener(new View.OnClickListener() {
@@ -76,12 +60,12 @@ public class LoginActivity extends FragmentActivity {
     }
 
     public void onGoogleMusicLoginButtonClicked(View view) {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
         startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
     }
 
     public void googleMusicGetToken() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
         startActivityForResult(signInIntent, Constants.RC_GET_TOKEN);
     }
 
@@ -89,72 +73,21 @@ public class LoginActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        // Check if result comes from the correct activity
-        if (requestCode == Constants.REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            switch (response.getType()) {
-                // Response was successful and contains auth token
-                case TOKEN:
-                    logMessage("Login Success!");
-                    SharedPreferences settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean(Constants.spotifyLoginChanged, true);
-                    editor.commit();
-
-                    CredentialsHandler.setToken(this, response.getAccessToken(),
-                            response.getExpiresIn(), TimeUnit.SECONDS, Constants.spotify);
-                    startMainActivity(response.getAccessToken());
-                    break;
-
-                // Auth flow returned an error
-                case ERROR:
-                    logError("Auth error: " + response.getError());
-                    break;
-
-                // Most likely auth flow was cancelled
-                default:
-                    logError("Auth result: " + response.getType());
-            }
+        String response = LoginHandler.handleLogin(requestCode, resultCode, intent, this.getApplicationContext());
+        Logger logger = new Logger(this.getApplicationContext(), LoginActivity.class.getSimpleName());
+        if (response.equals("Error"))
+        {
+            logger.logError("Login Failed");
         }
-        else if (requestCode == Constants.RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
-            if (result.isSuccess()) {
-                googleMusicGetToken();
-                return;
-            }
+        else if (response.equals("GoogleGetToken"))
+        {
+            googleMusicGetToken();
         }
-
-        else if (requestCode == Constants.RC_GET_TOKEN) {
-            SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
-            if (result.isSuccess()) {
-                String idToken = result.getSignInAccount().getIdToken();
-                SharedPreferences.Editor editor = settings.edit();
-                CredentialsHandler.setToken(this, idToken,
-                        9999999, TimeUnit.SECONDS, Constants.googleMusic);
-                startMainActivity(idToken);
-                //editor.put("GoogleACCT", acct);
-                // Get account information
-            }
-                return;
+        else
+        {
+            logger.logMessage("Login Success!");
+            startMainActivity(response, Constants.spotify);
         }
-    }
-
-    private void startMainActivity(String token) {
-        Intent intent = OneStreamActivity.createIntent(this);
-        intent.putExtra(Constants.spotifyToken, token);
-        startActivity(intent);
-        finish();
-    }
-
-    private void logError(String msg) {
-        Toast.makeText(this, "Error: " + msg, Toast.LENGTH_SHORT).show();
-        Log.e(TAG, msg);
-    }
-
-    private void logMessage(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, msg);
     }
 
 }
