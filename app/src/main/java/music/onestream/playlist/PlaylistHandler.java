@@ -18,7 +18,6 @@ import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
 import music.onestream.util.JSONExtractor;
 import music.onestream.util.RestServiceActionsHandler;
-import music.onestream.musicgetter.MusicLoaderService;
 import music.onestream.util.MusicSorter;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.PlaylistSorter;
@@ -165,7 +164,7 @@ public class PlaylistHandler implements AsyncResponse {
             ms = new MusicSorter(combinedList.getSongInfo(), type);
             retVal = ms.getRetArr();
             combinedList.setSongInfo((ArrayList<Song>) retVal[0]);
-            OneStreamActivity.invalidateList();
+            OneStreamActivity.notifyLibraryAdapter();
         }
 
         else if (artists != null && list.equals(Constants.artists))
@@ -217,7 +216,8 @@ public class PlaylistHandler implements AsyncResponse {
 
     public void initSongLists() {
 
-        if (playlistCachingOn) {
+        //Only do this on first run!
+        if (playlistCachingOn && combinedList == null) {
             getCachedLists();
         }
 
@@ -338,7 +338,7 @@ public class PlaylistHandler implements AsyncResponse {
             listContent.addSongs(totalListContent);
             combinedList.addSongs(totalListContent);
             OneStreamActivity.notifyLocalAdapter();
-            OneStreamActivity.invalidateList();
+            OneStreamActivity.notifyLibraryAdapter();
 
             totalDirectories--;
             for (File file: directoryContent.getDirectories())
@@ -350,11 +350,11 @@ public class PlaylistHandler implements AsyncResponse {
                 sortLists(sortType, Constants.local);
                 sortLists(sortType, Constants.library);
                 OneStreamActivity.notifyLocalAdapter();
-                OneStreamActivity.invalidateList();
+                OneStreamActivity.notifyLibraryAdapter();
                 addToArtistsAlbums(listContent.getSongInfo(), this);
             }
         } else if (type.equals(Constants.googleMusicGetter)) {
-            OneStreamActivity.invalidateList();
+            OneStreamActivity.notifyLibraryAdapter();
             OneStreamActivity.notifyGoogleAdapter();
         } else if (type.equals(Constants.spotifyMusicGetter)) {
 
@@ -374,7 +374,7 @@ public class PlaylistHandler implements AsyncResponse {
                 addToArtistsAlbums(spotifyListContent.getSongInfo(), this);
             }
             OneStreamActivity.notifySpotifyAdapter();
-            OneStreamActivity.invalidateList();
+            OneStreamActivity.notifyLibraryAdapter();
         }
         if (playlistCachingOn)
         {

@@ -210,11 +210,10 @@ private ViewPager mViewPager;
         }
     }
 
-    public static void invalidateList() {
+    public static void notifyLibraryAdapter() {
         combinedAdapter = new SongAdapter(getContext(), R.layout.songlayout,
                 playlistHandler.getList(Constants.library).getSongInfo());
-        mainList.invalidateViews();
-        if (combinedAdapter != null && currentPage == Constants.OneStream_Library_Pos)
+        if (currentPage == Constants.OneStream_Library_Pos)
         {
                 mainList.setAdapter(combinedAdapter);
                 mainList.setSelection(getPlayerHandler().getCurrentSongListPosition());
@@ -453,7 +452,7 @@ private ViewPager mViewPager;
                     case 2:
                         currentPage = Constants.OneStream_Spotify_Pos;
                         mainList.setAdapter(spotifyAdapter);
-                        if (playerHandler.isSpotifyLoggedOut() && spotifyAdapter.getCount() == 0)
+                        if (playerHandler.isSpotifyLoggedOut())
                         {
                             setLoginButtonVisible(true, loginButton);
                         }

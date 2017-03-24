@@ -44,7 +44,12 @@ public class MusicSorter {
                     Array1.get(i).getAlbumArt()));
         }
 
-        Collections.sort(metaData, new ResultComparatorString(type));
+        try {
+            Collections.sort(metaData, new ResultComparatorString(type));
+        }
+        catch (IllegalArgumentException e) {
+
+        }
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
             Array1.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album, comp.type, 1, comp.albArt));

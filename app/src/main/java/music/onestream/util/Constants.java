@@ -158,7 +158,7 @@ public class Constants {
 
     /*Getters and loaders*/
     public static String artistsAlbumsMusicLoader = "ArtistAlbumMusicLoader";
-    public static String musicLoaderService = "MusicLoaderService";
     public static String googleMusicGetter = "GoogleMusicGetter";
+    public static String musicLoaderService = "MusicLoaderService";
     public static String spotifyMusicGetter = "SpotifyMusicGetter";
 }

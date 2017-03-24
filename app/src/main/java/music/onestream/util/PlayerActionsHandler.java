@@ -801,7 +801,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
             Song invalidSong = getCurrentSong();
             OneStreamActivity.getPlaylistHandler().getList(Constants.spotify).removeSongItem(invalidSong);
             OneStreamActivity.getPlaylistHandler().getList(Constants.library).removeSongItem(invalidSong);
-            OneStreamActivity.invalidateList();
+            OneStreamActivity.notifyLibraryAdapter();
         }
     }
 
