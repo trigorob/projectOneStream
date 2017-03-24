@@ -1,5 +1,6 @@
 package music.onestream.playlist;
 
+import java.io.File;
 import java.util.ArrayList;
 import android.content.Context;
 
@@ -50,6 +51,7 @@ public class PlaylistHandler implements AsyncResponse {
 
     private Context context;
     private static PlaylistHandler instance;
+    private int totalDirectories = -1;
 
 
     protected PlaylistHandler() {
@@ -63,7 +65,7 @@ public class PlaylistHandler implements AsyncResponse {
         if (instance == null)
         {
             instance = new PlaylistHandler();
-            instance.musicGetterHandler = new MusicGetterHandler();
+            instance.musicGetterHandler = new MusicGetterHandler(instance);
         }
 
         instance.playlistCachingOn = cachePlaylists;
@@ -108,27 +110,14 @@ public class PlaylistHandler implements AsyncResponse {
         return currentSongs;
     }
 
-    public void setMusicDir(String dir)
+    public void getMusicFromDirectory(String dir)
     {
-
-        musicGetterHandler.setLocalMusicGetter(new LocalMusicGetter(dir));
-        musicGetterHandler.initLocalMusicGetter();
-
-        ArrayList<Song> totalListContent = musicGetterHandler.getLocalMusicGetter().getSongs();
-        totalLocalSongs = totalListContent.size();
-        listContent.setSongInfo(new ArrayList<Song>());
-        int localSongOffset= 0;
-        while (localSongOffset < totalListContent.size()) {
-            Object[] params = new Object[4];
-            params[0] = totalListContent;
-            params[1] = listContent;
-            params[2] = localSongOffset;
-            params[3] = combinedList;
-            MusicLoaderService mls = new MusicLoaderService();
-            mls.SAR = this;
-            mls.execute(params);
-            localSongOffset+=50;
+        if (totalDirectories == -1)
+        {
+            totalDirectories = 1;
         }
+        musicGetterHandler.addLocalMusicGetter(new LocalMusicGetter(dir), dir);
+        musicGetterHandler.initLocalMusicGetter(dir);
     }
 
     public void sortAllLists(String type)
@@ -243,7 +232,11 @@ public class PlaylistHandler implements AsyncResponse {
         }
 
         if (listContent.size() == 0 || isDirectoryChanged()) {
-            setMusicDir(directory);
+            for (Song song: listContent.getSongInfo()) {
+                combinedList.removeSongItem(song);
+            }
+            listContent.setSongInfo(new ArrayList<Song>());
+            getMusicFromDirectory(directory);
             directoryChanged();
         }
 
@@ -310,7 +303,7 @@ public class PlaylistHandler implements AsyncResponse {
         if (accessToken != null && isConnected() && spotifyLoginChanged) {
             spotifyLoginChanged = false;
             spotifyListContent = new Playlist();
-            musicGetterHandler.setSpotifyMusicGetter(new SpotifyMusicGetter(accessToken, this));
+            musicGetterHandler.addSpotifyMusicGetter(new SpotifyMusicGetter(accessToken, this));
             musicGetterHandler.initSpotifyMusicGetter();
         }
 
@@ -332,23 +325,37 @@ public class PlaylistHandler implements AsyncResponse {
             sortLists(sortType, Constants.playlists);
             OneStreamActivity.initPlaylistAdapter(context);
         }
-
         else if (type.equals(Constants.artistsAlbumsMusicLoader)) {
             OneStreamActivity.notifyArtistsAdapter();
             OneStreamActivity.notifyAlbumsAdapter();
         }
 
         else if (type.equals(Constants.musicLoaderService)) {
-                if (listContent.size() == totalLocalSongs) {
+            String nestedDirectory = (String) retVal;
+            LocalMusicGetter directoryContent =
+                    ((LocalMusicGetter) musicGetterHandler.getLocalMusicGetter().get(nestedDirectory));
+            ArrayList<Song> totalListContent = directoryContent.getSongs();
+            listContent.addSongs(totalListContent);
+            combinedList.addSongs(totalListContent);
+            OneStreamActivity.notifyLocalAdapter();
+            OneStreamActivity.invalidateList();
+
+            totalDirectories--;
+            for (File file: directoryContent.getDirectories())
+            {
+                getMusicFromDirectory(file.getPath());
+            }
+            totalDirectories += directoryContent.getDirectories().size();
+            if (totalDirectories == 0) {
                 sortLists(sortType, Constants.local);
+                sortLists(sortType, Constants.library);
+                OneStreamActivity.notifyLocalAdapter();
+                OneStreamActivity.invalidateList();
                 addToArtistsAlbums(listContent.getSongInfo(), this);
             }
-
-            OneStreamActivity.invalidateList();
         } else if (type.equals(Constants.googleMusicGetter)) {
-
             OneStreamActivity.invalidateList();
-            OneStreamActivity.notifyLocalAdapter();
+            OneStreamActivity.notifyGoogleAdapter();
         } else if (type.equals(Constants.spotifyMusicGetter)) {
 
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;

@@ -5,23 +5,31 @@ package music.onestream.musicgetter;
  */
 
 import android.media.MediaMetadataRetriever;
+import android.os.AsyncTask;
 
-import java.io.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.*;
 import music.onestream.song.Song;
+import music.onestream.util.AsyncResponse;
 import music.onestream.util.Constants;
 
-public class LocalMusicGetter implements MusicGetter {
-    ArrayList<Song> songs;
-    String directory = Constants.defaultDirectory;
+
+public class LocalMusicGetter extends AsyncTask implements MusicGetter {
+    private ArrayList<Song> songs;
+    private String directory = Constants.defaultDirectory;
+    public AsyncResponse SAR;
     public LocalMusicGetter(String directory)
     {
         this.directory = directory;
     }
+    private ArrayList<File> directories = new ArrayList<File>();
 
     public ArrayList<Song> getSongs() {
         return this.songs;
     }
+    public ArrayList<File> getDirectories() {return this.directories;}
 
     public String getFileIfValid(String fname){
         String[] acceptedTypes = {".mp3", ".wav", "mp4", ".3gp", ".flac", ".mid", ".ogg", ".mkv"};
@@ -44,29 +52,35 @@ public class LocalMusicGetter implements MusicGetter {
         ArrayList<String> artists = new ArrayList<String>();
         ArrayList<String> albums = new ArrayList<String>();
         ArrayList<File> files = new ArrayList<File>();
-        ArrayList<File> directories = new ArrayList<File>();
         if(dir.isDirectory()) {
+            try {
             File[] listFiles = dir.listFiles();
             int pos = 0;
                 while (pos < listFiles.length) {
-                    File file = listFiles[pos];
-                    if (file.isFile()) {
-                        String fname = file.getName();
-                        fname = getFileIfValid(fname);
-                        if (fname != null) {
-                            files.add(file);
-                            filess.add(fname);
-                            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                            mmr.setDataSource(file.getPath());
-                            String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                            String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                            artists.add(artistName);
-                            albums.add(albumName);
+                        File file = listFiles[pos];
+                        if (file.isFile()) {
+                            String fname = file.getName();
+                            fname = getFileIfValid(fname);
+                            if (fname != null) {
+                                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                                mmr.setDataSource(file.getPath());
+                                String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                                String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                                fname = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                                files.add(file);
+                                filess.add(fname);
+                                artists.add(artistName);
+                                albums.add(albumName);
+                            }
+                        } else if (file.isDirectory()) {
+                            directories.add(file);
                         }
-                    } else if (file.isDirectory()) {
-                        directories.add(file);
+                        pos++;
                     }
-                    pos++;
+            }
+            catch (Exception e)
+            {
+
             }
             String artist;
             String album;
@@ -86,10 +100,6 @@ public class LocalMusicGetter implements MusicGetter {
                 songs.add(song);
             }
         }
-        for (File file: directories)
-        {
-            loadLocalLibrary(file.getPath());
-        }
     }
 
     @Override
@@ -98,5 +108,19 @@ public class LocalMusicGetter implements MusicGetter {
         if (!directory.equals(Constants.defaultDirectory)) {
             loadLocalLibrary(directory);
         }
+    }
+
+    @Override
+    protected Object doInBackground(Object[] params) {
+        init();
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Object result) {
+        Object[] retObject = new Object[2];
+        retObject[0] = Constants.musicLoaderService;
+        retObject[1] = directory;
+        SAR.processFinish(retObject);
     }
 }

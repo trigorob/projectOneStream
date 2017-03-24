@@ -1,47 +1,62 @@
 package music.onestream.musicgetter;
 
+import android.content.Context;
+
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+import music.onestream.util.AsyncResponse;
+
 /**
  * Created by ruspe_000 on 2017-02-03.
  */
 
 public class MusicGetterHandler {
 
+    private AsyncResponse context;
     private SpotifyMusicGetter spotifyMusicGetter;
-    private LocalMusicGetter localMusicGetter;
+    private TreeMap<String, LocalMusicGetter> localMusicGetters;
     private GoogleMusicGetter googleMusicGetter;
 
-    public MusicGetterHandler()
+    public MusicGetterHandler(AsyncResponse returnLocation)
     {
-
+        this.context = returnLocation;
     }
 
-    public void setSpotifyMusicGetter(SpotifyMusicGetter spotifyMusicGetter) {
+    public void addSpotifyMusicGetter(SpotifyMusicGetter spotifyMusicGetter) {
         this.spotifyMusicGetter = spotifyMusicGetter;
     }
 
-    public void setGoogleMusicGetter(GoogleMusicGetter googleMusicGetter) {
+    public void addGoogleMusicGetter(GoogleMusicGetter googleMusicGetter) {
         this.googleMusicGetter = googleMusicGetter;
     }
 
-    public void setLocalMusicGetter(LocalMusicGetter localMusicGetter) {
-        this.localMusicGetter = localMusicGetter;
+    public void addLocalMusicGetter(LocalMusicGetter localMusicGetter, String directory) {
+        if (localMusicGetters == null)
+        {
+            localMusicGetters = new TreeMap<String, LocalMusicGetter>();
+        }
+        this.localMusicGetters.put(directory, localMusicGetter);
     }
 
     public GoogleMusicGetter getGoogleMusicGetter() {
         return googleMusicGetter;
     }
 
-    public LocalMusicGetter getLocalMusicGetter() {
-        return localMusicGetter;
+    public TreeMap getLocalMusicGetter() {
+        return localMusicGetters;
     }
 
     public SpotifyMusicGetter getSpotifyMusicGetter() {
         return spotifyMusicGetter;
     }
 
-    public void initLocalMusicGetter() {
+    public void initLocalMusicGetter(String directory) {
+        LocalMusicGetter localMusicGetter = localMusicGetters.get(directory);
         if (localMusicGetter != null) {
-            localMusicGetter.init();
+            localMusicGetter.SAR = context;
+            localMusicGetter.execute();
+
         }
     }
 
@@ -57,10 +72,4 @@ public class MusicGetterHandler {
         }
     }
 
-    public void initAll()
-    {
-        initLocalMusicGetter();
-        initSpotifyMusicGetter();
-        initGoogleMusicGetter();
-    }
 }

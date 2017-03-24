@@ -56,6 +56,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
 
     private PlayerActionsHandler playerHandler;
     private static boolean songViewEnabled;
+    private boolean firstRun;
 
     private static PlaylistHandler playlistHandler;
     private static int currentPage;
@@ -107,6 +108,13 @@ private ViewPager mViewPager;
     protected void onResume() {
         super.onResume();
         initPlayerHandler();
+        if (!firstRun) {
+            initPlaylistHandler();
+        }
+        else {
+            firstRun = false;
+        }
+        mainList.invalidateViews();
     }
 
     @Override
@@ -143,6 +151,8 @@ private ViewPager mViewPager;
 
         mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
 
+        firstRun = true;
+
         initPlayerHandler();
         initPlaylistHandler();
         initListDisplay();
@@ -151,7 +161,8 @@ private ViewPager mViewPager;
 
     public static void notifyLocalAdapter() {
         if (adapter != null) {
-            adapter.notifyDataSetChanged();
+            adapter = new SongAdapter(getContext(), R.layout.songlayout,
+                    playlistHandler.getList(Constants.local).getSongInfo());
             mainList.invalidateViews();
         }
     }
@@ -200,6 +211,9 @@ private ViewPager mViewPager;
     }
 
     public static void invalidateList() {
+        combinedAdapter = new SongAdapter(getContext(), R.layout.songlayout,
+                playlistHandler.getList(Constants.library).getSongInfo());
+        mainList.invalidateViews();
         if (combinedAdapter != null && currentPage == Constants.OneStream_Library_Pos)
         {
                 mainList.setAdapter(combinedAdapter);
@@ -362,7 +376,12 @@ private ViewPager mViewPager;
             editor.putBoolean(Constants.spotifyLoginChanged, false);
             editor.commit();
         }
-
+        if (directoryChanged) {
+            settings = getSharedPreferences(Constants.dirInfoLoc, 0);
+            editor = settings.edit();
+            editor.putBoolean(Constants.directoryChanged, false);
+            editor.commit();
+        }
     }
 
     public static void setLoginButtonVisible(boolean visible, ImageButton loginButton) {
