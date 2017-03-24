@@ -35,15 +35,8 @@ public class OSAuthenticationActivity extends OSActivity {
         return mGoogleApiClient;
     }
 
-    public void startMainActivity(String token, String type) {
+    public void startMainActivity() {
         Intent intent = OneStreamActivity.createIntent(this);
-        if (type.equals(Constants.spotify)) {
-            intent.putExtra(Constants.spotifyToken, token);
-        }
-        else if (type.equals(Constants.googleMusic))
-        {
-            intent.putExtra(Constants.googleToken, token);
-        }
         startActivity(intent);
         finish();
     }

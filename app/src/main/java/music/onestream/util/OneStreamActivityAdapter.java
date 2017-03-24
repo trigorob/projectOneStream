@@ -50,7 +50,7 @@ public class OneStreamActivityAdapter extends FragmentPagerAdapter {
             case 3:
                 return Constants.OneStream_Playlists;
             case 4:
-                return Constants.OneStream_GoogleMusic;
+                return Constants.OneStream_SoundCloud;
             case 5:
                 return Constants.OneStream_Artists;
             case 6:

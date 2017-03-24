@@ -1,8 +1,5 @@
 package music.onestream.musicgetter;
 
-import android.content.Context;
-
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 import music.onestream.util.AsyncResponse;
@@ -16,7 +13,7 @@ public class MusicGetterHandler {
     private AsyncResponse context;
     private SpotifyMusicGetter spotifyMusicGetter;
     private TreeMap<String, LocalMusicGetter> localMusicGetters;
-    private GoogleMusicGetter googleMusicGetter;
+    private SoundCloudMusicGetter soundCloudMusicGetter;
 
     public MusicGetterHandler(AsyncResponse returnLocation)
     {
@@ -27,8 +24,8 @@ public class MusicGetterHandler {
         this.spotifyMusicGetter = spotifyMusicGetter;
     }
 
-    public void addGoogleMusicGetter(GoogleMusicGetter googleMusicGetter) {
-        this.googleMusicGetter = googleMusicGetter;
+    public void addSoundCloudMusicGetter(SoundCloudMusicGetter soundCloudMusicGetter) {
+        this.soundCloudMusicGetter = soundCloudMusicGetter;
     }
 
     public void addLocalMusicGetter(LocalMusicGetter localMusicGetter, String directory) {
@@ -39,8 +36,8 @@ public class MusicGetterHandler {
         this.localMusicGetters.put(directory, localMusicGetter);
     }
 
-    public GoogleMusicGetter getGoogleMusicGetter() {
-        return googleMusicGetter;
+    public SoundCloudMusicGetter getSoundCloudMusicGetter() {
+        return soundCloudMusicGetter;
     }
 
     public TreeMap getLocalMusicGetter() {
@@ -66,9 +63,9 @@ public class MusicGetterHandler {
         }
     }
 
-    public void initGoogleMusicGetter() {
-        if (googleMusicGetter != null) {
-            googleMusicGetter.init();
+    public void initSoundCloudMusicGetter() {
+        if (soundCloudMusicGetter != null) {
+            soundCloudMusicGetter.init();
         }
     }
 

@@ -131,8 +131,8 @@ public class PlaylistHandler implements AsyncResponse {
 
     public void sortLists(String type, String list) {
 
-        MusicSorter ms = null;
-        Object[] retVal = null;
+        MusicSorter ms;
+        Object[] retVal;
         if (list.equals(Constants.local) && listContent != null)
         {
             ms = new MusicSorter(listContent.getSongInfo(), type);
@@ -353,9 +353,9 @@ public class PlaylistHandler implements AsyncResponse {
                 OneStreamActivity.notifyLibraryAdapter();
                 addToArtistsAlbums(listContent.getSongInfo(), this);
             }
-        } else if (type.equals(Constants.googleMusicGetter)) {
+        } else if (type.equals(Constants.soundCloudMusicGetter)) {
             OneStreamActivity.notifyLibraryAdapter();
-            OneStreamActivity.notifyGoogleAdapter();
+            OneStreamActivity.notifySoundCloudAdapter();
         } else if (type.equals(Constants.spotifyMusicGetter)) {
 
             ArrayList<Song> tempList = (ArrayList<Song>) retVal;

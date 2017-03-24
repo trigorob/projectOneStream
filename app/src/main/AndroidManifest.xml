@@ -67,6 +67,10 @@
                 <data
                     android:scheme="testschema"
                     android:host="callback" />
+                <data
+                    android:scheme="http://"
+                    android:host="onestream.local"
+                    android:pathPrefix="/dashboard/" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

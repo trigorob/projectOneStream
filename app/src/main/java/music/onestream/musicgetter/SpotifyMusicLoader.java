@@ -48,7 +48,7 @@ import music.onestream.util.JSONExtractor;
                 String json = (JSONExtractor.extractJSON(conn));
                 if (json != null)
                 {
-                    result = JSONExtractor.processSpotifyJSON(json, (int) params[1]);
+                    result = JSONExtractor.processSpotifyJSON(json);
                 }
             } catch (IOException IOE) {
 

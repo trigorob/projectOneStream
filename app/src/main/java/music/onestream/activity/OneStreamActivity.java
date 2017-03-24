@@ -173,7 +173,7 @@ private ViewPager mViewPager;
         }
     }
 
-    public static void notifyGoogleAdapter() {
+    public static void notifySoundCloudAdapter() {
         if (googleAdapter != null) {
             googleAdapter.notifyDataSetChanged();
             mainList.invalidateViews();
@@ -394,7 +394,7 @@ private ViewPager mViewPager;
             {
                 loginButton.setImageResource(R.drawable.spotify);
             }
-            else if (currentPage == Constants.OneStream_GoogleMusic_Pos)
+            else if (currentPage == Constants.OneStream_SoundCloud_Pos)
             {
                 loginButton.setImageResource(R.drawable.googlemusic);
             }
@@ -417,7 +417,7 @@ private ViewPager mViewPager;
                     .build();
             AuthenticationClient.openLoginActivity(this, Constants.REQUEST_CODE, request);
         }
-        else if (currentPage == Constants.OneStream_GoogleMusic_Pos)
+        else if (currentPage == Constants.OneStream_SoundCloud_Pos)
         {
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
             startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
@@ -468,7 +468,7 @@ private ViewPager mViewPager;
                         break;
                     case 4:
                         //Todo: change to Googledapter
-                        currentPage = Constants.OneStream_GoogleMusic_Pos;
+                        currentPage = Constants.OneStream_SoundCloud_Pos;
                         if ((playlistHandler.getList(Constants.spotify) == null))
                         {
                             setLoginButtonVisible(true, loginButton);
@@ -514,8 +514,8 @@ private ViewPager mViewPager;
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         Logger logger = new Logger(getContext(), OneStreamActivity.class.getSimpleName());
-
-        String response = LoginHandler.handleLogin(requestCode, resultCode, intent, this.getApplicationContext());
+        LoginHandler loginHandler = new LoginHandler(this);
+        String response = loginHandler.handleLogin(requestCode, resultCode, intent);
 
         if (response.equals("Error")) {
             logger.logError("Login Failed");
@@ -525,7 +525,7 @@ private ViewPager mViewPager;
 
         } else if (response.contains("Token:")) {
             logger.logMessage("Login Success!");
-            startMainActivity(response.substring(6), "Spotify");
+            startMainActivity();
 
             SharedPreferences settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
             SharedPreferences.Editor editor = settings.edit();

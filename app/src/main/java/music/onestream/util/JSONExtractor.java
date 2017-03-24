@@ -53,7 +53,7 @@ public class JSONExtractor {
         }
     }
 
-    public static ArrayList<Song> processSpotifyJSON(String output, int spotifySongOffset) {
+    public static ArrayList<Song> processSpotifyJSON(String output) {
         try {
         JSONObject jsonObject = new JSONObject(output);
         JSONArray jArray = jsonObject.getJSONArray("items");
@@ -101,6 +101,11 @@ public class JSONExtractor {
     }
         return null;
 }
+
+    public static ArrayList<Song> processSoundCloudJSON(String output) {
+            ArrayList<Song> tempList = new ArrayList<Song>();
+            return tempList;
+    }
 
     public static ArrayList<Playlist> processPlaylistJSON(String output) {
         if (output == null)
