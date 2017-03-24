@@ -107,7 +107,6 @@ public class OneStreamPlayerService extends Service {
         else if (action.equalsIgnoreCase(Constants.ACTION_NEXT))
         {
             mediaController.getTransportControls().skipToNext();
-            mediaController.getTransportControls().play();
             if (playerHandler.isRandomNext()) {
                 playerHandler.playRandomSong();
             }
@@ -123,7 +122,6 @@ public class OneStreamPlayerService extends Service {
         else if (action.equalsIgnoreCase(Constants.ACTION_PREVIOUS))
         {
             mediaController.getTransportControls().skipToPrevious();
-            mediaController.getTransportControls().play();
             playerHandler.previousSong();
         }
         else if (action.equalsIgnoreCase(Constants.ACTION_STOP))
@@ -165,7 +163,7 @@ public class OneStreamPlayerService extends Service {
 
         builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(Constants.ACTION_REWIND));
         builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(Constants.ACTION_PREVIOUS));
-        if (action.title.equals("Pause")) {
+        if (playerHandler.isPlaying()) {
             builder.addAction(R.drawable.pause, "Pause", generatePendingIntent(Constants.ACTION_PAUSE));
         }
         else {

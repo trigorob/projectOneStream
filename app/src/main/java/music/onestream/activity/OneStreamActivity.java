@@ -114,7 +114,7 @@ private ViewPager mViewPager;
         else {
             firstRun = false;
         }
-        mainList.invalidateViews();
+        notifyLibraryAdapter();
     }
 
     @Override
@@ -216,7 +216,11 @@ private ViewPager mViewPager;
         if (currentPage == Constants.OneStream_Library_Pos)
         {
                 mainList.setAdapter(combinedAdapter);
-                mainList.setSelection(getPlayerHandler().getCurrentSongListPosition());
+                int currentPos = getPlayerHandler().getCurrentSongListPosition();
+                if (currentPos > 0 && currentPos < combinedAdapter.getSongs().size())
+                {
+                    mainList.setSelection(currentPos);
+                }
         }
         mainList.invalidateViews();
     }

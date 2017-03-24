@@ -8,8 +8,6 @@ import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.*;
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
