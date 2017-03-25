@@ -49,8 +49,7 @@ public class Constants {
 
     /*Loading step size*/
     public static final int spotifyLoadStepSize = 50;
-    public static final int localLoadStepSize = 50;
-    public static final int soundCloudLoadStepSize = 50;
+    public static final int soundCloudLoadStepSize = 5;
 
     /*Playlist default name */
     public static String defaultPlaylistName = "Playlist Title";

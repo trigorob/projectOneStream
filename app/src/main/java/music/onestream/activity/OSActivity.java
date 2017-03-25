@@ -1,5 +1,6 @@
 package music.onestream.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 
 import music.onestream.playlist.Playlist;
 import music.onestream.util.Constants;
+import music.onestream.util.Logger;
+import music.onestream.util.LoginHandler;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.CredentialsHandler;
 

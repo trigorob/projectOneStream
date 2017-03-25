@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -41,7 +42,8 @@ import music.onestream.musicgetter.ImageGetter;
  * Created by ruspe_000 on 2017-02-21.
  */
 
-public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Player.NotificationCallback, ConnectionStateCallback, AsyncResponse {
+public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
+        Player.NotificationCallback, ConnectionStateCallback, AsyncResponse, MediaPlayer.OnPreparedListener {
 
     public static PlayerActionsHandler instance;
 
@@ -266,7 +268,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
                         }
                     }
                     else {
-                        if (currentSongType.equals(Constants.local)) {
+                        if (currentSongType.equals(Constants.local) ||
+                                currentSongType.equals(Constants.soundCloud)) {
                             if (!mp.isPlaying()) {
                                 resumeSong(currentSongListPosition);
                             } else //Stop song.
@@ -347,7 +350,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mp != null && fromUser && currentSongType.equals(Constants.local)){
+                if(mp != null && fromUser && (currentSongType.equals(Constants.local)
+                        || currentSongType.equals(Constants.soundCloud)))
+                {
                     currentSongPosition = progress;
                     mp.seekTo(currentSongPosition);
                 }
@@ -506,13 +511,11 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (type.equals(Constants.local)) {
             playLocalSong(currentSong);
         }
-
         else if (type.equals(Constants.spotify) && spotPlayer != null) {
             playSpotifySong(currentSong);
         }
-
-        else {
-            //Play google song here
+        else if (type.equals(Constants.soundCloud)) {
+            playSoundCloudSong(currentSong);
         }
         fabIO.setImageResource(R.drawable.pause);
         mainList.setSelection(songIndex);
@@ -561,15 +564,22 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         if (isPlayerPlaying()) {
             mp.reset();
         }
-        mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));// creates new mediaplayer with song.
+        mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));
         mp.start();
         currentSongType = Constants.local;
-
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            public void onCompletion(MediaPlayer mp) {
-                nextSong();
-            }});
         seekBar.setMax(mp.getDuration());
+    }
+
+    public void playSoundCloudSong(Song currentSong) {
+        mp.reset();
+        mp.setOnPreparedListener(this);
+        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try{
+            mp.setDataSource(currentSong.getUri()+ "?client_id=" + Constants.SOUNDCLOUD_CLIENT_ID);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        mp.prepareAsync();
     }
 
     public void playSpotifySong(Song currentSong) {
@@ -584,7 +594,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
 
     public void stopSong() {
 
-        if (currentSongType.equals(Constants.local))
+        if (currentSongType.equals(Constants.local) || currentSongType.equals(Constants.soundCloud))
         {
             mp.pause();
             currentSongPosition = mp.getCurrentPosition();
@@ -601,7 +611,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
     public void resumeSong(int songIndex)
     {
         if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
-            if (currentSongType.equals(Constants.local)) {
+            if (currentSongType.equals(Constants.local) || currentSongType.equals(Constants.soundCloud)) {
                 mp.seekTo(currentSongPosition);
                 mp.start(); // starting mediaplayer
                 fabIO.setImageResource(R.drawable.pause);
@@ -805,4 +815,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener, Pl
         }
     }
 
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mp.start();
+        currentSongType = Constants.soundCloud;
+        seekBar.setMax(mp.getDuration());
+    }
 }

@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.spotify.sdk.android.player.Connectivity;
 
 import music.onestream.musicgetter.ArtistAlbumMusicLoader;
+import music.onestream.musicgetter.SoundCloudMusicGetter;
 import music.onestream.song.Song;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.musicgetter.LocalMusicGetter;
@@ -25,12 +26,12 @@ import music.onestream.util.TinyDB;
 
 public class PlaylistHandler implements AsyncResponse {
 
-    private static int totalLocalSongs = 0;
     private String domain;
     private String directory;
     private Boolean directoryChanged = false;
     private String sortType;
     private Boolean spotifyLoginChanged;
+    private Boolean soundCloudLoginChanged;
 
     private static RestServiceActionsHandler restActionHandler;
 
@@ -39,6 +40,7 @@ public class PlaylistHandler implements AsyncResponse {
 
     private Playlist listContent;
     private Playlist spotifyListContent;
+    private Playlist soundCloudListContent;
     private Playlist combinedList;
     private static ArrayList<Playlist> playlists;
     private static ArrayList<Playlist> artists;
@@ -59,7 +61,7 @@ public class PlaylistHandler implements AsyncResponse {
 
     public static PlaylistHandler initPlaylistHandler(Context appContext, PlayerActionsHandler playerHandler,
                            String type, String directory, boolean directoryChanged, String domain,
-                                                      boolean spotifyLoginChanged, boolean cachePlaylists) {
+                                      boolean spotifyLoginChanged, boolean soundCloudLoginChanged, boolean cachePlaylists) {
 
         if (instance == null)
         {
@@ -76,23 +78,28 @@ public class PlaylistHandler implements AsyncResponse {
         instance.directoryChanged = directoryChanged;
         instance.domain = domain;
         instance.spotifyLoginChanged = spotifyLoginChanged;
+        instance.soundCloudLoginChanged = soundCloudLoginChanged;
 
         instance.initSongLists();
         return instance;
     }
 
     public Playlist getList(String type) {
-        if (type.equals("Local"))
+        if (type.equals(Constants.local))
         {
             return listContent;
         }
-        else if (type.equals("Spotify"))
+        else if (type.equals(Constants.spotify))
         {
             return spotifyListContent;
         }
-        else if (type.equals("Library"))
+        else if (type.equals(Constants.library))
         {
             return combinedList;
+        }
+        else if (type.equals(Constants.soundCloud))
+        {
+            return soundCloudListContent;
         }
         else
         {
@@ -149,6 +156,15 @@ public class PlaylistHandler implements AsyncResponse {
             OneStreamActivity.notifySpotifyAdapter();
         }
 
+        else if (soundCloudListContent != null && soundCloudListContent.size() > 0
+                && list.equals(Constants.soundCloud))
+        {
+            ms = new MusicSorter(soundCloudListContent.getSongInfo(), type);
+            retVal = ms.getRetArr();
+            soundCloudListContent.setSongInfo((ArrayList<Song>) retVal[0]);
+            OneStreamActivity.notifySoundCloudAdapter();
+        }
+
         else if (playlists != null && list.equals(Constants.playlists))
         {
 
@@ -202,6 +218,11 @@ public class PlaylistHandler implements AsyncResponse {
         {
             spotifyListContent = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists)).get(0);
         }
+        cachedLists = (tinyDB.getListObject(Constants.soundCloud, Object.class));
+        if (cachedLists != null && cachedLists.size() > 0)
+        {
+            soundCloudListContent = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists)).get(0);
+        }
         cachedLists = (tinyDB.getListObject(Constants.local, Object.class));
         if (cachedLists != null && cachedLists.size() > 0)
         {
@@ -244,22 +265,23 @@ public class PlaylistHandler implements AsyncResponse {
         {
             spotifyListContent = new Playlist();
         }
+        if (soundCloudListContent == null)
+        {
+            soundCloudListContent = new Playlist();
+        }
         if (artists == null || albums == null)
         {
             artists = new ArrayList<Playlist>();
             albums = new ArrayList<Playlist>();
         }
         getSpotifyLibrary();
+        getSoundCloudLibrary();
 
         if (playlists == null || playlists.size() == 0)
         {
             playlists = new ArrayList<Playlist>();
             getRemotePlaylists(getDomain());
         }
-    }
-
-    public void onResume() {
-        initSongLists();
     }
 
     //Only call this when you change domains
@@ -309,6 +331,19 @@ public class PlaylistHandler implements AsyncResponse {
 
     }
 
+    public void getSoundCloudLibrary() {
+        CredentialsHandler CH = new CredentialsHandler();
+        final String accessToken = CH.getToken(context, Constants.soundCloud);
+
+        if (accessToken != null && isConnected() && soundCloudLoginChanged) {
+            soundCloudLoginChanged = false;
+            soundCloudListContent = new Playlist();
+            musicGetterHandler.addSoundCloudMusicGetter(new SoundCloudMusicGetter(accessToken, this));
+            musicGetterHandler.initSoundCloudMusicGetter();
+        }
+
+    }
+
     //Called when threads return
     @Override
     public void processFinish(Object[] result) {
@@ -354,32 +389,35 @@ public class PlaylistHandler implements AsyncResponse {
                 addToArtistsAlbums(listContent.getSongInfo(), this);
             }
         } else if (type.equals(Constants.soundCloudMusicGetter)) {
-            OneStreamActivity.notifyLibraryAdapter();
-            OneStreamActivity.notifySoundCloudAdapter();
+            processRemoteSongs((ArrayList<Song>)retVal, soundCloudListContent);
         } else if (type.equals(Constants.spotifyMusicGetter)) {
-
-            ArrayList<Song> tempList = (ArrayList<Song>) retVal;
-            for (Song song: tempList)
-            if (spotifyListContent.getSongInfo().contains(song))
-            {
-                tempList.remove(song);
-            }
-            spotifyListContent.addSongs(tempList);
-            combinedList.addSongs(tempList);
-
-
-            if (tempList.size() < 20) {
-                sortLists(sortType, Constants.spotify);
-                sortLists(sortType, Constants.library);
-                addToArtistsAlbums(spotifyListContent.getSongInfo(), this);
-            }
-            OneStreamActivity.notifySpotifyAdapter();
-            OneStreamActivity.notifyLibraryAdapter();
+            processRemoteSongs((ArrayList<Song>)retVal, spotifyListContent);
         }
         if (playlistCachingOn)
         {
             cacheResult(type);
         }
+    }
+
+    private void processRemoteSongs(ArrayList<Song> retVal, Playlist songLocation) {
+        for (Song song: retVal)
+            if (songLocation.getSongInfo().contains(song))
+            {
+                retVal.remove(song);
+            }
+        songLocation.addSongs(retVal);
+        combinedList.addSongs(retVal);
+
+
+        if (retVal.size() < 50) {
+            sortLists(sortType, Constants.spotify);
+            sortLists(sortType, Constants.soundCloud);
+            sortLists(sortType, Constants.library);
+            addToArtistsAlbums(songLocation.getSongInfo(), this);
+        }
+        OneStreamActivity.notifySoundCloudAdapter();
+        OneStreamActivity.notifyLibraryAdapter();
+        OneStreamActivity.notifySpotifyAdapter();
     }
 
     //Dont calculate artist/albums: Do that at runtime for sanity purposes
@@ -388,6 +426,13 @@ public class PlaylistHandler implements AsyncResponse {
         if (type.equals(Constants.spotifyMusicGetter)) {
             listContainer.add(spotifyListContent);
             cachePlaylist(listContainer, Constants.spotify);
+            listContainer.remove(0);
+            listContainer.add(combinedList);
+            cachePlaylist(listContainer, Constants.library);
+        }
+        else if (type.equals(Constants.soundCloudMusicGetter)) {
+            listContainer.add(soundCloudListContent);
+            cachePlaylist(listContainer, Constants.soundCloud);
             listContainer.remove(0);
             listContainer.add(combinedList);
             cachePlaylist(listContainer, Constants.library);

@@ -103,8 +103,39 @@ public class JSONExtractor {
 }
 
     public static ArrayList<Song> processSoundCloudJSON(String output) {
-            ArrayList<Song> tempList = new ArrayList<Song>();
-            return tempList;
+        ArrayList<Song> tempList = new ArrayList<Song>();
+        try {
+            JSONArray jArray = new JSONArray(output);
+            JSONObject jsonObject;
+            for (int i = 0; i < jArray.length(); i++)
+            {
+                jsonObject = new JSONObject(jArray.get(i).toString());
+                if ((Boolean) jsonObject.get("streamable")) {
+                    String uri = (String) jsonObject.get("stream_url");
+                    String name = (String) jsonObject.get("title");
+                    String albumArt = (String) jsonObject.get("artwork_url");
+                    String artist = "";
+                    String[] tags = ((String) jsonObject.get("tag_list")).split("\"");
+                    if (tags.length > 1)
+                    {
+                        artist = tags[1];
+                    }
+                    else
+                    {
+                        artist = Constants.defaultArtistsAlbumSongName;
+                    }
+                    String album = (String) jsonObject.get("genre");
+                    Song song = new Song(name, uri, artist, album, Constants.soundCloud, 1, albumArt);
+                    tempList.add(song);
+                }
+
+            }
+        }
+        catch (JSONException e)
+        {
+
+        }
+        return tempList;
     }
 
     public static ArrayList<Playlist> processPlaylistJSON(String output) {

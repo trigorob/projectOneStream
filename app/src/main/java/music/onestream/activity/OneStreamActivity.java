@@ -32,17 +32,9 @@ import android.widget.TextView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Connectivity;
 
 import music.onestream.util.Constants;
-import music.onestream.util.Logger;
-import music.onestream.util.LoginHandler;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.playlist.Playlist;
 import music.onestream.playlist.PlaylistAdapter;
@@ -66,7 +58,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
     private static SongAdapter adapter;
     private static SongAdapter spotifyAdapter;
     private static PlaylistAdapter playlistAdapter;
-    private static SongAdapter googleAdapter;
+    private static SongAdapter soundCloudAdapter;
     private static SongAdapter combinedAdapter;
     private static PlaylistAdapter artistsAdapter;
     private static PlaylistAdapter albumsAdapter;
@@ -174,8 +166,8 @@ private ViewPager mViewPager;
     }
 
     public static void notifySoundCloudAdapter() {
-        if (googleAdapter != null) {
-            googleAdapter.notifyDataSetChanged();
+        if (soundCloudAdapter != null) {
+            soundCloudAdapter.notifyDataSetChanged();
             mainList.invalidateViews();
         }
     }
@@ -237,6 +229,8 @@ private ViewPager mViewPager;
                 playlistHandler.getList(Constants.local).getSongInfo());
         spotifyAdapter = new SongAdapter(this, R.layout.songlayout,
                 playlistHandler.getList(Constants.spotify).getSongInfo());
+        soundCloudAdapter = new SongAdapter(this,R.layout.songlayout,
+                playlistHandler.getList(Constants.soundCloud).getSongInfo());
         combinedAdapter = new SongAdapter(this, R.layout.songlayout,
                 playlistHandler.getList(Constants.library).getSongInfo());
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout,
@@ -248,14 +242,12 @@ private ViewPager mViewPager;
 
         adapter.setNotifyOnChange(true);
         spotifyAdapter.setNotifyOnChange(true);
+        soundCloudAdapter.setNotifyOnChange(true);
         combinedAdapter.setNotifyOnChange(true);
         playlistAdapter.setNotifyOnChange(true);
         artistsAdapter.setNotifyOnChange(true);
         albumsAdapter.setNotifyOnChange(true);
 
-        //TODO: Implement
-        googleAdapter = new SongAdapter(this,R.layout.songlayout,
-                new ArrayList<Song>());
         mainList.setAdapter(adapter);
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
@@ -357,15 +349,18 @@ private ViewPager mViewPager;
         boolean sortOnLoad = settings.getBoolean(Constants.sortOnLoad, false);
         settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
         boolean spotifyLoginChanged = settings.getBoolean(Constants.spotifyLoginChanged, false);
+        boolean soundCloudLoginChanged = settings.getBoolean(Constants.soundCloudLoginChanged, false);
         String domain =  settings.getString(Constants.domain, Constants.defaultDomain);
 
         if (playlistHandler == null)
         {
             spotifyLoginChanged = true;
+            soundCloudLoginChanged = true;
         }
 
         playlistHandler = PlaylistHandler.initPlaylistHandler(this.getApplicationContext(), playerHandler,
-                sortType, directory, directoryChanged, domain, spotifyLoginChanged, cachePlaylists);
+                sortType, directory, directoryChanged, domain, spotifyLoginChanged, soundCloudLoginChanged,
+                cachePlaylists);
 
         if (sortOnLoad)
         {
@@ -377,6 +372,12 @@ private ViewPager mViewPager;
         {
             editor = settings.edit();
             editor.putBoolean(Constants.spotifyLoginChanged, false);
+            editor.commit();
+        }
+        if (soundCloudLoginChanged)
+        {
+            editor = settings.edit();
+            editor.putBoolean(Constants.soundCloudLoginChanged, false);
             editor.commit();
         }
         if (directoryChanged) {
@@ -409,19 +410,7 @@ private ViewPager mViewPager;
     }
 
     public void onLoginButtonClicked() {
-        if (currentPage == Constants.OneStream_Spotify_Pos) {
-            final AuthenticationRequest request = new AuthenticationRequest.Builder(Constants.SPOTIFY_ID,
-                    AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
-                    .setScopes(new String[]{"user-library-read", "user-read-private", "playlist-read",
-                            "playlist-read-private", "streaming"}).setShowDialog(true)
-                    .build();
-            AuthenticationClient.openLoginActivity(this, Constants.REQUEST_CODE, request);
-        }
-        else if (currentPage == Constants.OneStream_SoundCloud_Pos)
-        {
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
-            startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
-        }
+        handleLogin(currentPage);
     }
 
     public void initButtonListeners() {
@@ -467,13 +456,12 @@ private ViewPager mViewPager;
                         setLoginButtonVisible(false, loginButton);
                         break;
                     case 4:
-                        //Todo: change to Googledapter
                         currentPage = Constants.OneStream_SoundCloud_Pos;
-                        if ((playlistHandler.getList(Constants.spotify) == null))
+                        if ((playlistHandler.getList(Constants.soundCloud) == null))
                         {
                             setLoginButtonVisible(true, loginButton);
                         }
-                        mainList.setAdapter(googleAdapter);
+                        mainList.setAdapter(soundCloudAdapter);
                         break;
                     case 5:
                         currentPage = Constants.OneStream_Artists_Pos;
@@ -512,25 +500,8 @@ private ViewPager mViewPager;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        Logger logger = new Logger(getContext(), OneStreamActivity.class.getSimpleName());
-        LoginHandler loginHandler = new LoginHandler(this);
-        String response = loginHandler.handleLogin(requestCode, resultCode, intent);
-
-        if (response.equals("Error")) {
-            logger.logError("Login Failed");
-        } else if (response.equals("GoogleGetToken")) {
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(getGoogleApiClient());
-            startActivityForResult(signInIntent, Constants.RC_GET_TOKEN);
-
-        } else if (response.contains("Token:")) {
-            logger.logMessage("Login Success!");
-            startMainActivity();
-
-            SharedPreferences settings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(Constants.spotifyLoginChanged, true);
-            editor.commit();
+        if (intent != null && requestCode == Constants.REQUEST_CODE) {
+            onLoginActivityResult(requestCode, resultCode, intent);
         }
     }
 

@@ -60,7 +60,11 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
         }
 
         TextView t1 = (TextView) customView.findViewById(R.id.listSongName);
-        t1.setText(song.getName());
+        String name = song.getName();
+        if (name.length() > 50) {
+            name = name.substring(0, 55) + "...";
+        }
+        t1.setText(name);
         TextView t2= (TextView) customView.findViewById(R.id.listSongArtistAlbum);
         t2.setText(song.getArtist() + " ---- " + song.getAlbum());
 

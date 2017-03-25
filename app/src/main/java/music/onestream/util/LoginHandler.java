@@ -1,20 +1,15 @@
 package music.onestream.util;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.jlubecki.soundcloud.webapi.android.auth.AuthenticationCallback;
 import com.jlubecki.soundcloud.webapi.android.auth.AuthenticationStrategy;
 import com.jlubecki.soundcloud.webapi.android.auth.SoundCloudAuthenticator;
 import com.jlubecki.soundcloud.webapi.android.auth.webview.WebViewSoundCloudAuthenticator;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.authentication.LoginActivity;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,8 +28,8 @@ public class LoginHandler {
         mActivity = activity;
     }
 
-    public AuthenticationStrategy getStrategy() {
-        return strategy;
+    public void setActivity(Activity activity) {
+        mActivity = activity;
     }
 
     public void setupSoundCloud() {
@@ -65,7 +60,7 @@ public class LoginHandler {
     }
 
     public Boolean isAuthenticationIntentSoundCloud(Intent intent) {
-        return ((intent.getData() != null)
+        return ((intent != null && intent.getData() != null)
                 && (intent.getData().getScheme() + "://" + intent.getData().getAuthority()
                 + intent.getData().getPath()).equals(Constants.SOUNDCLOUD_REDIRECT_URI));
     }

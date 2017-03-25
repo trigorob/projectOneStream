@@ -20,7 +20,7 @@ public class SoundCloudMusicGetter implements MusicGetter {
     @Override
     public void init() {
 
-        while (soundCloudSongOffset < Constants.spotifySongCap) {
+        //while (soundCloudSongOffset < Constants.spotifySongCap) {
             SoundCloudMusicLoader soundCloudMusicLoader = new SoundCloudMusicLoader();
             soundCloudMusicLoader.SAR = handler;
             Object[] params = new Object[2];
@@ -28,7 +28,7 @@ public class SoundCloudMusicGetter implements MusicGetter {
             params[1] = soundCloudSongOffset;
             soundCloudMusicLoader.execute(params);
             soundCloudSongOffset += Constants.soundCloudLoadStepSize;
-        }
+        //}
     }
 
 }
