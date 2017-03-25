@@ -22,6 +22,7 @@ import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 import music.onestream.playlist.Playlist;
 import music.onestream.util.Constants;
+import music.onestream.util.CredentialsHandler;
 import music.onestream.util.PlayerActionsHandler;
 
 /**
@@ -49,8 +50,9 @@ public class PlaylistActivity extends OSActivity {
     }
 
     public void checkForInvalidSongs(ArrayList<Song> playlistAdapter) {
-        String services = "";
-        Boolean spotifyAvailable = true;
+        boolean spotifyAvailable = true;
+        boolean soundCloudAvailable = true;
+        boolean soundCloudLoggedOut = (CredentialsHandler.getToken(this, Constants.soundCloud) == null);
         String dir = (Environment.getExternalStorageDirectory().toString());
         for (int i = 0; i < playlist.getSongInfo().size(); i++){
             Song s = playlist.getSongInfo().get(i);
@@ -71,8 +73,19 @@ public class PlaylistActivity extends OSActivity {
                 loginLauncherLinkerButton.setVisibility(View.VISIBLE);
                 loginLauncherLinkerButton.setImageResource(R.drawable.spotify);
                 mainList.setVisibility(View.INVISIBLE);
-                services += " " + Constants.spotify + " ";
                 spotifyAvailable = false;
+            }
+            else if (s.getType().equals(Constants.soundCloud) && soundCloudLoggedOut)
+            {
+                loginLauncherLinkerButton.setVisibility(View.VISIBLE);
+                loginLauncherLinkerButton.setImageResource(R.drawable.googlemusic);
+                mainList.setVisibility(View.INVISIBLE);
+                spotifyAvailable = false;
+            }
+            else if (!soundCloudAvailable && !spotifyAvailable)
+            {
+                //TODO: set hybrid icon here
+                i+= playlist.getSongInfo().size();
             }
             //Todo: Add button with google if not logged in && google songs in playlist
             else {

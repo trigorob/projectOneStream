@@ -163,7 +163,8 @@ public class OneStreamPlayerService extends Service {
 
         builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(Constants.ACTION_REWIND));
         builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(Constants.ACTION_PREVIOUS));
-        if (playerHandler.isPlaying()) {
+        if (playerHandler.isPlaying() || action.title.equals("Pause") ||
+                action.title.equals("Previous") || action.title.equals("Next")) {
             builder.addAction(R.drawable.pause, "Pause", generatePendingIntent(Constants.ACTION_PAUSE));
         }
         else {
@@ -243,7 +244,7 @@ public class OneStreamPlayerService extends Service {
             @Override
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
-                buildNotification(generateAction(android.R.drawable.ic_media_rew, "Rewind", Constants.ACTION_REWIND));
+                buildNotification(generateAction(android.R.drawable.ic_media_rew, "Previous", Constants.ACTION_PREVIOUS));
             }
 
             @Override

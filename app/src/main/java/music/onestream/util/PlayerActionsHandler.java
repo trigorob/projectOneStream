@@ -128,9 +128,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             instance.random.setImageResource(R.drawable.shuffleoff);
         }
         if (currentSong != null) {
-            if (isPlayerPlaying() && currentSong.getType().equals(Constants.local)) {
+            if (isPlayerPlaying() && currentSongNotSpotify()) {
                 seekBar.setMax(mp.getDuration());
-            } else if (isSpotifyPlaying() && currentSong.getType().equals(Constants.spotify)) {
+            } else if (isSpotifyPlaying() && !currentSongNotSpotify()) {
                 Metadata.Track track = spotPlayer.getMetadata().currentTrack;
                 if (track != null) {
                     seekBar.setMax((int) track.durationMs);
@@ -139,15 +139,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
 
     }
-
-    public void setCurrentSongType(String type)
+    public boolean currentSongNotSpotify()
     {
-        this.currentSongType = type;
-    }
-
-    public String getCurrentSongType()
-    {
-        return this.currentSongType;
+        return (currentSongType.equals(Constants.local) ||
+                currentSongType.equals(Constants.soundCloud));
     }
 
     public void setCurrentSongListPosition(int position)
@@ -268,8 +263,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
                         }
                     }
                     else {
-                        if (currentSongType.equals(Constants.local) ||
-                                currentSongType.equals(Constants.soundCloud)) {
+                        if (currentSongNotSpotify()) {
                             if (!mp.isPlaying()) {
                                 resumeSong(currentSongListPosition);
                             } else //Stop song.
@@ -350,8 +344,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mp != null && fromUser && (currentSongType.equals(Constants.local)
-                        || currentSongType.equals(Constants.soundCloud)))
+                if(mp != null && fromUser && currentSongNotSpotify())
                 {
                     currentSongPosition = progress;
                     mp.seekTo(currentSongPosition);
@@ -526,7 +519,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     public void setSongViewDisplay(Song song) {
         if (this.parentClass.equals(Constants.songActivity)) {
             SongActivity.initDisplay(song);
-            if (song.getType().equals(Constants.spotify))
+            if (song.getType().equals(Constants.spotify) || song.getType().equals(Constants.soundCloud))
             {
                 String url = song.getAlbumArt();
                 Object[] params = new Object[1];
@@ -594,7 +587,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void stopSong() {
 
-        if (currentSongType.equals(Constants.local) || currentSongType.equals(Constants.soundCloud))
+        if (currentSongNotSpotify())
         {
             mp.pause();
             currentSongPosition = mp.getCurrentPosition();
@@ -611,7 +604,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     public void resumeSong(int songIndex)
     {
         if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
-            if (currentSongType.equals(Constants.local) || currentSongType.equals(Constants.soundCloud)) {
+            if (currentSongNotSpotify()) {
                 mp.seekTo(currentSongPosition);
                 mp.start(); // starting mediaplayer
                 fabIO.setImageResource(R.drawable.pause);
@@ -687,7 +680,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(mp != null && fromUser && currentSongType.equals(Constants.local)){
+        if(mp != null && fromUser && currentSongNotSpotify()){
             setCurrentSongPosition(progress);
             mp.seekTo(progress);
         }

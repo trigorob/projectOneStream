@@ -224,7 +224,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
 
         setPlaylistsChangedFlag(true);
 
-        Intent settings = new Intent(getBaseContext(), SettingsActivity.class);
+        Intent settings = new Intent(getBaseContext(), OneStreamActivity.class);
         Bundle b = new Bundle();
         b.putSerializable("Playlist", null);
         b.putSerializable("combinedList", null);
@@ -264,7 +264,7 @@ public class EditPlaylistActivity extends AppCompatActivity implements AsyncResp
 
         setPlaylistsChangedFlag(true);
 
-        Intent settings = new Intent(getBaseContext(), SettingsActivity.class);
+        Intent settings = new Intent(getBaseContext(), OneStreamActivity.class);
         Bundle b = new Bundle();
         b.putSerializable("Playlist", null);
         b.putSerializable("combinedList", null);

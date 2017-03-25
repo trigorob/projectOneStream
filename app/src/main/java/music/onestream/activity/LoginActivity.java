@@ -4,13 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import music.onestream.util.Constants;
 import music.onestream.R;
-import music.onestream.util.Logger;
 
 public class LoginActivity extends OSAuthenticationActivity {
 
