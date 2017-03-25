@@ -31,7 +31,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="180dp"
             android:id="@+id/loginLauncherLinkerButtonPL"
-            android:background="#FFFFFF"
+            android:backgroundTint="@android:color/transparent"
             android:visibility="invisible">
         </ImageButton>
 

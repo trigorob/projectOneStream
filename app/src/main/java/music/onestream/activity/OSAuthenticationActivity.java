@@ -24,9 +24,12 @@ public class OSAuthenticationActivity extends OSActivity {
     private static LoginHandler loginHandler;
 
     public void startMainActivity() {
-        Intent intent = OneStreamActivity.createIntent(this);
-        startActivity(intent);
-        finish();
+        if (!this.getClass().equals(PlaylistActivity.class)) {
+            Intent intent;
+            intent = OneStreamActivity.createIntent(this);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public LoginHandler getLoginHandler() {

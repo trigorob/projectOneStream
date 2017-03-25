@@ -275,7 +275,7 @@ public class PlaylistHandler implements AsyncResponse {
             albums = new ArrayList<Playlist>();
         }
         getSpotifyLibrary();
-        getSoundCloudLibrary();
+        getSoundCloudLibrary(Constants.defaultHref);
 
         if (playlists == null || playlists.size() == 0)
         {
@@ -331,14 +331,17 @@ public class PlaylistHandler implements AsyncResponse {
 
     }
 
-    public void getSoundCloudLibrary() {
+    public void getSoundCloudLibrary(String nextHref) {
         CredentialsHandler CH = new CredentialsHandler();
         final String accessToken = CH.getToken(context, Constants.soundCloud);
 
-        if (accessToken != null && isConnected() && soundCloudLoginChanged) {
+        if (accessToken != null && isConnected() && soundCloudLoginChanged
+                || isConnected() && nextHref.contains("http")) {
             soundCloudLoginChanged = false;
-            soundCloudListContent = new Playlist();
-            musicGetterHandler.addSoundCloudMusicGetter(new SoundCloudMusicGetter(accessToken, this));
+            if (!nextHref.contains("http")) {
+                soundCloudListContent = new Playlist();
+            }
+            musicGetterHandler.addSoundCloudMusicGetter(new SoundCloudMusicGetter(accessToken, nextHref, this));
             musicGetterHandler.initSoundCloudMusicGetter();
         }
 
@@ -389,9 +392,9 @@ public class PlaylistHandler implements AsyncResponse {
                 addToArtistsAlbums(listContent.getSongInfo(), this);
             }
         } else if (type.equals(Constants.soundCloudMusicGetter)) {
-            processRemoteSongs((ArrayList<Song>)retVal, soundCloudListContent);
+            processRemoteSongs(retVal, Constants.soundCloud);
         } else if (type.equals(Constants.spotifyMusicGetter)) {
-            processRemoteSongs((ArrayList<Song>)retVal, spotifyListContent);
+            processRemoteSongs(retVal, Constants.spotify);
         }
         if (playlistCachingOn)
         {
@@ -399,25 +402,37 @@ public class PlaylistHandler implements AsyncResponse {
         }
     }
 
-    private void processRemoteSongs(ArrayList<Song> retVal, Playlist songLocation) {
-        for (Song song: retVal)
-            if (songLocation.getSongInfo().contains(song))
-            {
-                retVal.remove(song);
-            }
-        songLocation.addSongs(retVal);
-        combinedList.addSongs(retVal);
+    private void processRemoteSongs(Object retVal, String type) {
+        ArrayList<Song> songs = null;
+        String nextHref = "";
+        Playlist targetList;
+        if (type.equals(Constants.spotify))
+        {
+            songs = (ArrayList<Song>) retVal;
+            targetList = spotifyListContent;
+        }
+        else
+        {
+            nextHref = (String) ((Object[]) retVal)[0];
+            songs = (ArrayList<Song>) ((Object[]) retVal)[1];
+            targetList = soundCloudListContent;
+        }
+        targetList.addSongs(songs);
+        combinedList.addSongs(songs);
 
-
-        if (retVal.size() < 50) {
+        if (songs.size() < 50) {
             sortLists(sortType, Constants.spotify);
             sortLists(sortType, Constants.soundCloud);
             sortLists(sortType, Constants.library);
-            addToArtistsAlbums(songLocation.getSongInfo(), this);
+            addToArtistsAlbums(targetList.getSongInfo(), this);
         }
         OneStreamActivity.notifySoundCloudAdapter();
         OneStreamActivity.notifyLibraryAdapter();
         OneStreamActivity.notifySpotifyAdapter();
+
+        if (!nextHref.equals("")) {
+            getSoundCloudLibrary(nextHref);
+        }
     }
 
     //Dont calculate artist/albums: Do that at runtime for sanity purposes

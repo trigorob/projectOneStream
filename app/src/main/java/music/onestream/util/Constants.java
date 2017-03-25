@@ -12,7 +12,6 @@ public class Constants {
     public static final String SOUNDCLOUD_ACCESS_TOKEN = "soundcloud_access_token";
     public static final String EXPIRES_AT = "expires_at";
     public static final String CLIENT_ID = "0785a1e619c34d11b2f50cb717c27da0";
-    public static final String PLAYBACK_STATE_CHANGED = "com.spotify.music.playbackstatechanged";
     @SuppressWarnings("SpellCheckingInspection")
     public static final String SPOTIFY_ID = "0785a1e619c34d11b2f50cb717c27da0";
     @SuppressWarnings("SpellCheckingInspection")
@@ -21,11 +20,6 @@ public class Constants {
     public static final String SOUNDCLOUD_CLIENT_ID = "asNLcGe4DAQ1YHSRKNyCo15sfFnXDbvS";
     public static final String SOUNDCLOUD_CLIENT_SECRET = "2W7E1oEwhXuAMVx8dL2KAArXw1Kv1NK6";
     public static final int REQUEST_CODE = 1337;
-    public static final int GOOGLE_RESPONSE_CODE = 0;
-    public static final int GOOGLE_CACHE_CODE = -1;
-    public static final int RC_SIGN_IN = 9001;
-    public static final int RC_GET_TOKEN = 9002;
-    public static final String PREFS_NAME = "GoogleACCT";
 
     /* Service Actions */
     public static final String ACTION_INIT = "action_init";
@@ -44,12 +38,10 @@ public class Constants {
 
     /* Music Caps */
     public static final int spotifySongCap = 1000;
-    public static final int localSongCap = 1000;
-    public static final int googleSongCap = 1000;
 
     /*Loading step size*/
     public static final int spotifyLoadStepSize = 50;
-    public static final int soundCloudLoadStepSize = 5;
+    public static final int soundCloudLoadStepSize = 50;
 
     /*Playlist default name */
     public static String defaultPlaylistName = "Playlist Title";
@@ -79,7 +71,12 @@ public class Constants {
 
     /*Default sortType*/
     public static String defaultSortType = "Default";
+
+    /*Default directory*/
     public static String defaultDirectory = "N/A";
+
+    /*Default href*/
+    public static String defaultHref = "N/A";
 
     /*Default domain*/
     public static String defaultDomain = "Admin";

@@ -29,14 +29,16 @@ public class SoundCloudMusicLoader extends AsyncTask{
     }
     @Override
     protected Object doInBackground(Object[] params) {
-        ArrayList<Song> result = null;
         String token = (String) params[0];
-
-        //TODO: Implement limits to load at 50songs/step
-        //String urlString = "https://api.soundcloud.com/me/favorites?" +"limit="+Constants.soundCloudLoadStepSize+"&oauth_token="+token;
+        String href = (String) params[1];
 
         try {
-            String urlString = "https://api.soundcloud.com/me/favorites?oauth_token="+token;
+            String urlString = href;
+            if (href == null || href.equals(Constants.defaultHref)) {
+                 urlString = "https://api.soundcloud.com/me/favorites?" + "limit="
+                        + Constants.soundCloudLoadStepSize + "&oauth_token=" + token
+                        + "&linked_partitioning=1";
+            }
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -45,11 +47,9 @@ public class SoundCloudMusicLoader extends AsyncTask{
             String json = (JSONExtractor.extractJSON(conn));
             if (json != null)
             {
-                result = JSONExtractor.processSoundCloudJSON(json);
+                return JSONExtractor.processSoundCloudJSON(json);
             }
-        } catch (IOException IOE) {
-
-        }
-        return result;
+        } catch (IOException IOE) {}
+        return null;
     }
 }

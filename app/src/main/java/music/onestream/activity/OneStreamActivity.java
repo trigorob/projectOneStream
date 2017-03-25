@@ -408,10 +408,6 @@ private ViewPager mViewPager;
         return playlistHandler;
     }
 
-    public void onLoginButtonClicked() {
-        handleLogin(currentPage);
-    }
-
     public void initButtonListeners() {
 
         final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButton);
@@ -419,7 +415,7 @@ private ViewPager mViewPager;
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onLoginButtonClicked();
+                handleLogin(currentPage);
             }
         });
 

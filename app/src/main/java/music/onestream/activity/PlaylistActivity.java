@@ -29,11 +29,14 @@ import music.onestream.util.PlayerActionsHandler;
  * Created by ruspe_000 on 2017-02-21.
  */
 
-public class PlaylistActivity extends OSActivity {
+public class PlaylistActivity extends OSAuthenticationActivity {
     private PlayerActionsHandler playerHandler;
     private Playlist playlist;
+    private ArrayList<Song> playlistAdapter;
+    private SongAdapter adapter;
     private ListView mainList;
     private ImageButton loginLauncherLinkerButton;
+    private String loggedOutServices;
     final Handler mHandler = new Handler();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,9 @@ public class PlaylistActivity extends OSActivity {
         setContentView(R.layout.playlist_activity);
 
         mainList = (ListView) findViewById(R.id.ListViewPL);
+        playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         loginLauncherLinkerButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButtonPL);
+        loggedOutServices = "";
 
         initPlayerHandler();
         initSongList();
@@ -49,10 +54,14 @@ public class PlaylistActivity extends OSActivity {
         setTitle(playlist.getName());
     }
 
-    public void checkForInvalidSongs(ArrayList<Song> playlistAdapter) {
+    public void checkForInvalidSongs() {
         boolean spotifyAvailable = true;
         boolean soundCloudAvailable = true;
         boolean soundCloudLoggedOut = (CredentialsHandler.getToken(this, Constants.soundCloud) == null);
+
+        playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
+        playlistAdapter = new ArrayList<Song>();
+        
         String dir = (Environment.getExternalStorageDirectory().toString());
         for (int i = 0; i < playlist.getSongInfo().size(); i++){
             Song s = playlist.getSongInfo().get(i);
@@ -74,12 +83,14 @@ public class PlaylistActivity extends OSActivity {
                 loginLauncherLinkerButton.setImageResource(R.drawable.spotify);
                 mainList.setVisibility(View.INVISIBLE);
                 spotifyAvailable = false;
+                loggedOutServices+=Constants.spotify;
             }
             else if (s.getType().equals(Constants.soundCloud) && soundCloudLoggedOut)
             {
                 loginLauncherLinkerButton.setVisibility(View.VISIBLE);
                 loginLauncherLinkerButton.setImageResource(R.drawable.googlemusic);
                 mainList.setVisibility(View.INVISIBLE);
+                loggedOutServices+=Constants.soundCloud;
                 spotifyAvailable = false;
             }
             else if (!soundCloudAvailable && !spotifyAvailable)
@@ -87,10 +98,19 @@ public class PlaylistActivity extends OSActivity {
                 //TODO: set hybrid icon here
                 i+= playlist.getSongInfo().size();
             }
-            //Todo: Add button with google if not logged in && google songs in playlist
             else {
                 playlistAdapter.add(s);
             }
+        }
+
+        if (loggedOutServices.length() == 0)
+        {
+            loginLauncherLinkerButton.setVisibility(View.INVISIBLE);
+            mainList.setVisibility(View.VISIBLE);
+
+            adapter = new SongAdapter(this, R.layout.songlayout, playlistAdapter);
+            mainList.setAdapter(adapter);
+            mainList.invalidateViews();
         }
 
         PlaylistActivity.this.runOnUiThread(new Runnable() {
@@ -98,19 +118,17 @@ public class PlaylistActivity extends OSActivity {
             public void run() {
                 playerHandler.updateSeekBar();
                 mHandler.postDelayed(this, 1000);
+                if (mainList.getVisibility() == View.INVISIBLE && loggedOutServices.length() > 0 &&
+                        loginLauncherLinkerButton.getVisibility() == View.INVISIBLE)
+                {
+                    loggedOutServices = "";
+                    checkForInvalidSongs();
+                }
             }
         });
     }
 
     private void initSongList() {
-        playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
-        ArrayList<Song> playlistAdapter = new ArrayList<Song>();
-
-        //Handle songs not accessible by device
-        checkForInvalidSongs(playlistAdapter);
-
-        ArrayAdapter<Song> adapter = new SongAdapter(this, R.layout.songlayout, playlistAdapter);
-        mainList.setAdapter(adapter);
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -127,10 +145,26 @@ public class PlaylistActivity extends OSActivity {
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settings = new Intent(v.getContext(), LoginActivity.class);
-                startActivityForResult(settings, 0);
+                if (loggedOutServices.contains(Constants.soundCloud)) {
+                    handleLogin(Constants.OneStream_SoundCloud_Pos);
+                }
+                else if (loggedOutServices.contains(Constants.spotify)) {
+                    handleLogin(Constants.OneStream_Spotify_Pos);
+                }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (intent != null && requestCode == Constants.REQUEST_CODE) {
+            onLoginActivityResult(requestCode, resultCode, intent);
+        }
+        intent = new Intent(getContext(), PlaylistActivity.class);
+        Bundle b = new Bundle();
+        b.putSerializable("Playlist", playlist);
+        intent.putExtras(b);
+        startActivityForResult(intent, 0);
     }
 
     private void initPlayerHandler() {
@@ -151,9 +185,6 @@ public class PlaylistActivity extends OSActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_edit_list) {
             Intent editList = new Intent(PlaylistActivity.this, EditPlaylistActivity.class);
@@ -187,6 +218,14 @@ public class PlaylistActivity extends OSActivity {
     protected void onResume() {
         super.onResume();
         initPlayerHandler();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                checkForInvalidSongs();
+            }
+        }, 500);
     }
 
 }

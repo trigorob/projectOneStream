@@ -102,11 +102,16 @@ public class JSONExtractor {
         return null;
 }
 
-    public static ArrayList<Song> processSoundCloudJSON(String output) {
+    public static Object[] processSoundCloudJSON(String output) {
+        Object[] retArr = new Object[2];
+        String nextSongs = "";
         ArrayList<Song> tempList = new ArrayList<Song>();
         try {
-            JSONArray jArray = new JSONArray(output);
-            JSONObject jsonObject;
+            JSONObject jsonObject= new JSONObject(output);
+            if (jsonObject.length() > 1) {
+                nextSongs = jsonObject.get("next_href").toString();
+            }
+            JSONArray jArray = (JSONArray) jsonObject.get("collection");
             for (int i = 0; i < jArray.length(); i++)
             {
                 jsonObject = new JSONObject(jArray.get(i).toString());
@@ -135,7 +140,9 @@ public class JSONExtractor {
         {
 
         }
-        return tempList;
+        retArr[0] = nextSongs;
+        retArr[1] = tempList;
+        return retArr;
     }
 
     public static ArrayList<Playlist> processPlaylistJSON(String output) {
