@@ -152,7 +152,7 @@ public class OneStreamPlayerService extends Service {
                 .setDeleteIntent(pendingIntent)
                 .setOngoing(true);
 
-        if (playerHandler.getCurrentSongListPosition() != -1) {
+        if (playerHandler != null && playerHandler.getCurrentSongListPosition() != -1) {
             Song currentSong = playerHandler.getCurrentSong();
             builder.setContentTitle(currentSong.getName());
             builder.setContentText(currentSong.getArtist());

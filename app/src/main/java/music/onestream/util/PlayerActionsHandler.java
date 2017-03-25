@@ -57,6 +57,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     ListView mainList;
     private SeekBar seekBar;
 
+    private boolean playerInStreamingMode;
     private boolean receiverIsRegistered;
     private boolean serviceInit;
     private String parentClass;
@@ -559,20 +560,33 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
         mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));
         mp.start();
+
+        playerInStreamingMode = false;
         currentSongType = Constants.local;
         seekBar.setMax(mp.getDuration());
     }
 
     public void playSoundCloudSong(Song currentSong) {
-        mp.reset();
+        if (isPlayerPlaying()) {
+            mp.reset();
+        }
+        else if (playerInStreamingMode)
+        {
+            mp.release();
+            mp = new MediaPlayer();
+        }
+
         mp.setOnPreparedListener(this);
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         try{
             mp.setDataSource(currentSong.getUri()+ "?client_id=" + Constants.SOUNDCLOUD_CLIENT_ID);
         }catch (Exception e){
             e.printStackTrace();
         }
+
         mp.prepareAsync();
+        playerInStreamingMode = true;
     }
 
     public void playSpotifySong(Song currentSong) {

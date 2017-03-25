@@ -1,8 +1,0 @@
-Amazon Webhosting LoginInfo:
-	User: admin
-	Pass: onestreamadmin1
-	
-	Access key ID: AKIAJKRWRVQWANSOIKFQ
-		Config URL: https://074989051941.signin.aws.amazon.com/console
-	Secret access key: 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
-	
