@@ -1,7 +1,6 @@
 package music.onestream.activity;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -9,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -57,7 +55,6 @@ public class PlaylistActivity extends OSAuthenticationActivity {
     public void checkForInvalidSongs() {
         boolean spotifyAvailable = true;
         boolean soundCloudAvailable = true;
-        boolean soundCloudLoggedOut = (CredentialsHandler.getToken(this, Constants.soundCloud) == null);
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         playlistAdapter = new ArrayList<Song>();
@@ -84,19 +81,24 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                 mainList.setVisibility(View.INVISIBLE);
                 spotifyAvailable = false;
                 loggedOutServices+=Constants.spotify;
+                if (!soundCloudAvailable && !spotifyAvailable)
+                {
+                    loginLauncherLinkerButton.setImageResource(R.drawable.soundify);
+                    return;
+                }
             }
-            else if (s.getType().equals(Constants.soundCloud) && soundCloudLoggedOut)
+            else if (s.getType().equals(Constants.soundCloud) && playerHandler.isSoundCloudLoggedOut())
             {
                 loginLauncherLinkerButton.setVisibility(View.VISIBLE);
-                loginLauncherLinkerButton.setImageResource(R.drawable.googlemusic);
+                loginLauncherLinkerButton.setImageResource(R.drawable.soundcloud);
                 mainList.setVisibility(View.INVISIBLE);
                 loggedOutServices+=Constants.soundCloud;
-                spotifyAvailable = false;
-            }
-            else if (!soundCloudAvailable && !spotifyAvailable)
-            {
-                //TODO: set hybrid icon here
-                i+= playlist.getSongInfo().size();
+                soundCloudAvailable = false;
+                if (!soundCloudAvailable && !spotifyAvailable)
+                {
+                    loginLauncherLinkerButton.setImageResource(R.drawable.soundify);
+                    return;
+                }
             }
             else {
                 playlistAdapter.add(s);

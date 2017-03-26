@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
@@ -405,7 +404,7 @@ private ViewPager mViewPager;
             }
             else if (currentPage == Constants.OneStream_SoundCloud_Pos)
             {
-                loginButton.setImageResource(R.drawable.googlemusic);
+                loginButton.setImageResource(R.drawable.soundcloud);
             }
         }
         else {
@@ -461,7 +460,7 @@ private ViewPager mViewPager;
                         break;
                     case 4:
                         currentPage = Constants.OneStream_SoundCloud_Pos;
-                        if ((playlistHandler.getList(Constants.soundCloud) == null))
+                        if (playerHandler.isSoundCloudLoggedOut())
                         {
                             setLoginButtonVisible(true, loginButton);
                         }

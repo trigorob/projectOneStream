@@ -92,8 +92,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         if (instance == null) {
             instance = new PlayerActionsHandler();
             instance.receiverIsRegistered = false;
-            instance.mp = new MediaPlayer();
-
         }
         instance.initHandlerFields(context, play, previous, next, rewind,
                 random, loginButton,
@@ -160,10 +158,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         return this.currentSongListPosition;
     }
 
-    public int getCurrentSongPosition(int position)
-    {
-        return this.currentSongPosition;
-    }
     public void setRandomNext(Boolean value)
     {
         this.randomNext = value;
@@ -254,7 +248,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             public void onClick(View view) {
                 {
                     //Play or resume song
-
                     if (currentSongListPosition == -1)
                     {
                         if (mp.isPlaying() || (spotPlayer != null && spotPlayer.getPlaybackState().isPlaying))
@@ -319,12 +312,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             @Override
             public void onClick(View view) {
                 {
-                    if (!randomNext) {
-                        nextSong();
-                    }
-                    else {
-                        playRandomSong();
-                    }
+                    handleNext();
                 };
             }});
 
@@ -358,6 +346,15 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             }
         });
 
+    }
+
+    public void handleNext() {
+        if (!randomNext) {
+            nextSong();
+        }
+        else {
+            playRandomSong();
+        }
     }
 
     public void resetPlayers() {
@@ -421,6 +418,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     public boolean isSpotifyLoggedOut()
     {
         return (spotPlayer == null || !spotPlayer.isLoggedIn());
+    }
+    public boolean isSoundCloudLoggedOut() {
+        return (CredentialsHandler.getToken(context, Constants.soundCloud) == null);
     }
 
 
@@ -554,31 +554,46 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     }
 
     public void playLocalSong(Song currentSong) {
-        if (isPlayerPlaying()) {
-            mp.reset();
-        }
-        mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));
+        mp = initMediaPlayer(mp, currentSong.getUri());
         mp.start();
 
         currentSongType = Constants.local;
         seekBar.setMax(mp.getDuration());
     }
 
-    public void playSoundCloudSong(Song currentSong) {
+    private MediaPlayer initMediaPlayer(MediaPlayer mp, String uri) {
         if (isPlayerPlaying()) {
             mp.reset();
         }
-        mp.release();
-        mp = new MediaPlayer();
-        mp.setOnPreparedListener(this);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        try{
-            mp.setDataSource(currentSong.getUri()+ "?client_id=" + Constants.SOUNDCLOUD_CLIENT_ID);
-        }catch (Exception e){
-            e.printStackTrace();
+        if (mp != null) {
+            mp.release();
         }
+        if (!uri.contains("client_id")) {
+            mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));
+        }
+        else {
+            mp = new MediaPlayer();
+            mp.setOnPreparedListener(this);
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try{
+                mp.setDataSource(uri);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                handleNext();
+            }
+        });
 
+        return mp;
+    }
+
+    public void playSoundCloudSong(Song currentSong) {
+        String uri = currentSong.getUri()+ "?client_id=" + Constants.SOUNDCLOUD_CLIENT_ID;
+        mp = initMediaPlayer(mp, uri);
         mp.prepareAsync();
     }
 
@@ -747,7 +762,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     }
 
     public void onDestroy() {
-        mp.release();
+        if (mp != null) {
+            mp.release();
+        }
         if (spotPlayer != null) {
             spotPlayer.pause(opCallback);
         }

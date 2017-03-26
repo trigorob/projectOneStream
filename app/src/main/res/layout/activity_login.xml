@@ -14,13 +14,14 @@
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:id="@+id/sound_cloud_logo_background"
-            android:background="#600"
+            android:background="#84bd00"
             android:gravity="center">
             <ImageButton
                 android:id="@+id/soundCloudMusicLoginLauncherButton"
-                android:src="@drawable/googlemusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:src="@drawable/soundcloud"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:scaleType="fitCenter"
                 android:onClick="onSoundCloudLoginButtonClicked"
                 android:backgroundTint="@android:color/transparent" />
         </LinearLayout>
@@ -28,12 +29,13 @@
             android:id="@+id/os_logo_background"
             android:layout_width="match_parent"
             android:layout_height="210dp"
-            android:background="#84bd00"
+            android:background="#FF7700"
             android:gravity="center">
             <ImageButton
                 android:id="@+id/oneStreamDomainLauncherButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="fitCenter"
                 android:backgroundTint="@android:color/transparent"
                 android:src="@drawable/logo" />
         </LinearLayout>
@@ -46,8 +48,9 @@
         <ImageButton
             android:id="@+id/spotifyLoginLauncherButton"
             android:src="@drawable/spotify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="fitCenter"
             android:onClick="onSpotifyLoginButtonClicked"
             android:backgroundTint="@android:color/transparent" />
     </LinearLayout>
