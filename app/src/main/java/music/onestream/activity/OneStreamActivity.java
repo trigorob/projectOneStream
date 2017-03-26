@@ -154,6 +154,15 @@ private ViewPager mViewPager;
         if (adapter != null) {
             adapter = new SongAdapter(getContext(), R.layout.songlayout,
                     playlistHandler.getList(Constants.local).getSongInfo());
+            if (currentPage == Constants.OneStream_Local_Pos)
+            {
+                mainList.setAdapter(adapter);
+                int currentPos = getPlayerHandler().getCurrentSongListPosition();
+                if (currentPos > 0 && currentPos < adapter.getSongs().size())
+                {
+                    mainList.setSelection(currentPos);
+                }
+            }
             mainList.invalidateViews();
         }
     }

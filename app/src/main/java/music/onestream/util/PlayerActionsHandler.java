@@ -57,7 +57,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     ListView mainList;
     private SeekBar seekBar;
 
-    private boolean playerInStreamingMode;
     private boolean receiverIsRegistered;
     private boolean serviceInit;
     private String parentClass;
@@ -92,8 +91,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
         if (instance == null) {
             instance = new PlayerActionsHandler();
-            instance.mp = new MediaPlayer();
             instance.receiverIsRegistered = false;
+            instance.mp = new MediaPlayer();
+
         }
         instance.initHandlerFields(context, play, previous, next, rewind,
                 random, loginButton,
@@ -119,7 +119,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         instance.seekBar = seekBar;
         instance.parentClass = parentClass;
         instance.serviceInit = false;
-
         if (isPlaying())
         {
             instance.fabIO.setImageResource(R.drawable.pause);
@@ -561,7 +560,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         mp = MediaPlayer.create(context, Uri.parse(currentSong.getUri()));
         mp.start();
 
-        playerInStreamingMode = false;
         currentSongType = Constants.local;
         seekBar.setMax(mp.getDuration());
     }
@@ -570,12 +568,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         if (isPlayerPlaying()) {
             mp.reset();
         }
-        else if (playerInStreamingMode)
-        {
-            mp.release();
-            mp = new MediaPlayer();
-        }
-
+        mp.release();
+        mp = new MediaPlayer();
         mp.setOnPreparedListener(this);
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -586,7 +580,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
 
         mp.prepareAsync();
-        playerInStreamingMode = true;
     }
 
     public void playSpotifySong(Song currentSong) {

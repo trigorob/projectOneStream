@@ -61,7 +61,7 @@ public class PlaylistActivity extends OSAuthenticationActivity {
 
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
         playlistAdapter = new ArrayList<Song>();
-        
+
         String dir = (Environment.getExternalStorageDirectory().toString());
         for (int i = 0; i < playlist.getSongInfo().size(); i++){
             Song s = playlist.getSongInfo().get(i);

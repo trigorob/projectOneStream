@@ -2,6 +2,9 @@ package music.onestream.playlist;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import android.content.Context;
 
 import com.google.gson.Gson;
@@ -54,6 +57,8 @@ public class PlaylistHandler implements AsyncResponse {
     private static PlaylistHandler instance;
     private int totalDirectories = -1;
 
+    private static Lock addingToArtistAlbums;
+
 
     protected PlaylistHandler() {
 
@@ -69,6 +74,7 @@ public class PlaylistHandler implements AsyncResponse {
             instance.musicGetterHandler = new MusicGetterHandler(instance);
         }
 
+        instance.addingToArtistAlbums = new ReentrantLock();
         instance.playlistCachingOn = cachePlaylists;
         instance.directory = directory;
         instance.context = appContext;
@@ -366,6 +372,7 @@ public class PlaylistHandler implements AsyncResponse {
         else if (type.equals(Constants.artistsAlbumsMusicLoader)) {
             OneStreamActivity.notifyArtistsAdapter();
             OneStreamActivity.notifyAlbumsAdapter();
+            addingToArtistAlbums.unlock();
         }
 
         else if (type.equals(Constants.musicLoaderService)) {
@@ -472,6 +479,10 @@ public class PlaylistHandler implements AsyncResponse {
 
 
     public static void addToArtistsAlbums(ArrayList<Song> songs, AsyncResponse SAR) {
+        while (!addingToArtistAlbums.tryLock())
+        {
+
+        }
         Object[] params = new Object[3];
         params[0] = artists;
         params[1] = albums;
