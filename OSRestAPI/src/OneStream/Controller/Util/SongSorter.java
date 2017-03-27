@@ -11,24 +11,18 @@ import java.util.Comparator;
 public class SongSorter {
 
     ArrayList<Song> Array1;
-    String type;
-    Object[] retArr = null;
 
-    public SongSorter(ArrayList<Song> listContent, String type) {
+    public SongSorter(ArrayList<Song> listContent) {
         this.Array1 = listContent;
-        this.type = type;
 
         if (this.Array1 != null) {
             sort();
-            retArr = new Object[]{Array1};
         }
     }
 
-    public Object[] getRetArr() {
-        return retArr;
+    public ArrayList<Song> getSortedArray() {
+        return Array1;
     }
-
-
     public void sort() {
 
         ArrayList<compString> metaData = new ArrayList<compString>();
@@ -39,7 +33,7 @@ public class SongSorter {
                     Array1.get(i).getAlbumArt()));
         }
 
-        Collections.sort(metaData, new ResultComparatorString(type));
+        Collections.sort(metaData, new ResultComparatorString());
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
             Array1.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album,
@@ -50,11 +44,6 @@ public class SongSorter {
 }
 
 class ResultComparatorString implements Comparator<compString> {
-    String type;
-
-    public ResultComparatorString(String type) {
-        this.type = type;
-    }
     @Override
     public int compare(compString a, compString b) {
             return b.position - a.position < 0 ? -1 : b.position == a.position ? 0 : 1;

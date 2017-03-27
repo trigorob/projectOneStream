@@ -1,6 +1,7 @@
 package OneStream.Controller;
 
 import OneStream.Controller.Util.Playlist;
+import OneStream.Controller.Util.PlaylistSorter;
 import OneStream.Controller.Util.Song;
 import OneStream.PlaylistRepository;
 import OneStream.SongRepository;
@@ -160,7 +161,22 @@ public class PlaylistControllerTest{
         
     }
 
+
     @Test
+    public void testPlaylistSorter() {
+        init();
+        ArrayList<Playlist> playlists =
+                playlistController.playlist("TestList", "", 0, 1000,
+                        false, false, false);
+        PlaylistSorter ps = new PlaylistSorter(playlists);
+        playlists = ps.getSortedArray();
+        assert playlists.contains(p);
+        assert playlists.contains(p2);
+        assert playlists.get(0).toString().equals(p.toString());
+        assert playlists.get(1).toString().equals(p2.toString());
+    }
+
+        @Test
     public void testRecommendedPlaylists() {
         init();
         initRecommendedPlaylistController();

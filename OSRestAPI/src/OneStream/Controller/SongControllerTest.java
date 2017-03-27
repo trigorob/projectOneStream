@@ -2,6 +2,7 @@ package OneStream.Controller;
 
 import OneStream.Controller.Util.Playlist;
 import OneStream.Controller.Util.Song;
+import OneStream.Controller.Util.SongSorter;
 import OneStream.PlaylistRepository;
 import OneStream.SongRepository;
 import org.junit.Test;
@@ -130,6 +131,23 @@ public class SongControllerTest {
         assert songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert !songs.contains(allSongs.get(2));
+    }
+
+    @Test
+    public void testSongSorter() {
+        init();
+        ArrayList<Song> songs =songController.song("","","",
+                false,false,false);
+
+        SongSorter songSorter = new SongSorter(songs);
+        songs = songSorter.getSortedArray();
+        assert songs.contains(allSongs.get(2));
+        assert songs.contains(allSongs.get(1));
+        assert songs.contains(allSongs.get(0));
+        assert songs.get(2).toString().equals(allSongs.get(0).toString());
+        assert songs.get(1).toString().contains(allSongs.get(1).toString());
+        assert songs.get(0).toString().contains(allSongs.get(2).toString());
+
     }
 
     @Test

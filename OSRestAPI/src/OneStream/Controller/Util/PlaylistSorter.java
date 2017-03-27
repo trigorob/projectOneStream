@@ -11,9 +11,8 @@ public class PlaylistSorter {
     ArrayList<Playlist> sortedArray;
     String type;
 
-    public PlaylistSorter(ArrayList<Playlist> playlists, String type) {
+    public PlaylistSorter(ArrayList<Playlist> playlists) {
         this.sortedArray = playlists;
-        this.type = type;
 
         if (this.sortedArray != null) {
             sort();
@@ -33,7 +32,7 @@ public class PlaylistSorter {
                     sortedArray.get(i).getSongInfo(), sortedArray.get(i).get_id(), sortedArray.get(i).getSongInfo().size()));
         }
 
-        Collections.sort(metaData, new ResultComparatorPlaylist(type));
+        Collections.sort(metaData, new ResultComparatorPlaylist());
         for (int i = 0; i < metaData.size(); i++) {
             compPL comp = metaData.get(i);
             sortedArray.set(i, new Playlist(comp.name, comp.owner, comp.songInfo));
@@ -43,12 +42,6 @@ public class PlaylistSorter {
 }
 
 class ResultComparatorPlaylist implements Comparator<compPL> {
-    String type;
-
-    public ResultComparatorPlaylist(String type) {
-        this.type = type;
-    }
-
     @Override
     public int compare(compPL a, compPL b) {
             return b.size - a.size < 0 ? -1 : b.size == a.size ? 0 : 1;

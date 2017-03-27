@@ -23,12 +23,12 @@ public class TopAlbumController extends OneStreamController {
         for (int i = 0; i < 50; i++) {
             if (i >= allAlbumPlaylists.size())
             {
-                PlaylistSorter ps = new PlaylistSorter(topAlbums, "Playlist");
+                PlaylistSorter ps = new PlaylistSorter(topAlbums);
                 return ps.getSortedArray();
             }
             topAlbums.add(allAlbumPlaylists.get(i));
         }
-        PlaylistSorter ps = new PlaylistSorter(topAlbums, "Playlist");
+        PlaylistSorter ps = new PlaylistSorter(topAlbums);
         return ps.getSortedArray();
     }
 

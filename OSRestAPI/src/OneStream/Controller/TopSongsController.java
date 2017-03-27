@@ -26,8 +26,8 @@ public class TopSongsController extends OneStreamController {
             }
         }
         allSongs.removeAll(badSongs);
-        SongSorter sorter = new SongSorter(allSongs, "SONG");
-        allSongs = (ArrayList<Song>) sorter.getRetArr()[0];
+        SongSorter sorter = new SongSorter(allSongs);
+        allSongs = (ArrayList<Song>) sorter.getSortedArray();
         ArrayList<Playlist> songsLists = new ArrayList<Playlist>();
         int offset = 0;
         String name = "";
