@@ -49,14 +49,19 @@ public class OSAuthenticationActivity extends OSActivity {
         String response;
         Logger logger = new Logger(this.getApplicationContext(), LoginActivity.class.getSimpleName());
         if (getLoginHandler() != null && getLoginHandler().isAuthenticationIntentSoundCloud(intent)) {
-            getLoginHandler().getSoundCloudToken(intent);
-            logger.logMessage("Login Success!");
-            startMainActivity();
+            if (intent == null || intent.getData().toString().contains("access_denied")) {
+                logger.logMessage("Login Cancelled");
+            }
+            else {
+                getLoginHandler().getSoundCloudToken(intent);
+                logger.logMessage("Login Success!");
+                startMainActivity();
+            }
         }
         else {
             response = getLoginHandler().handleLogin(requestCode, resultCode, intent);
             if (response.equals("Error")) {
-                logger.logError("Login Failed");
+                logger.logMessage("Login Failed");
             } else {
                 logger.logMessage("Login Success!");
                 startMainActivity();

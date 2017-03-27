@@ -18,11 +18,6 @@ public class Logger {
         this.TAG = TAG;
     }
 
-    public void logError(String msg) {
-        Toast.makeText(context, "Error: " + msg, Toast.LENGTH_SHORT).show();
-        Log.e(TAG, msg);
-    }
-
     public void logMessage(String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         Log.d(TAG, msg);

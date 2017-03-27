@@ -118,17 +118,13 @@ public class LoginHandler {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    storeSpotifyToken(mActivity, response);
-
+                    return storeSpotifyToken(mActivity, response);
                 // Auth flow returned an error
                 case ERROR:
-                    authResult = "Login Failed";
-                    return authResult;
-
+                    return "Error";
                 // Most likely auth flow was cancelled
                 default:
-                    authResult = (response.getType().toString());
-                    return authResult;
+                    return "Error";
             }
         }
         return "";

@@ -255,7 +255,7 @@ private ViewPager mViewPager;
         artistsAdapter.setNotifyOnChange(true);
         albumsAdapter.setNotifyOnChange(true);
 
-        mainList.setAdapter(adapter);
+        mainList.setAdapter(combinedAdapter);
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
