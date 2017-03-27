@@ -236,19 +236,15 @@ public class PlaylistActivity extends OSAuthenticationActivity {
     @Override
     public void onBackPressed() {
         String parent =  getIntent().getStringExtra("Parent");
-        if (parent.contains("OneStreamActivity"))
-        {
-            Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
-            startActivityForResult(back, 0);
-        }
-        else if (parent.contains("PlaylistRecommendationsActivity"))
+        if (parent.contains("PlaylistRecommendationsActivity"))
         {
             Intent back = new Intent(getApplicationContext(), PlaylistRecommendationsActivity.class);
             startActivityForResult(back, 0);
         }
         else
         {
-            super.onBackPressed();
+            Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
+            startActivityForResult(back, 0);
         }
     }
 
