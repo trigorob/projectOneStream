@@ -305,6 +305,7 @@ private ViewPager mViewPager;
                     Bundle b = new Bundle();
                     Playlist p = ((PlaylistAdapter) mainList.getAdapter()).getItem(position);
                     b.putSerializable("Playlist", p);
+                    b.putString("Parent", OneStreamActivity.class.toString());
                     playlist.putExtras(b);
                     startActivityForResult(playlist, 0);
                 }

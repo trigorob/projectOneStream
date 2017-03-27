@@ -16,11 +16,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import music.onestream.R;
+import music.onestream.playlist.Playlist;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
-import music.onestream.playlist.Playlist;
 import music.onestream.util.Constants;
-import music.onestream.util.CredentialsHandler;
 import music.onestream.util.PlayerActionsHandler;
 
 /**
@@ -165,6 +164,10 @@ public class PlaylistActivity extends OSAuthenticationActivity {
         intent = new Intent(getContext(), PlaylistActivity.class);
         Bundle b = new Bundle();
         b.putSerializable("Playlist", playlist);
+        if (getCallingActivity() != null)
+        {
+            b.putString("Parent", getCallingActivity().toString());
+        }
         intent.putExtras(b);
         startActivityForResult(intent, 0);
     }
@@ -228,6 +231,25 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                 checkForInvalidSongs();
             }
         }, 500);
+    }
+
+    @Override
+    public void onBackPressed() {
+        String parent =  getIntent().getStringExtra("Parent");
+        if (parent.contains("OneStreamActivity"))
+        {
+            Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
+            startActivityForResult(back, 0);
+        }
+        else if (parent.contains("PlaylistRecommendationsActivity"))
+        {
+            Intent back = new Intent(getApplicationContext(), PlaylistRecommendationsActivity.class);
+            startActivityForResult(back, 0);
+        }
+        else
+        {
+            super.onBackPressed();
+        }
     }
 
 }

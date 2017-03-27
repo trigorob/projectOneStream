@@ -1,22 +1,16 @@
 package music.onestream.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,6 +40,11 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
     private PlaylistAdapter topSongsAdapter;
     private PlaylistAdapter topArtistsAdapter;
     private PlaylistAdapter topAlbumsAdapter;
+
+    private ArrayList<Playlist> playlists;
+    private ArrayList<Playlist> topSongs;
+    private ArrayList<Playlist> topArtists;
+    private ArrayList<Playlist> topAlbums;
     private RecommendationsAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
@@ -110,15 +109,32 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
 
         adapter = new SongAdapter(this, R.layout.songlayout, songs);
         playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
-        if (topAlbumsAdapter == null || topSongsAdapter == null || topArtistsAdapter == null) {
-            topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
-            topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
+        if (topAlbums == null)
+        {
             topAlbumsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
-
-            getTopRecommendations(Constants.getTopSongs);
-            getTopRecommendations(Constants.getTopArtists);
             getTopRecommendations(Constants.getTopAlbums);
         }
+        else
+        {
+            topAlbumsAdapter = new PlaylistAdapter(this, R.layout.songlayout, topAlbums);
+        }
+        if (topArtists == null) {
+            topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
+            getTopRecommendations(Constants.getTopArtists);
+        }
+        else
+        {
+            topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, topArtists);
+        }
+        if (topSongsAdapter == null) {
+            topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, new ArrayList<Playlist>());
+            getTopRecommendations(Constants.getTopSongs);
+        }
+        else
+        {
+            topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, topSongs);
+        }
+
         adapter.setNotifyOnChange(true);
         mainList.setAdapter(adapter);
 
@@ -136,6 +152,7 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
                     Intent playlist = new Intent(view.getContext(), PlaylistActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", p);
+                    b.putString("Parent", PlaylistRecommendationsActivity.class.toString());
                     playlist.putExtras(b);
                     startActivityForResult(playlist, 0);
                 }
@@ -205,22 +222,26 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
         if (resultList != null && resultList.size() > 0)
         {
             if (type.equals(Constants.getRecommendations)) {
-                playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
+                playlists = resultList;
+                playlistAdapter = new PlaylistAdapter(this, R.layout.songlayout, playlists);
                 playlistAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
                 mViewPager.setCurrentItem(1);
             }
             else if (type.equals(Constants.getTopSongs)) {
-                topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
+                topSongs = resultList;
+                topSongsAdapter = new PlaylistAdapter(this, R.layout.songlayout, topSongs);
                 topSongsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
             }
             else if (type.equals(Constants.getTopArtists)) {
-                topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
+                topArtists = resultList;
+                topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, topArtists);
                 topArtistsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
             }
             else if (type.equals(Constants.getTopAlbums)) {
+                topAlbums = resultList;
                 topAlbumsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
                 topAlbumsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
@@ -235,6 +256,21 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putSerializable("Playlists", playlists);
+        savedInstanceState.putSerializable("TopSongs", topSongs);
+        savedInstanceState.putSerializable("TopAlbums", topAlbums);
+        savedInstanceState.putSerializable("TopArtists", topArtists);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
+        startActivityForResult(back, 0);
     }
 
 }
