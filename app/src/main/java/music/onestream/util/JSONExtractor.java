@@ -120,13 +120,19 @@ public class JSONExtractor {
                     String name = (String) jsonObject.get("title");
                     String albumArt = (String) jsonObject.get("artwork_url");
                     String artist = "";
-                    String[] tags = ((String) jsonObject.get("tag_list")).split("\"");
-                    if (tags.length > 1)
-                    {
-                        artist = tags[1];
+                    try {
+                        String tagList = (String) jsonObject.get("tag_list");
+                        String[] tags = tagList.split("\"");
+                        if (tags.length > 1)
+                        {
+                            artist = tags[1];
+                        }
+                        else
+                        {
+                            artist = Constants.defaultArtistsAlbumSongName;
+                        }
                     }
-                    else
-                    {
+                    catch (JSONException JE) {
                         artist = Constants.defaultArtistsAlbumSongName;
                     }
                     String album = (String) jsonObject.get("genre");

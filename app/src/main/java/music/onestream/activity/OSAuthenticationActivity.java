@@ -1,16 +1,11 @@
 package music.onestream.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import music.onestream.R;
 import music.onestream.util.Constants;
 import music.onestream.util.Logger;
 import music.onestream.util.LoginHandler;

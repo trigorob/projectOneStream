@@ -30,6 +30,7 @@ public class JSONExtractorTest {
     private Playlist playlist2;
     private Song song;
     private Song song2;
+    private Song song3;
     private ArrayList<Song> testSongs;
     private ArrayList<Playlist> testPlaylists;
     private String spotifyJSON =
@@ -102,6 +103,20 @@ public class JSONExtractorTest {
             + "} "
             + " }]";
 
+    private String soundCloudJSON = "{\"collection\":[{\"kind\":\"track\",\"id\":231321623,\"created_at\":\"2015/11/03 06:14:45 +0000\"" +
+            ",\"permalink\":\"feelgoodinc\",\"streamable\":true,\"embeddable_by\":\"all\",\"downloadable\":false,\"purchase_url\":null," +
+            "\"label_id\":null,\"purchase_title\":null,\"genre\":\"gorillaz\",\"title\":\"Feel Good Inc.\"," +
+            "\"label_name\":null,\"release\":null,\"track_type\":null,\"key_signature\":null,\"isrc\":null," +
+            "\"video_url\":null,\"bpm\":null,\"release_year\":null,\"release_month\":null,\"release_day\":null,\"original_format\":\"flac\"," +
+            "\"license\":\"all-rights-reserved\",\"uri\":\"https://api.soundcloud.com/tracks/231321623\"" +
+            ",\"user\":{\"id\":184434848,\"kind\":\"user\",\"permalink\":\"everythinggorillazp2\",\"username\":\"Everything Gorillaz - P2\"" +
+            ",\"last_modified\":\"2016/03/08 17:44:20 +0000\",\"uri\":\"https://api.soundcloud.com/users/184434848\"" +
+            ",\"permalink_url\":\"http://soundcloud.com/everythinggorillazp2\"" +
+            ",\"avatar_url\":\"https://i1.sndcdn.com/avatars-000185939326-fpfaz9-large.jpg\"},"+
+            "\"user_playback_count\":1,\"user_favorite\":true" +
+            ",\"artwork_url\":\"https://i1.sndcdn.com/artworks-000134866575-mk19ov-large.jpg\"" +
+            ",\"stream_url\":\"https://api.soundcloud.com/tracks/231321623/stream\"}]}";
+
     @Test
     public void extractPlaylistJSONtest() throws Exception {
         initPlaylists();
@@ -124,6 +139,15 @@ public class JSONExtractorTest {
         assert testSong.equals(songLists.get(0));
     }
 
+    @Test
+    public void extractSoundCloudJSONtest() throws Exception {
+        initPlaylists();
+        ArrayList<Song> songLists = (ArrayList<Song>) ((Object[]) JSONExtractor.processSoundCloudJSON(soundCloudJSON))[1];
+        assert songLists.size() == 1;
+        Song testSong = songLists.get(0);
+        assert testSong.equals(songLists.get(1));
+    }
+
 
     public void initPlaylists() {
         playlist = new Playlist();
@@ -143,6 +167,9 @@ public class JSONExtractorTest {
         testSongs = new ArrayList<Song>();
         song = new Song("Self Control", "spotify:track:2Yxa3k0CecfZ5HVWQyxNvy", "Scissor Sisters",
                 "Magic Hour", "Spotify", 4, "https://i.scdn.co/image/bfb21f1026245457738ed73f535d079bf6450ada");
+        testSongs.add(song);
+        song3 = new Song("demon days", "https://api.soundcloud.com/tracks/231321623/stream", "N/A",
+                "gorillaz", "SoundCloud", 1, "https://i1.sndcdn.com/artworks-000134866575-mk19ov-large.jpg");
         testSongs.add(song);
     }
 

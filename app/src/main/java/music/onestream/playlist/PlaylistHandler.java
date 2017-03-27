@@ -1,30 +1,30 @@
 package music.onestream.playlist;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import android.content.Context;
 
 import com.google.gson.Gson;
 import com.spotify.sdk.android.player.Connectivity;
 
-import music.onestream.musicgetter.ArtistAlbumMusicLoader;
-import music.onestream.musicgetter.SoundCloudMusicGetter;
-import music.onestream.song.Song;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import music.onestream.activity.OneStreamActivity;
+import music.onestream.musicgetter.ArtistAlbumMusicLoader;
 import music.onestream.musicgetter.LocalMusicGetter;
 import music.onestream.musicgetter.MusicGetterHandler;
+import music.onestream.musicgetter.SoundCloudMusicGetter;
 import music.onestream.musicgetter.SpotifyMusicGetter;
+import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.Constants;
 import music.onestream.util.CredentialsHandler;
 import music.onestream.util.JSONExtractor;
-import music.onestream.util.RestServiceActionsHandler;
 import music.onestream.util.MusicSorter;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.PlaylistSorter;
+import music.onestream.util.RestServiceActionsHandler;
 import music.onestream.util.TinyDB;
 
 public class PlaylistHandler implements AsyncResponse {
@@ -342,7 +342,7 @@ public class PlaylistHandler implements AsyncResponse {
         final String accessToken = CH.getToken(context, Constants.soundCloud);
 
         if (accessToken != null && isConnected() && soundCloudLoginChanged
-                || isConnected() && nextHref.contains("http")) {
+                || (isConnected() && nextHref.contains("http"))) {
             soundCloudLoginChanged = false;
             if (!nextHref.contains("http")) {
                 soundCloudListContent = new Playlist();
@@ -351,6 +351,20 @@ public class PlaylistHandler implements AsyncResponse {
             musicGetterHandler.initSoundCloudMusicGetter();
         }
 
+    }
+
+    public void onServiceLoggedIn(String service)
+    {
+        if (service.equals(Constants.soundCloud))
+        {
+            soundCloudLoginChanged = true;
+            getSoundCloudLibrary(Constants.defaultHref);
+        }
+        else if (service.equals(Constants.spotify))
+        {
+            soundCloudLoginChanged = true;
+            getSpotifyLibrary();
+        }
     }
 
     //Called when threads return

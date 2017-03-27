@@ -24,11 +24,11 @@ public class CredentialsHandlerTest {
     public void testToken() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
         setToken(appContext, "ABC", 999, TimeUnit.SECONDS, "Spotify");
-        setToken(appContext, "DEF", 999, TimeUnit.SECONDS, "GoogleMusic");
+        setToken(appContext, "DEF", 999, TimeUnit.SECONDS, "SoundCloud");
         CredentialsHandlerTest cH = new CredentialsHandlerTest();
         String token = getToken(appContext, "Spotify");
         assertEquals("ABC", token);
-        token = getToken(appContext, "GoogleMusic");
+        token = getToken(appContext, "SoundCloud");
         assertEquals("DEF", token);
     }
 }

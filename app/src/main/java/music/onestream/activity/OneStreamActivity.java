@@ -1,18 +1,15 @@
 package music.onestream.activity;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -21,26 +18,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.spotify.sdk.android.player.Connectivity;
 
-import music.onestream.util.Constants;
-import music.onestream.util.PlayerActionsHandler;
+import java.util.ArrayList;
+
+import music.onestream.R;
 import music.onestream.playlist.Playlist;
 import music.onestream.playlist.PlaylistAdapter;
 import music.onestream.playlist.PlaylistHandler;
-import music.onestream.R;
-import music.onestream.util.OneStreamActivityAdapter;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
+import music.onestream.util.Constants;
+import music.onestream.util.OneStreamActivityAdapter;
+import music.onestream.util.PlayerActionsHandler;
 
 public class OneStreamActivity extends OSAuthenticationActivity {
 
@@ -141,10 +139,10 @@ private ViewPager mViewPager;
 
         mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
 
-        firstRun = true;
-
         initPlayerHandler();
-        initPlaylistHandler();
+        if (playlistHandler == null) {
+            initPlaylistHandler();
+        }
         initListDisplay();
         initButtonListeners();
     }
@@ -363,6 +361,7 @@ private ViewPager mViewPager;
         {
             spotifyLoginChanged = true;
             soundCloudLoginChanged = true;
+            firstRun = true;
         }
 
         playlistHandler = PlaylistHandler.initPlaylistHandler(this.getApplicationContext(), playerHandler,

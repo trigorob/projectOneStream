@@ -12,6 +12,9 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import java.util.concurrent.TimeUnit;
 
+import music.onestream.activity.OSAuthenticationActivity;
+import music.onestream.activity.OneStreamActivity;
+
 /**
  * Created by ruspe_000 on 2017-03-22.
  */
@@ -21,14 +24,14 @@ public class LoginHandler {
     private SoundCloudAuthenticator mAuthenticator;
     private AuthenticationStrategy strategy;
     private AuthenticationCallback soundcloudCallback;
-    private Activity mActivity;
+    private OSAuthenticationActivity mActivity;
     private String authResult;
 
-    public LoginHandler(Activity activity) {
+    public LoginHandler(OSAuthenticationActivity activity) {
         mActivity = activity;
     }
 
-    public void setActivity(Activity activity) {
+    public void setActivity(OSAuthenticationActivity activity) {
         mActivity = activity;
     }
 
@@ -73,6 +76,7 @@ public class LoginHandler {
                     switch (response.getType()) {
                         case TOKEN:
                             storeSoundCloudToken(mActivity, response);
+                            OneStreamActivity.getPlaylistHandler().onServiceLoggedIn(Constants.soundCloud);
                             break;
                     }
                 }
