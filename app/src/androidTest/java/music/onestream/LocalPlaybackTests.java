@@ -92,5 +92,38 @@ public class LocalPlaybackTests {
         onView(withId(R.id.RandomSV)).check(ViewAssertions.matches(isDisplayed()));
 
     }
+
+    @Test
+    public void songViewDisabledPlayLocalSong() {
+
+        //Click options menu and click settings
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(withText("Settings")).perform(click());
+
+        //Disable song view
+        onView(withId(R.id.songViewToggleButton)).perform(click());
+
+        //Go back to Onestream
+        onView(withId(R.id.back)).perform(click());
+
+        //Click Local tab
+        onView(allOf(withClassName(endsWith("TabView")),
+                withChild(withText(Constants.OneStream_Local)),
+                withParent(withParent(withId(R.id.tabs)))
+        )).perform(scrollTo()).perform(click());
+
+        onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
+
+        onView(withId(R.id.listSongName)).perform(click());
+
+        //Check if play controls are displayed
+        onView(withId(R.id.fabIO)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Random)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Rewind)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Prev)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Next)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.seekBar)).check(ViewAssertions.matches(isDisplayed()));
+
+    }
 }
 
