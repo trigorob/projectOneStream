@@ -272,6 +272,9 @@ public class PlaylistHandler implements AsyncResponse {
             artists = new ArrayList<Playlist>();
             albums = new ArrayList<Playlist>();
             genres = new ArrayList<Playlist>();
+            if (playlistCachingOn && listContent != null && listContent.getSongInfo() != null) {
+                addToArtistsAlbumsGenres(listContent.getSongInfo(), this);
+            }
         }
         getSpotifyLibrary();
         getSoundCloudLibrary(Constants.defaultHref);
@@ -388,30 +391,12 @@ public class PlaylistHandler implements AsyncResponse {
         }
 
         else if (type.equals(Constants.musicLoaderService)) {
-            String nestedDirectory = (String) retVal;
-            LocalMusicGetter directoryContent =
-                    ((LocalMusicGetter) musicGetterHandler.getLocalMusicGetter().get(nestedDirectory));
-            ArrayList<Song> totalListContent = directoryContent.getSongs();
-            listContent.addSongs(totalListContent);
-            combinedList.addSongs(totalListContent);
-            OneStreamActivity.notifyLocalAdapter();
-            OneStreamActivity.notifyLibraryAdapter();
-
-            totalDirectories += directoryContent.getDirectories().size() - 1;
-            for (File file: directoryContent.getDirectories())
-            {
-                getMusicFromDirectory(file.getPath());
-            }
-            if (totalDirectories == 0) {
-                sortLists(sortType, Constants.local);
-                sortLists(sortType, Constants.library);
-                OneStreamActivity.notifyLocalAdapter();
-                OneStreamActivity.notifyLibraryAdapter();
-                addToArtistsAlbumsGenres(listContent.getSongInfo(), this);
-            }
-        } else if (type.equals(Constants.soundCloudMusicGetter)) {
+            processLocalSongs(retVal);
+        }
+        else if (type.equals(Constants.soundCloudMusicGetter)) {
             processRemoteSongs(retVal, Constants.soundCloud);
-        } else if (type.equals(Constants.spotifyMusicGetter)) {
+        }
+        else if (type.equals(Constants.spotifyMusicGetter)) {
             processRemoteSongs(retVal, Constants.spotify);
         }
         if (playlistCachingOn && !type.equals(Constants.restServiceActionsHandler))
@@ -420,6 +405,29 @@ public class PlaylistHandler implements AsyncResponse {
         }
     }
 
+    private void processLocalSongs(Object retVal) {
+        String nestedDirectory = (String) retVal;
+        LocalMusicGetter directoryContent =
+                ((LocalMusicGetter) musicGetterHandler.getLocalMusicGetter().get(nestedDirectory));
+        ArrayList<Song> totalListContent = directoryContent.getSongs();
+        listContent.addSongs(totalListContent);
+        combinedList.addSongs(totalListContent);
+        OneStreamActivity.notifyLocalAdapter();
+        OneStreamActivity.notifyLibraryAdapter();
+
+        totalDirectories += directoryContent.getDirectories().size() - 1;
+        for (File file : directoryContent.getDirectories()) {
+            getMusicFromDirectory(file.getPath());
+        }
+        if (totalDirectories == 0) {
+            sortLists(sortType, Constants.local);
+            sortLists(sortType, Constants.library);
+            OneStreamActivity.notifyLocalAdapter();
+            OneStreamActivity.notifyLibraryAdapter();
+            addToArtistsAlbumsGenres(listContent.getSongInfo(), this);
+
+        }
+    }
     private void processRemoteSongs(Object retVal, String type) {
         ArrayList<Song> songs = null;
         String nextHref = "";
