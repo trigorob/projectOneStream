@@ -27,7 +27,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class OneStreamActivityUITest {
+public class OneStreamActivityUITests {
 
     @Rule
     public ActivityTestRule<OneStreamActivity> mActivityRule = new ActivityTestRule<>(

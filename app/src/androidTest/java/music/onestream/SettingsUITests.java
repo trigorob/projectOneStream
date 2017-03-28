@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.allOf;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class SettingsUITest {
+public class SettingsUITests {
 
     @Rule
     public ActivityTestRule<SettingsActivity> mActivityRule = new ActivityTestRule<>(
