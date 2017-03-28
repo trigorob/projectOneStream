@@ -80,7 +80,7 @@ public class LocalPlaybackTests {
 
         //Check if album art, artist name, and album name are displayed in song view
         onView(withId(R.id.album)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.artistName)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.artistOrGenreName)).check(ViewAssertions.matches(isDisplayed()));
         onView(withId(R.id.albumName)).check(ViewAssertions.matches(isDisplayed()));
 
         //Check if seek bar and playback controls are displayed
