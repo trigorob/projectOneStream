@@ -13,11 +13,9 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
-import music.onestream.activity.EditPlaylistActivity;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.util.Constants;
 
-import music.onestream.activity.SettingsActivity;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
@@ -62,10 +60,8 @@ public class LocalPlaybackTests {
 
         //Should just check if it exists do not need to check for exact name
         onView(withId(R.id.listSongName)).check(ViewAssertions.matches(isDisplayed()));
-        //onView(withId(R.id.listSongName)).check(ViewAssertions.matches(withText("Far Nearer")));
-
         onView(withId(R.id.listSongArtistAlbum)).check(ViewAssertions.matches(isDisplayed()));
-        //onView(withId(R.id.listSongArtistAlbum)).check(ViewAssertions.matches(withText("Jamie XX")));
+
     }
 
     //Make sure song view is enabled
