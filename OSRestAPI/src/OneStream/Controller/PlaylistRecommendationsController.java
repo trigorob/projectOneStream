@@ -19,6 +19,7 @@ public class PlaylistRecommendationsController extends OneStreamController {
     public ArrayList<Playlist> playlist(@RequestParam(value = "name", defaultValue = "") String name,
                                         @RequestParam(value = "artist", defaultValue = "") String artist,
                                         @RequestParam(value = "album", defaultValue = "") String album,
+                                        @RequestParam(value = "genre", defaultValue = "") String genre,
                                         @RequestParam(value = "minLength", defaultValue = "0") int minLength,
                                         @RequestParam(value = "maxLength", defaultValue = "1000") int maxLength,
                                         @RequestParam(value = "excludeLocal", defaultValue = "false") boolean excludeLocal,
@@ -39,6 +40,7 @@ public class PlaylistRecommendationsController extends OneStreamController {
         Song sTemp = new Song();
         sTemp.setName(name);
         sTemp.setArtist(artist);
+        sTemp.setGenre(artist);
         sTemp.setAlbum(album);
         for (Playlist playlist : allPlaylists)
         {

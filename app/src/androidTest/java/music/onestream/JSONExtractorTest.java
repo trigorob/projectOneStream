@@ -2,16 +2,12 @@ package music.onestream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.json.JsonGenerator;
-import com.google.api.client.json.jackson2.JacksonFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
@@ -153,23 +149,23 @@ public class JSONExtractorTest {
         playlist = new Playlist();
         playlist.setName("TestList");
         playlist.setOwner("TestOwner");
-        song = new Song("TestN", "TestU", "TestA", "TestAA", "Spot", 0, "AA");
+        song = new Song("TestN", "TestU", "TestA", "TestAA", "Spot", 0, "AA", "GG");
         playlist.addSong(song);
 
         playlist2 = new Playlist();
         playlist2.setName("TestList2");
         playlist2.setOwner("TestOwner2");
-        song2 = new Song("TestN2", "TestU2", "TestA2", "TestAA2", "Spot2", 1, "AA2");
+        song2 = new Song("TestN2", "TestU2", "TestA2", "TestAA2", "Spot2", 1, "AA2", "GG2");
         playlist2.addSong(song);
         testPlaylists = new ArrayList<Playlist>();
         testPlaylists.add(playlist);
         testPlaylists.add(playlist2);
         testSongs = new ArrayList<Song>();
         song = new Song("Self Control", "spotify:track:2Yxa3k0CecfZ5HVWQyxNvy", "Scissor Sisters",
-                "Magic Hour", "Spotify", 4, "https://i.scdn.co/image/bfb21f1026245457738ed73f535d079bf6450ada");
+                "Magic Hour", "Spotify", 4, "https://i.scdn.co/image/bfb21f1026245457738ed73f535d079bf6450ada", "N/A");
         testSongs.add(song);
         song3 = new Song("demon days", "https://api.soundcloud.com/tracks/231321623/stream", "N/A",
-                "gorillaz", "SoundCloud", 1, "https://i1.sndcdn.com/artworks-000134866575-mk19ov-large.jpg");
+                "N/A", "SoundCloud", 1, "https://i1.sndcdn.com/artworks-000134866575-mk19ov-large.jpg", "gorillaz");
         testSongs.add(song);
     }
 
@@ -221,7 +217,7 @@ public class JSONExtractorTest {
                 if (album == null || album.equals("")) {
                     album = "<Unknown>";
                 }
-                Song song = new Song(name, uri, artist, album, "Spotify", spotifySongOffset + i, albumArt);
+                Song song = new Song(name, uri, artist, album, "Spotify", spotifySongOffset + i, albumArt, "N/A");
 
                 jsonObject = jsonObject.getJSONArray("images").getJSONObject(0);
                 albumArt = (String) jsonObject.get("url");

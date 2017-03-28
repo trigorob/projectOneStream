@@ -14,9 +14,10 @@ public class Song implements Serializable {
     String type;
     int position;
     String albumArt;
+    String genre;
 
     public Song(String name, String uri, String artist, String album,
-                String type, int position, String albumArt)
+                String type, int position, String albumArt, String genre)
     {
         this.name = name;
         this.uri = uri;
@@ -25,6 +26,7 @@ public class Song implements Serializable {
         this.type = type;
         this.position = position;
         this.albumArt = albumArt;
+        this.genre = genre;
     }
 
     public String getName() {
@@ -53,6 +55,9 @@ public class Song implements Serializable {
 
     public String getAlbum() {
         return album;
+    }
+    public String getGenre() {
+        return genre;
     }
 
     public String getType() {

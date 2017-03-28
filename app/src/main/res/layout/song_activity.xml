@@ -23,7 +23,7 @@
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:textSize="20sp"
-            android:id="@+id/artistName"
+            android:id="@+id/artistOrGenreName"
             android:gravity="center"
             android:layout_below="@id/album" />
         <TextView
@@ -31,7 +31,7 @@
             android:layout_height="20dp"
             android:layout_centerHorizontal="true"
             android:textSize="15sp"
-            android:layout_below="@id/artistName"
+            android:layout_below="@id/artistOrGenreName"
             android:gravity="center"
             android:id ="@+id/albumName"/>
     </RelativeLayout>

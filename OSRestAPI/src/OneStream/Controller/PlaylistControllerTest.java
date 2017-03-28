@@ -49,11 +49,11 @@ public class PlaylistControllerTest{
 
     public void initPlaylists() {
         Song s1 = new Song("name","uri",
-                "artist", "album", "Local", 1, "albumart");
+                "artist", "album", "Local", 1, "albumart", "genre");
         Song s2 = new Song("name1","uri1",
-                "artist1", "album", "Spotify", 2, "albumart2");
+                "artist1", "album", "Spotify", 2, "albumart2", "genre2");
         Song s3 = new Song("name2","uri2",
-                "artist1", "album2", "SoundCloud", 3, "albumart3");
+                "artist1", "album2", "SoundCloud", 3, "albumart3", "genre3");
         p = new Playlist("TestList", "Admin", new ArrayList<Song>());
         p2 = new Playlist("TestList2", "Admin2", new ArrayList<Song>());
         p.addSong(s1);
@@ -103,7 +103,7 @@ public class PlaylistControllerTest{
         assert playlists.contains(p2);
 
          playlists =
-                playlistController.playlist("", "", 0, 1000,
+                playlistController.playlist("", "",  0, 1000,
                         true, false, false);
          assert !playlists.contains(p);
          assert playlists.contains(p2);
@@ -138,13 +138,13 @@ public class PlaylistControllerTest{
         p2.setName("TestList");
         playlistController.update("TestList2", "Admin2", p2);
 
-        playlists = playlistController.playlist("TestList", "", 0, 1000,
+        playlists = playlistController.playlist("TestList", "",0, 1000,
                 false, false, false);
 
         assert playlists.contains(p);
         assert playlists.contains(p2);
 
-        playlists = playlistController.playlist("TestList2", "", 0, 1000,
+        playlists = playlistController.playlist("TestList2", "",0, 1000,
                 false, false, false);
 
         assert !playlists.contains(p);
@@ -152,7 +152,7 @@ public class PlaylistControllerTest{
 
         playlistController.delete("TestList", "Admin2");
 
-        playlists = playlistController.playlist("TestList", "", 0, 1000,
+        playlists = playlistController.playlist("TestList", "",0, 1000,
                 false, false, false);
 
 
@@ -183,49 +183,49 @@ public class PlaylistControllerTest{
 
         ArrayList<Playlist> playlists =
                 playlistRecommendationsController.playlist("", "",
-                        "", 0, 1000,
+                        "", "", 0, 1000,
                         false, false, false);
         assert !playlists.contains(p);
         assert !playlists.contains(p2);
 
         playlists =
                 playlistRecommendationsController.playlist("name", "",
-                        "", 0, 1000,
+                        "", "", 0, 1000,
                         false, false, false);
         assert playlists.contains(p);
         assert playlists.contains(p2);
 
         playlists =
                 playlistRecommendationsController.playlist("", "artist",
-                        "", 0, 1000,
+                        "", "", 0, 1000,
                         false, false, false);
         assert playlists.contains(p);
         assert playlists.contains(p2);
 
         playlists =
                 playlistRecommendationsController.playlist("", "",
-                        "album", 0, 1000,
+                        "album", "", 0, 1000,
                         false, false, false);
         assert playlists.contains(p);
         assert playlists.contains(p2);
 
         playlists =
                 playlistRecommendationsController.playlist("name2", "artist1",
-                        "", 0, 1000,
+                        "", "", 0, 1000,
                         false, false, false);
         assert playlists.contains(p);
         assert playlists.contains(p2);
 
         playlists =
                 playlistRecommendationsController.playlist("2", "",
-                        "", 0, 1000,
+                        "", "", 0, 1000,
                         false, false, false);
         assert playlists.contains(p);
         assert !playlists.contains(p2);
 
         playlists =
                 playlistRecommendationsController.playlist("bad", "bad",
-                        "bad", 0, 1000,
+                        "bad", "", 0, 1000,
                         false, false, false);
         assert !playlists.contains(p);
         assert !playlists.contains(p2);
@@ -296,7 +296,7 @@ public class PlaylistControllerTest{
         for (int i = 0; i < 55; i++)
         {
             Song s = new Song("testName" + i, "testUri" + i, "testArtist" + i,
-                    "testAlbum" + i, "testType" + i, i, "" + i);
+                    "testAlbum" + i, "testType" + i, i, "" + i, "testGenre"+i);
             p.addSong(s);
         }
         playlistController.create("TestList3", "TestOwner3", p);

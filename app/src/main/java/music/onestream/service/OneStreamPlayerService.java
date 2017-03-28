@@ -155,8 +155,15 @@ public class OneStreamPlayerService extends Service {
         if (playerHandler != null && playerHandler.getCurrentSongListPosition() != -1) {
             Song currentSong = playerHandler.getCurrentSong();
             builder.setContentTitle(currentSong.getName());
-            builder.setContentText(currentSong.getArtist());
-            builder.setSubText(currentSong.getAlbum());
+            if (!currentSong.getArtist().equals(Constants.defaultArtistsAlbumGenreName) &&
+             !currentSong.getAlbum().equals(Constants.defaultArtistsAlbumGenreName)) {
+                builder.setContentText(currentSong.getArtist());
+                builder.setSubText(currentSong.getAlbum());
+            }
+            else if (!currentSong.getGenre().equals(Constants.defaultArtistsAlbumGenreName))
+            {
+                builder.setContentText(currentSong.getGenre());
+            }
         }
 
         builder.setStyle(style);

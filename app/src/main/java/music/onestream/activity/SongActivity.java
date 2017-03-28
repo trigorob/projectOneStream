@@ -2,8 +2,6 @@ package music.onestream.activity;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,9 +15,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import music.onestream.R;
-import music.onestream.song.SongAdapter;
 import music.onestream.playlist.Playlist;
 import music.onestream.song.Song;
+import music.onestream.song.SongAdapter;
 import music.onestream.util.ColorCalculator;
 import music.onestream.util.Constants;
 import music.onestream.util.PlayerActionsHandler;
@@ -36,7 +34,7 @@ public class SongActivity extends OSActivity {
     private static ArrayAdapter<Song> adapter;
     final Handler mHandler = new Handler();
 
-    static TextView artistName;
+    static TextView artistOrGenreName;
     static TextView albumName;
     static ImageView albumArt;
     static ActionBar title;
@@ -73,7 +71,7 @@ public class SongActivity extends OSActivity {
         mainList = (ListView) findViewById(R.id.ListViewSV);
         playlist = (Playlist) getIntent().getSerializableExtra("Playlist");
 
-        artistName = (TextView) findViewById(R.id.artistName);
+        artistOrGenreName = (TextView) findViewById(R.id.artistOrGenreName);
         albumName = (TextView) findViewById(R.id.albumName);
         albumArt = (ImageView) findViewById(R.id.album);
         resources = this.getResources();
@@ -89,8 +87,13 @@ public class SongActivity extends OSActivity {
 
 
     public static void initDisplay(Song song) {
-        artistName.setText(song.getArtist());
-        albumName.setText(song.getAlbum());
+        if (!song.getArtist().equals(Constants.defaultArtistsAlbumGenreName)) {
+            artistOrGenreName.setText(song.getArtist());
+        }
+        if (!song.getAlbum().equals(Constants.defaultArtistsAlbumGenreName))
+        {
+            albumName.setText(song.getAlbum());
+        }
         title.setTitle(song.getName());
         String artURL = song.getAlbumArt();
 
@@ -129,7 +132,7 @@ public class SongActivity extends OSActivity {
         int textColor = ColorCalculator.getColorInversion(backgroundColor);
         getPlayerHandler().setButtonColors(textColor);
         albumName.setTextColor(textColor);
-        artistName.setTextColor(textColor);
+        artistOrGenreName.setTextColor(textColor);
     }
 
     private void initMainList() {

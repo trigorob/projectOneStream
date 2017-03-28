@@ -12,7 +12,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/OSRestAPI$Application.coverage" NAME="Application Coverage Results" MODIFIED="1490423567907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/OSRestAPI$Application.coverage" NAME="Application Coverage Results" MODIFIED="1490664152271" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/OSRestAPI$PlaylistControllerTest.coverage" NAME="PlaylistControllerTest Coverage Results" MODIFIED="1490587987497" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>OneStream.Controller.*</FILTER>
     </SUITE>
@@ -29,10 +29,10 @@
     <SUITE FILE_PATH="coverage/OSRestAPI$PlaylistControllerTest_testTopPlaylists.coverage" NAME="PlaylistControllerTest.testTopPlaylists Coverage Results" MODIFIED="1490146918740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>Test.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/OSRestAPI$OneStream_Controller_in_OSRestAPI.coverage" NAME="OneStream.Controller in OSRestAPI Coverage Results" MODIFIED="1490588450187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/OSRestAPI$OneStream_Controller_in_OSRestAPI.coverage" NAME="OneStream.Controller in OSRestAPI Coverage Results" MODIFIED="1490595010363" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>OneStream.Controller.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/OSRestAPI$OneStream_in_OSRestAPI.coverage" NAME="OneStream in OSRestAPI Coverage Results" MODIFIED="1490588402387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/OSRestAPI$OneStream_in_OSRestAPI.coverage" NAME="OneStream in OSRestAPI Coverage Results" MODIFIED="1490664169561" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>OneStream.*</FILTER>
     </SUITE>
   </component>
@@ -42,109 +42,42 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="PlaylistController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistController.java">
+      <file leaf-file-name="SongController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-644">
-              <caret line="15" column="15" lean-forward="true" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
+            <state relative-caret-position="340">
+              <caret line="27" column="25" lean-forward="false" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlaylistRecommendationsController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistRecommendationsController.java">
+      <file leaf-file-name="Itemgetter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/Itemgetter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
-              <caret line="32" column="30" lean-forward="true" selection-start-line="32" selection-start-column="30" selection-end-line="32" selection-end-column="30" />
+            <state relative-caret-position="296">
+              <caret line="63" column="50" lean-forward="true" selection-start-line="63" selection-start-column="50" selection-end-line="63" selection-end-column="50" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlaylistControllerTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistControllerTest.java">
+      <file leaf-file-name="SongRecommendationsController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongRecommendationsController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="43">
-              <caret line="162" column="0" lean-forward="false" selection-start-line="162" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Song.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/Song.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+            <state relative-caret-position="-28">
+              <caret line="27" column="46" lean-forward="false" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="46" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TopSongsController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopSongsController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="36" column="31" lean-forward="true" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlaylistSorter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/PlaylistSorter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="99">
-              <caret line="34" column="66" lean-forward="false" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SongControllerTest.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SongControllerTest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongControllerTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="148" column="62" lean-forward="false" selection-start-line="148" selection-start-column="62" selection-end-line="148" selection-end-column="62" />
+            <state relative-caret-position="388">
+              <caret line="109" column="0" lean-forward="true" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TopArtistsController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopArtistsController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="343">
-              <caret line="31" column="57" lean-forward="false" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="57" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TopAlbumController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopAlbumController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="20" column="54" lean-forward="false" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="54" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SongSorter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/SongSorter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-              <folding>
-                <element signature="e#433#434#0" expanded="true" />
-                <element signature="e#462#463#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -160,11 +93,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>slf4</find>
-      <find>post</find>
-      <find>_id;</find>
-      <find>_id</find>
-      <find>songRepos</find>
       <find>autowired</find>
       <find>playlistrep</find>
       <find>Jeff</find>
@@ -190,6 +118,11 @@
       <find>1.3.0</find>
       <find>resetrepo</find>
       <find>type</find>
+      <find>sort</find>
+      <find>genre</find>
+      <find>artist</find>
+      <find>aritst</find>
+      <find>album</find>
     </findStrings>
     <replaceStrings>
       <replace>aName</replace>
@@ -244,20 +177,15 @@
         <option value="$PROJECT_DIR$/src/OneStream/PlaylistControllerTest.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Playlist.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/OneStreamController.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/SongRecommendationsController.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Song.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/Itemgetter.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/Playlist.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/PlaylistRepository.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Repository/PlaylistRepository.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Repository/SongRepository.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/PlaylistRecommendationsController.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/Song.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Application/Application.java" />
         <option value="$PROJECT_DIR$/src/META-INF/application-context.xml" />
         <option value="$PROJECT_DIR$/src/OneStream/Application/PlaylistRepository.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Application/SongRepository.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/SongController.java" />
         <option value="$PROJECT_DIR$/src/OneStream/SongRepository.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/PlaylistController.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
@@ -265,10 +193,15 @@
         <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/PlaylistSorter.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/TopAlbumController.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/TopArtistsController.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/SongSorter.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/TopSongsController.java" />
-        <option value="$PROJECT_DIR$/src/OneStream/Controller/SongControllerTest.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/SongSorter.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/PlaylistRecommendationsController.java" />
         <option value="$PROJECT_DIR$/src/OneStream/Controller/PlaylistControllerTest.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/Song.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/SongController.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/Util/Itemgetter.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/SongRecommendationsController.java" />
+        <option value="$PROJECT_DIR$/src/OneStream/Controller/SongControllerTest.java" />
       </list>
     </option>
   </component>
@@ -326,7 +259,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -496,6 +428,7 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -522,7 +455,7 @@
       <recent name="C:\Users\ruspe_000\IdeaProjects\OSRestAPI\src\main\resources\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.OneStream.Controller in OSRestAPI">
+  <component name="RunManager" selected="Spring Boot.Application">
     <configuration default="false" name="OneStream.Controller in OSRestAPI" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -1050,8 +983,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.OneStream.Controller in OSRestAPI" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.OneStream in OSRestAPI" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.OneStream in OSRestAPI" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.OneStream.Controller in OSRestAPI" />
         <item index="2" class="java.lang.String" itemvalue="JUnit.PlaylistControllerTest" />
         <item index="3" class="java.lang.String" itemvalue="JUnit.PlaylistControllerTest.testTopAlbums" />
         <item index="4" class="java.lang.String" itemvalue="JUnit.PlaylistControllerTest.testTopArtists" />
@@ -1092,44 +1025,46 @@
       <workItem from="1490420320889" duration="2906000" />
       <workItem from="1490423447573" duration="686000" />
       <workItem from="1490425037403" duration="228000" />
-      <workItem from="1490587328805" duration="1178000" />
+      <workItem from="1490587328805" duration="1398000" />
+      <workItem from="1490594981897" duration="135000" />
+      <workItem from="1490662643409" duration="3354000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="OneStream_Controller_in_OSRestAPI - 2017.03.26 at 21h 20m 56s.xml">
-      <configuration name="OneStream.Controller in OSRestAPI" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 16m 03s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 01m 32s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 17m 26s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 02m 43s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 17m 43s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 08m 14s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 18m 09s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 09m 14s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 19m 06s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 12m 53s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 19m 22s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 14m 33s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="OneStream_in_OSRestAPI - 2017.03.26 at 21h 20m 10s.xml">
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 18m 14s.xml">
       <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PlaylistControllerTest - 2017.03.26 at 21h 12m 03s.xml">
-      <configuration name="PlaylistControllerTest" configurationId="JUnit" />
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 19m 01s.xml">
+      <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PlaylistControllerTest - 2017.03.26 at 21h 13m 14s.xml">
-      <configuration name="PlaylistControllerTest" configurationId="JUnit" />
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 22m 37s.xml">
+      <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="OneStream_in_OSRestAPI - 2017.03.27 at 18h 22m 57s.xml">
+      <configuration name="OneStream in OSRestAPI" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="141926000" />
+    <option name="totallyTimeSpent" value="145635000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-2" y="0" width="1597" height="876" extended-state="0" />
@@ -1138,7 +1073,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28312412" sideWeight="0.3470437" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24202994" sideWeight="0.4478261" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50683147" sideWeight="0.20920502" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1146,7 +1081,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.46861926" sideWeight="0.8791774" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48117155" sideWeight="0.8791774" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32775453" sideWeight="0.49485862" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1154,15 +1089,14 @@
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35843793" sideWeight="0.7654242" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24202994" sideWeight="0.5521739" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44072524" sideWeight="0.7654242" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17826936" sideWeight="0.79079497" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32775453" sideWeight="0.4922879" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26917714" sideWeight="0.6529563" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20781033" sideWeight="0.6529563" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3096942" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27521145" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16773778" sideWeight="0.4926004" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32775453" sideWeight="0.4975" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1170,6 +1104,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="11" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32775453" sideWeight="0.4975" order="7" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1180,7 +1115,15 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="231" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistControllerTest.java</url>
+          <line>187</line>
+          <properties />
+          <option name="timeStamp" value="231" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="237" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1374,23 +1317,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="12" column="34" lean-forward="false" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Application.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/OneStream/PlaylistRepository.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -1416,14 +1342,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/Itemgetter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="54" lean-forward="false" selection-start-line="10" selection-start-column="54" selection-end-line="10" selection-end-column="54" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
@@ -1440,43 +1358,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-644">
-          <caret line="15" column="15" lean-forward="true" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongRecommendationsController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="36" column="30" lean-forward="false" selection-start-line="36" selection-start-column="30" selection-end-line="36" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistRecommendationsController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="32" column="30" lean-forward="true" selection-start-line="32" selection-start-column="30" selection-end-line="32" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/PlaylistSorter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="34" column="66" lean-forward="false" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopArtistsController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
+        <state relative-caret-position="408">
           <caret line="31" column="57" lean-forward="false" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="57" />
           <folding />
         </state>
@@ -1484,53 +1368,110 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopAlbumController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
+        <state relative-caret-position="221">
           <caret line="20" column="54" lean-forward="false" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/SongSorter.java">
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Application.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding>
-            <element signature="e#433#434#0" expanded="true" />
-            <element signature="e#462#463#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopSongsController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="36" column="31" lean-forward="true" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongControllerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="148" column="62" lean-forward="false" selection-start-line="148" selection-start-column="62" selection-end-line="148" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistControllerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="43">
-          <caret line="162" column="0" lean-forward="false" selection-start-line="162" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+        <state relative-caret-position="245">
+          <caret line="42" column="37" lean-forward="true" selection-start-line="42" selection-start-column="37" selection-end-line="42" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/TopSongsController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="491">
+          <caret line="36" column="31" lean-forward="false" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/PlaylistSorter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="50" column="6" lean-forward="false" selection-start-line="50" selection-start-column="6" selection-end-line="50" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="31" column="34" lean-forward="false" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/Song.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+        <state relative-caret-position="122">
+          <caret line="145" column="35" lean-forward="true" selection-start-line="145" selection-start-column="35" selection-end-line="145" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistControllerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="184" column="0" lean-forward="false" selection-start-line="184" selection-start-column="0" selection-end-line="184" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/PlaylistRecommendationsController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="41" column="19" lean-forward="false" selection-start-line="41" selection-start-column="19" selection-end-line="41" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/SongSorter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="60" column="17" lean-forward="false" selection-start-line="60" selection-start-column="17" selection-end-line="60" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="27" column="25" lean-forward="false" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/Util/Itemgetter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="296">
+          <caret line="63" column="50" lean-forward="true" selection-start-line="63" selection-start-column="50" selection-end-line="63" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongRecommendationsController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-28">
+          <caret line="27" column="46" lean-forward="false" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OneStream/Controller/SongControllerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="109" column="0" lean-forward="true" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
           <folding />
         </state>
       </provider>

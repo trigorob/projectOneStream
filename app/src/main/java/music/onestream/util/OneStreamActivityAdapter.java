@@ -9,8 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.ArrayList;
-
 import music.onestream.activity.OneStreamActivity;
 
 /**
@@ -34,7 +32,7 @@ public class OneStreamActivityAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 7 total pages.
-        return 7;
+        return 8;
     }
 
 
@@ -55,6 +53,8 @@ public class OneStreamActivityAdapter extends FragmentPagerAdapter {
                 return Constants.OneStream_Artists;
             case 6:
                 return Constants.OneStream_Albums;
+            case 7:
+                return Constants.OneStream_Genre;
         }
         return null;
     }

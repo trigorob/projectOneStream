@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/textColorPrimary">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,6 +22,14 @@
         android:layout_height="125dp"
         android:id="@+id/sortAlphAscend"
         android:text="Sort in Ascending order (Song)"/>
+
+        <Button
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/default_color"
+            android:id="@+id/sortAlphAscendGenre"
+            android:text="Sort in Ascending order (Genre)"/>
     </LinearLayout>
 
     <LinearLayout
@@ -74,6 +83,14 @@
         android:textColor="@color/default_color"
         android:id="@+id/sortAlphAscendAlbum"
         android:text="Sort in Ascending order (Album)"/>
+
+        <Button
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/default_color"
+            android:id="@+id/sortAlphDescendGenre"
+            android:text="Sort in Descending order (Genre)"/>
     </LinearLayout>
 
 </LinearLayout>

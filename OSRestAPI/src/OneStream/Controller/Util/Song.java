@@ -16,6 +16,7 @@ public class Song implements Serializable {
     String type;
     int position;
     String albumArt;
+    String genre;
 
     @Id
     private String _id;
@@ -29,9 +30,10 @@ public class Song implements Serializable {
         this.type = "";
         this.position = 0;
         this.albumArt = "";
+        this.genre = "";
     }
 
-    public Song(String name, String uri, String artist, String album, String type, int position, String albumArt)
+    public Song(String name, String uri, String artist, String album, String type, int position, String albumArt, String genre)
     {
         this.name = name;
         this.uri = uri;
@@ -40,6 +42,7 @@ public class Song implements Serializable {
         this.type = type;
         this.position = position;
         this.albumArt = albumArt;
+        this.genre = genre;
 
     }
 
@@ -75,9 +78,11 @@ public class Song implements Serializable {
         this.position = position;
     }
 
-    public String getUri() {
-        return uri;
-    }
+    public String getUri() { return uri; }
+
+    public String getGenre() { return genre; }
+
+    public void setGenre(String genre) { this.genre = genre; }
 
     public String getArtist() {
         return artist;
@@ -112,15 +117,17 @@ public class Song implements Serializable {
         String bName = b.getName();
         String bArtist = b.getArtist();
         String bAlbum = b.getAlbum();
+        String aGenre = a.getGenre();
+        String bGenre = b.getGenre();
         if (aName == null || aName.equals(""))
         {
             aName = "IGNORE_THIS_FIELD";
         }
-        if (aAlbum == null|| aAlbum.equals(""))
+        if (aAlbum == null|| aAlbum.equals("") || aAlbum.equals("N/A"))
         {
             aAlbum = "IGNORE_THIS_FIELD";
         }
-        if (aArtist == null || aArtist.equals(""))
+        if (aArtist == null || aArtist.equals("") || aArtist.equals("N/A"))
         {
             aArtist = "IGNORE_THIS_FIELD";
         }
@@ -128,13 +135,21 @@ public class Song implements Serializable {
         {
             bName = "IGNORE_THIS_FIELD";
         }
-        if (bArtist == null || bArtist.equals(""))
+        if (bArtist == null || bArtist.equals("") || bArtist.equals("N/A"))
         {
             bArtist = "IGNORE_THIS_FIELD";
         }
-        if (bAlbum == null || bAlbum.equals(""))
+        if (bAlbum == null || bAlbum.equals("") || bAlbum.equals("N/A"))
         {
             bAlbum = "IGNORE_THIS_FIELD";
+        }
+        if (bGenre == null || bGenre.equals("") || bGenre.equals("N/A"))
+        {
+            bGenre = "IGNORE_THIS_FIELD";
+        }
+        if (aGenre == null || aGenre.equals("") || aGenre.equals("N/A"))
+        {
+            aGenre = "IGNORE_THIS_FIELD";
         }
 
         boolean nameContains = aName.contains(bName) || bName.contains(aName);
@@ -146,8 +161,10 @@ public class Song implements Serializable {
         boolean artistContainsotherReverse = bArtist.contains(aName) || bArtist.contains(aAlbum);
         boolean albumContainsOther = aAlbum.contains(bArtist) || aAlbum.contains(bName);
         boolean albumContainsOtherReverse = bAlbum.contains(aArtist) || bAlbum.contains(aName);
+        boolean genreMatch = aGenre.contains(bGenre) || bGenre.contains(aGenre);
         return (nameContains || artistContains || albumContains|| nameContainsOther || nameContainsOtherReverse ||
-                artistContainsOther || artistContainsotherReverse || albumContainsOther || albumContainsOtherReverse);
+                artistContainsOther || artistContainsotherReverse || albumContainsOther || albumContainsOtherReverse
+                || genreMatch);
     }
 
 }

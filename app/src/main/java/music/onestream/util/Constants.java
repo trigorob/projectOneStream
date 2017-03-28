@@ -45,7 +45,9 @@ public class Constants {
 
     /*Playlist default name */
     public static String defaultPlaylistName = "Playlist Title";
-    public static String defaultArtistsAlbumSongName = "N/A";
+
+    /*Song Default values */
+    public static String defaultArtistsAlbumGenreName = "N/A";
 
     /*Shared pref files*/
     public static String oneStreamDomainLoc = "ONESTREAM_ACCOUNT";
@@ -90,6 +92,7 @@ public class Constants {
     public static String playlists = "Playlists";
     public static String artists = "Artists";
     public static String albums = "Albums";
+    public static String genres = "Genres";
 
     /*Tokens*/
     public static String spotifyToken = "SPOTIFY_TOKEN";
@@ -110,6 +113,8 @@ public class Constants {
     public static String OneStream_Albums = "Album";
     public static int OneStream_Local_Pos = 1;
     public static String OneStream_Local = "Local";
+    public static int OneStream_Genres_Pos = 7;
+    public static String OneStream_Genre = "Genre";
 
     /*OneStreamActivity Tabs */
     public static int Recommendations_Songs_Pos = 0;
@@ -158,7 +163,7 @@ public class Constants {
     public static String spotifyPlaybackFailed = "kSpErrorFailed";
 
     /*Getters and loaders*/
-    public static String artistsAlbumsMusicLoader = "ArtistAlbumMusicLoader";
+    public static String artistsAlbumsGenresLoader = "AlbumArtistGenreLoader";
     public static String soundCloudMusicGetter = "SoundCloudMusicGetter";
     public static String musicLoaderService = "MusicLoaderService";
     public static String spotifyMusicGetter = "SpotifyMusicGetter";

@@ -26,8 +26,6 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.spotify.sdk.android.player.Connectivity;
-
 import java.util.ArrayList;
 
 import music.onestream.R;
@@ -58,6 +56,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
     private static SongAdapter combinedAdapter;
     private static PlaylistAdapter artistsAdapter;
     private static PlaylistAdapter albumsAdapter;
+    private static PlaylistAdapter genresAdapter;
 
 /**
  * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -137,8 +136,6 @@ private ViewPager mViewPager;
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
-
         initPlayerHandler();
         if (playlistHandler == null) {
             initPlaylistHandler();
@@ -191,6 +188,13 @@ private ViewPager mViewPager;
         }
     }
 
+    public static void notifyGenresAdapter() {
+        if (genresAdapter != null) {
+            genresAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
+        }
+    }
+
     public static void initPlaylistAdapter(Context context) {
         boolean refreshView = false;
         if (mainList.getAdapter().equals(playlistAdapter))
@@ -210,7 +214,7 @@ private ViewPager mViewPager;
     public static void notifyLibraryAdapter() {
         combinedAdapter = new SongAdapter(getContext(), R.layout.songlayout,
                 playlistHandler.getList(Constants.library).getSongInfo());
-        if (currentPage == Constants.OneStream_Library_Pos)
+        if (currentPage == Constants.OneStream_Library_Pos || mainList.getAdapter() == null)
         {
                 mainList.setAdapter(combinedAdapter);
                 int currentPos = getPlayerHandler().getCurrentSongListPosition();
@@ -225,7 +229,8 @@ private ViewPager mViewPager;
     public boolean onPlaylistPage() {
         return (currentPage == Constants.OneStream_Playlists_Pos
                 || currentPage == Constants.OneStream_Artists_Pos ||
-                currentPage == Constants.OneStream_Albums_Pos);
+                currentPage == Constants.OneStream_Albums_Pos
+                || currentPage == Constants.OneStream_Genres_Pos);
     }
 
     public void initListDisplay() {
@@ -244,6 +249,8 @@ private ViewPager mViewPager;
                 playlistHandler.getArtists());
         albumsAdapter = new PlaylistAdapter(this, R.layout.songlayout,
                 playlistHandler.getAlbums());
+        genresAdapter = new PlaylistAdapter(this, R.layout.songlayout,
+                playlistHandler.getGenres());
 
         adapter.setNotifyOnChange(true);
         spotifyAdapter.setNotifyOnChange(true);
@@ -252,8 +259,9 @@ private ViewPager mViewPager;
         playlistAdapter.setNotifyOnChange(true);
         artistsAdapter.setNotifyOnChange(true);
         albumsAdapter.setNotifyOnChange(true);
+        genresAdapter.setNotifyOnChange(true);
 
-        mainList.setAdapter(combinedAdapter);
+        mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
@@ -476,6 +484,11 @@ private ViewPager mViewPager;
                         mainList.setAdapter(albumsAdapter);
                         setLoginButtonVisible(false, loginButton);
                         break;
+                    case 7:
+                        currentPage = Constants.OneStream_Genres_Pos;
+                        mainList.setAdapter(genresAdapter);
+                        setLoginButtonVisible(false, loginButton);
+                        break;
                 }
             }
             @Override
@@ -491,10 +504,6 @@ private ViewPager mViewPager;
             }
         });
 
-    }
-
-    public Boolean isConnected() {
-        return !playerHandler.getNetworkConnectivity(this.getApplicationContext()).equals(Connectivity.OFFLINE);
     }
 
     public static Intent createIntent(Context context) {
