@@ -323,7 +323,7 @@ public class PlaylistHandler implements AsyncResponse {
 
         if (accessToken != null && isConnected() && spotifyLoginChanged) {
             spotifyLoginChanged = false;
-            spotifyListContent = new Playlist();
+            spotifyListContent.getSongInfo().clear();
             musicGetterHandler.addSpotifyMusicGetter(new SpotifyMusicGetter(accessToken, this));
             musicGetterHandler.initSpotifyMusicGetter();
         }
@@ -338,7 +338,7 @@ public class PlaylistHandler implements AsyncResponse {
                 || (isConnected() && nextHref.contains("http"))) {
             soundCloudLoginChanged = false;
             if (!nextHref.contains("http")) {
-                soundCloudListContent = new Playlist();
+                soundCloudListContent.getSongInfo().clear();
             }
             musicGetterHandler.addSoundCloudMusicGetter(new SoundCloudMusicGetter(accessToken, nextHref, this));
             musicGetterHandler.initSoundCloudMusicGetter();
