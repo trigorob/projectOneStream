@@ -65,6 +65,9 @@ public class SettingsUITest {
         onView(withId(R.id.cacheSongs)).check(ViewAssertions.matches(isDisplayed()));
         onView(withId(R.id.cacheSongs)).check(ViewAssertions.matches(withText("Song Cache Off")));
 
+        onView(withId(R.id.change_dir)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.change_dir)).check(ViewAssertions.matches(withText("Change Local Music Folder")));
+
     }
 }
 
