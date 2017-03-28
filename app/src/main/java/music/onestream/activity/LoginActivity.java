@@ -2,11 +2,16 @@ package music.onestream.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
-import music.onestream.util.Constants;
 import music.onestream.R;
+import music.onestream.util.Constants;
+import music.onestream.util.CredentialsHandler;
+
+import static java.util.concurrent.TimeUnit.*;
 
 public class LoginActivity extends OSAuthenticationActivity {
 
@@ -33,11 +38,36 @@ public class LoginActivity extends OSAuthenticationActivity {
         handleLogin(Constants.OneStream_SoundCloud_Pos);
     }
 
+    public void logout() {
+        CredentialsHandler.setToken(getContext(), null, 0,
+                SECONDS, Constants.soundCloud);
+        CredentialsHandler.setToken(getContext(), null, 0,
+                SECONDS, Constants.spotify);
+        getPlayerHandler().getSpotifyPlayer().logout();
+        startMainActivity();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (intent != null && requestCode == Constants.REQUEST_CODE) {
             onLoginActivityResult(requestCode, resultCode, intent);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_logout) {
+            logout();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_login, menu);
+        return true;
     }
 
 }

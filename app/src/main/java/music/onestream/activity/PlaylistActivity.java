@@ -113,20 +113,6 @@ public class PlaylistActivity extends OSAuthenticationActivity {
             mainList.setAdapter(adapter);
             mainList.invalidateViews();
         }
-
-        PlaylistActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                playerHandler.updateSeekBar();
-                mHandler.postDelayed(this, 1000);
-                if (mainList.getVisibility() == View.INVISIBLE && loggedOutServices.length() > 0 &&
-                        loginLauncherLinkerButton.getVisibility() == View.INVISIBLE)
-                {
-                    loggedOutServices = "";
-                    checkForInvalidSongs();
-                }
-            }
-        });
     }
 
     private void initSongList() {
@@ -154,20 +140,27 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                 }
             }
         });
-    }
 
-    private void previousIntentIsSomething(Intent intent) {
-        String parent = getIntent().getStringExtra("Parent");
-        if (parent.contains("PlaylistRecommendationsActivity"))
-        {
-            Intent back = new Intent(getApplicationContext(), PlaylistRecommendationsActivity.class);
-            startActivityForResult(back, 0);
-        }
-        else
-        {
-            Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
-            startActivityForResult(back, 0);
-        }
+        PlaylistActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerHandler.updateSeekBar();
+                mHandler.postDelayed(this, 1000);
+                if (mainList.getVisibility() == View.INVISIBLE)
+                {
+                    if (!playerHandler.isSoundCloudLoggedOut() && loggedOutServices.contains(Constants.soundCloud))
+                    {
+                        loggedOutServices = "";
+                        checkForInvalidSongs();
+                    }
+                    else if (!playerHandler.isSpotifyLoggedOut() && loggedOutServices.contains(Constants.spotify))
+                    {
+                        loggedOutServices = "";
+                        checkForInvalidSongs();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -238,13 +231,6 @@ public class PlaylistActivity extends OSAuthenticationActivity {
     protected void onResume() {
         super.onResume();
         initPlayerHandler();
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkForInvalidSongs();
-            }
-        }, 500);
+        checkForInvalidSongs();
     }
 }

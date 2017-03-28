@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">OneStream</string>
     <string name="action_settings">Settings</string>
+    <string name="action_logout">Logout</string>
     <string name="action_edit_list">Edit Playlist</string>
     <string name="onestream_login_button">Set OneStream Playlist Domain</string>
     <string name="spotify_login_button">Login to Spotify</string>

@@ -409,14 +409,17 @@ private ViewPager mViewPager;
             if (currentPage == Constants.OneStream_Spotify_Pos)
             {
                 loginButton.setImageResource(R.drawable.spotify);
+                mainList.setVisibility(View.INVISIBLE);
             }
             else if (currentPage == Constants.OneStream_SoundCloud_Pos)
             {
                 loginButton.setImageResource(R.drawable.soundcloud);
+                mainList.setVisibility(View.INVISIBLE);
             }
         }
         else {
             loginButton.setVisibility(View.INVISIBLE);
+            mainList.setVisibility(View.VISIBLE);
         }
     }
 

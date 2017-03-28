@@ -1,9 +1,9 @@
 package music.onestream.util;
 
 
-import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import java.util.concurrent.TimeUnit;
 
 public class CredentialsHandler {
@@ -32,6 +32,23 @@ public class CredentialsHandler {
             editor.putString(Constants.SOUNDCLOUD_ACCESS_TOKEN, token);
             editor.putLong(Constants.EXPIRES_AT, expiresAt);
         }
+        editor.apply();
+    }
+
+    public static void deleteTokens(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences sharedPref = getSoundCloudSharedPreferences(appContext);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString(Constants.SOUNDCLOUD_ACCESS_TOKEN, null);
+        editor.putLong(Constants.EXPIRES_AT, 0);
+
+        sharedPref = getSpotifySharedPreferences(appContext);
+        editor = sharedPref.edit();
+
+        editor.putString(Constants.SPOTIFY_ACCESS_TOKEN, null);
+        editor.putLong(Constants.EXPIRES_AT, 0);
+
         editor.apply();
     }
 

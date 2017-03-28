@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OneStream.iml" filepath="$PROJECT_DIR$/OneStream.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Onestream.iml" filepath="$PROJECT_DIR$/Onestream.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
