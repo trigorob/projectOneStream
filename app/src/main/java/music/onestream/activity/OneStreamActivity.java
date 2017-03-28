@@ -136,8 +136,6 @@ private ViewPager mViewPager;
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
-
         initPlayerHandler();
         if (playlistHandler == null) {
             initPlaylistHandler();
@@ -216,7 +214,7 @@ private ViewPager mViewPager;
     public static void notifyLibraryAdapter() {
         combinedAdapter = new SongAdapter(getContext(), R.layout.songlayout,
                 playlistHandler.getList(Constants.library).getSongInfo());
-        if (currentPage == Constants.OneStream_Library_Pos)
+        if (currentPage == Constants.OneStream_Library_Pos || mainList.getAdapter() == null)
         {
                 mainList.setAdapter(combinedAdapter);
                 int currentPos = getPlayerHandler().getCurrentSongListPosition();
@@ -263,7 +261,7 @@ private ViewPager mViewPager;
         albumsAdapter.setNotifyOnChange(true);
         genresAdapter.setNotifyOnChange(true);
 
-        mainList.setAdapter(combinedAdapter);
+        mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {

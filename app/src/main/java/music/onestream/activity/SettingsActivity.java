@@ -214,10 +214,4 @@ public class SettingsActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
-        startActivityForResult(back, 0);
-    }
-
 }

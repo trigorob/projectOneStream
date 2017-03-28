@@ -156,20 +156,35 @@ public class PlaylistActivity extends OSAuthenticationActivity {
         });
     }
 
+    private void previousIntentIsSomething(Intent intent) {
+        String parent = getIntent().getStringExtra("Parent");
+        if (parent.contains("PlaylistRecommendationsActivity"))
+        {
+            Intent back = new Intent(getApplicationContext(), PlaylistRecommendationsActivity.class);
+            startActivityForResult(back, 0);
+        }
+        else
+        {
+            Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
+            startActivityForResult(back, 0);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (intent != null && requestCode == Constants.REQUEST_CODE) {
             onLoginActivityResult(requestCode, resultCode, intent);
         }
-        intent = new Intent(getContext(), PlaylistActivity.class);
-        Bundle b = new Bundle();
-        b.putSerializable("Playlist", playlist);
-        if (getCallingActivity() != null)
-        {
-            b.putString("Parent", getCallingActivity().toString());
+        else if (requestCode == Constants.REQUEST_CODE) {
+            intent = new Intent(getContext(), PlaylistActivity.class);
+            Bundle b = new Bundle();
+            b.putSerializable("Playlist", playlist);
+            if (getCallingActivity() != null) {
+                b.putString("Parent", getCallingActivity().toString());
+            }
+            intent.putExtras(b);
+            startActivityForResult(intent, 0);
         }
-        intent.putExtras(b);
-        startActivityForResult(intent, 0);
     }
 
     private void initPlayerHandler() {
@@ -232,20 +247,4 @@ public class PlaylistActivity extends OSAuthenticationActivity {
             }
         }, 500);
     }
-
-    @Override
-    public void onBackPressed() {
-        String parent =  getIntent().getStringExtra("Parent");
-        if (parent.contains("PlaylistRecommendationsActivity"))
-        {
-            Intent back = new Intent(getApplicationContext(), PlaylistRecommendationsActivity.class);
-            startActivityForResult(back, 0);
-        }
-        else
-        {
-            Intent back = new Intent(getApplicationContext(), OneStreamActivity.class);
-            startActivityForResult(back, 0);
-        }
-    }
-
 }

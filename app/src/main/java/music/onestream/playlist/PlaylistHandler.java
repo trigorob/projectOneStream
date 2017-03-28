@@ -397,12 +397,11 @@ public class PlaylistHandler implements AsyncResponse {
             OneStreamActivity.notifyLocalAdapter();
             OneStreamActivity.notifyLibraryAdapter();
 
-            totalDirectories--;
+            totalDirectories += directoryContent.getDirectories().size() - 1;
             for (File file: directoryContent.getDirectories())
             {
                 getMusicFromDirectory(file.getPath());
             }
-            totalDirectories += directoryContent.getDirectories().size();
             if (totalDirectories == 0) {
                 sortLists(sortType, Constants.local);
                 sortLists(sortType, Constants.library);
