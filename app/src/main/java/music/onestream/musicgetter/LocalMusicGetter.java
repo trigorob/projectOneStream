@@ -49,6 +49,7 @@ public class LocalMusicGetter extends AsyncTask implements MusicGetter {
         ArrayList<String> filess = new ArrayList<String>();
         ArrayList<String> artists = new ArrayList<String>();
         ArrayList<String> albums = new ArrayList<String>();
+        ArrayList<String> genres = new ArrayList<String>();
         ArrayList<File> files = new ArrayList<File>();
         if(dir.isDirectory()) {
             try {
@@ -65,10 +66,12 @@ public class LocalMusicGetter extends AsyncTask implements MusicGetter {
                                 String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                                 String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                                 fname = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                                String genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
                                 files.add(file);
                                 filess.add(fname);
                                 artists.add(artistName);
                                 albums.add(albumName);
+                                genres.add(genre);
                             }
                         } else if (file.isDirectory()) {
                             directories.add(file);
@@ -82,19 +85,25 @@ public class LocalMusicGetter extends AsyncTask implements MusicGetter {
             }
             String artist;
             String album;
+            String genre;
             for (int i = 0; i < files.size(); i++) {
                 artist = artists.get(i);
                 album = albums.get(i);
+                genre = genres.get(i);
                 if (artist == null ||artist.equals(""))
                 {
-                    artist = Constants.defaultArtistsAlbumSongName;
+                    artist = Constants.defaultArtistsAlbumGenreName;
                 }
                 if (album == null || album.equals(""))
                 {
-                    album =  Constants.defaultArtistsAlbumSongName;
+                    album =  Constants.defaultArtistsAlbumGenreName;
+                }
+                if (genre == null || genre.equals(""))
+                {
+                    album =  Constants.defaultArtistsAlbumGenreName;
                 }
                 Song song = new Song(filess.get(i), files.get(i).toURI().toString(),
-                        artist, album, Constants.local, 0, files.get(i).getPath());
+                        artist, album, Constants.local, 0, files.get(i).getPath(), genre);
                 songs.add(song);
             }
         }

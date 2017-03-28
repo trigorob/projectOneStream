@@ -5,8 +5,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import music.onestream.playlist.Playlist;
-import music.onestream.song.Song;
-import music.onestream.util.MusicSorter;
 import music.onestream.util.PlaylistSorter;
 
 /**
@@ -32,13 +30,13 @@ public class PlaylistSorterTest {
         assert playlists.get(1).equals(playlist2);
         assert playlists.get(2).equals(playlist3);
         PlaylistSorter ps = new PlaylistSorter(playlists, ALPH_ASC);
-        sortedPlaylists = (ArrayList<Playlist>) ps.getRetArr()[0];
+        sortedPlaylists =  ps.getSortedArray();
         assert sortedPlaylists.size() == 3;
         assert sortedPlaylists.get(0).equals(playlist3);
         assert sortedPlaylists.get(1).equals(playlist2);
         assert sortedPlaylists.get(2).equals(playlist);
         ps = new PlaylistSorter(playlists, ALPH_DESC);
-        sortedPlaylists = (ArrayList<Playlist>) ps.getRetArr()[0];
+        sortedPlaylists =  ps.getSortedArray();
         assert sortedPlaylists.size() == 3;
         assert sortedPlaylists.get(0).equals(playlist);
         assert sortedPlaylists.get(1).equals(playlist2);

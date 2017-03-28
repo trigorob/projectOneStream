@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 
 import music.onestream.R;
-import music.onestream.activity.OneStreamActivity;
 import music.onestream.util.Constants;
 
 /**
@@ -109,6 +108,36 @@ public class SortingActivity extends Activity {
                 startActivityForResult(back, 0);
             }
         });
+
+        final Button sortAGenre = (Button) findViewById(R.id.sortAlphAscendGenre);
+        sortAGenre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(Constants.sortTypeLoc, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("sortType", "ALPH-ASC-GENRE");
+                editor.putBoolean("sortOnLoad", true);
+                editor.commit();
+
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
+                startActivityForResult(back, 0);
+            }
+        });
+        final Button sortDGenre = (Button) findViewById(R.id.sortAlphDescendGenre);
+        sortDGenre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences(Constants.sortTypeLoc, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("sortType", "ALPH-DESC-GENRE");
+                editor.putBoolean("sortOnLoad", true);
+                editor.commit();
+
+                Intent back = new Intent(v.getContext(), OneStreamActivity.class);
+                startActivityForResult(back, 0);
+            }
+        });
+
 
     final Button reset = (Button) findViewById(R.id.resetSortingType);
     reset.setOnClickListener(new View.OnClickListener() {

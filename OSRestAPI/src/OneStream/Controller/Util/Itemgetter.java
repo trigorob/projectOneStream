@@ -45,7 +45,7 @@ public class Itemgetter {
         return returnList;
     }
 
-    public ArrayList<Song> getSongs(String name, String artist, String album,
+    public ArrayList<Song> getSongs(String name, String artist, String album, String genre,
                                     boolean excludeLocal, boolean excludeSpotify, boolean excludeSoundCloud,
             ArrayList<Song> allSongs) {
         ArrayList<Song> returnList = new ArrayList<Song>();
@@ -55,7 +55,7 @@ public class Itemgetter {
             Song candidate = allSongs.get(i);
 
             if (!candidate.getName().contains(name) && !candidate.getArtist().contains(artist)
-                    && !candidate.getAlbum().contains(album))
+                    && !candidate.getAlbum().contains(album) && !candidate.getGenre().contains(genre))
             {
                 valid = false;
             }

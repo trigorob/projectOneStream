@@ -49,11 +49,11 @@ public class SongControllerTest {
 
     public void initRepo() {
         Song s1 = new Song("name", "uri",
-                "artist", "album", "Local", 1, "albumart");
+                "artist", "album", "Local", 1, "albumart", "genre1");
         Song s2 = new Song("name1", "uri1",
-                "artist1", "album", "Spotify", 2, "albumart2");
+                "artist1", "album", "Spotify", 2, "albumart2", "genre2");
         Song s3 = new Song("name2", "uri2",
-                "artist1", "album2", "SoundCloud", 3, "albumart3");
+                "artist1", "album2", "SoundCloud", 3, "albumart3", "genre3");
         allSongs = new ArrayList<Song>();
         allSongs.add(s1);
         allSongs.add(s2);
@@ -83,49 +83,50 @@ public class SongControllerTest {
     @Test
     public void testGetSongs() {
         init();
-        ArrayList<Song> songs =songController.song("","","",
+        ArrayList<Song> songs =songController.song("","","", "",
                 false,false,false);
 
         assert songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songController.song("name2","DUMMY-VAR","album2",
+        songs =songController.song("name2","DUMMY-VAR","album2", "DUMMY-VAR",
                 false,false,false);
 
         assert !songs.contains(allSongs.get(0));
         assert !songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songController.song("DUMMY-VAR","artist1","DUMMY-VAR",
+
+        songs =songController.song("DUMMY-VAR","artist1","DUMMY-VAR", "DUMMY-VAR",
                 false,false,false);
 
         assert !songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songController.song("name","artist","album",
+        songs =songController.song("name","artist","album", "genre",
                 false,false,false);
 
         assert songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songController.song("name","artist","album",
+        songs =songController.song("name","artist","album", "genre",
                 true,false,false);
 
         assert !songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songController.song("name","artist","album",
+        songs =songController.song("name","artist","album", "genre",
                 false,true,false);
 
         assert songs.contains(allSongs.get(0));
         assert !songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songController.song("name","artist","album",
+        songs =songController.song("name","artist","album", "genre",
                 false,false,true);
 
         assert songs.contains(allSongs.get(0));
@@ -136,7 +137,7 @@ public class SongControllerTest {
     @Test
     public void testSongSorter() {
         init();
-        ArrayList<Song> songs =songController.song("","","",
+        ArrayList<Song> songs =songController.song("","","", "",
                 false,false,false);
 
         SongSorter songSorter = new SongSorter(songs);
@@ -147,6 +148,7 @@ public class SongControllerTest {
         assert songs.get(2).toString().equals(allSongs.get(0).toString());
         assert songs.get(1).toString().contains(allSongs.get(1).toString());
         assert songs.get(0).toString().contains(allSongs.get(2).toString());
+        assert songs.get(0).getGenre().equals(allSongs.get(2).getGenre());
 
     }
 
@@ -154,49 +156,49 @@ public class SongControllerTest {
     public void testGetRecommendations() {
         init();
         initSongRecommendationsController();
-        ArrayList<Song> songs =songRecommendationsController.song("","","",
+        ArrayList<Song> songs =songRecommendationsController.song("","","", "",
                 false,false,false);
 
         assert !songs.contains(allSongs.get(0));
         assert !songs.contains(allSongs.get(1));
         assert !songs.contains(allSongs.get(2));
 
-        songs =songRecommendationsController.song("name2","DUMMY-VAR","album2",
+        songs =songRecommendationsController.song("name2","DUMMY-VAR","album2", "",
                 false,false,false);
 
         assert songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songRecommendationsController.song("DUMMY-VAR","artist1","DUMMY-VAR",
+        songs =songRecommendationsController.song("DUMMY-VAR","artist1","DUMMY-VAR",  "",
                 false,false,false);
 
         assert songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songRecommendationsController.song("name","artist","album",
+        songs =songRecommendationsController.song("name","artist","album",  "genre",
                 false,false,false);
 
         assert songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songRecommendationsController.song("name","artist","album",
+        songs =songRecommendationsController.song("name","artist","album",  "",
                 true,false,false);
 
         assert !songs.contains(allSongs.get(0));
         assert songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songRecommendationsController.song("name","artist","album",
+        songs =songRecommendationsController.song("name","artist","album",  "",
                 false,true,false);
 
         assert songs.contains(allSongs.get(0));
         assert !songs.contains(allSongs.get(1));
         assert songs.contains(allSongs.get(2));
 
-        songs =songRecommendationsController.song("name","artist","album",
+        songs =songRecommendationsController.song("name","artist","album",  "",
                 false,false,true);
 
         assert songs.contains(allSongs.get(0));

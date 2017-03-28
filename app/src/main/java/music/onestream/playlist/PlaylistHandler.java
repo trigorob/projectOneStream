@@ -11,7 +11,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import music.onestream.activity.OneStreamActivity;
-import music.onestream.musicgetter.ArtistAlbumMusicLoader;
+import music.onestream.musicgetter.AlbumArtistGenreLoader;
 import music.onestream.musicgetter.LocalMusicGetter;
 import music.onestream.musicgetter.MusicGetterHandler;
 import music.onestream.musicgetter.SoundCloudMusicGetter;
@@ -48,6 +48,7 @@ public class PlaylistHandler implements AsyncResponse {
     private static ArrayList<Playlist> playlists;
     private static ArrayList<Playlist> artists;
     private static ArrayList<Playlist> albums;
+    private static ArrayList<Playlist> genres;
 
     private boolean playlistCachingOn;
 
@@ -57,7 +58,7 @@ public class PlaylistHandler implements AsyncResponse {
     private static PlaylistHandler instance;
     private int totalDirectories = -1;
 
-    private static Lock addingToArtistAlbums;
+    private static Lock addingToArtistAlbumsGenres;
 
 
     protected PlaylistHandler() {
@@ -74,7 +75,7 @@ public class PlaylistHandler implements AsyncResponse {
             instance.musicGetterHandler = new MusicGetterHandler(instance);
         }
 
-        instance.addingToArtistAlbums = new ReentrantLock();
+        instance.addingToArtistAlbumsGenres = new ReentrantLock();
         instance.playlistCachingOn = cachePlaylists;
         instance.directory = directory;
         instance.context = appContext;
@@ -139,74 +140,65 @@ public class PlaylistHandler implements AsyncResponse {
         sortLists(type, Constants.playlists);
         sortLists(type, Constants.library);
         sortLists(type, Constants.albums);
+        sortLists(type, Constants.genres);
         sortLists(type, Constants.artists);
     }
 
     public void sortLists(String type, String list) {
 
-        MusicSorter ms;
-        Object[] retVal;
         if (list.equals(Constants.local) && listContent != null)
         {
-            ms = new MusicSorter(listContent.getSongInfo(), type);
-            retVal = ms.getRetArr();
-            listContent.setSongInfo((ArrayList<Song>) retVal[0]);
+            MusicSorter ms = new MusicSorter(listContent.getSongInfo(), type);
+            listContent.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifyLocalAdapter();
         }
         else if (spotifyListContent != null && spotifyListContent.size() > 0
                 && list.equals(Constants.spotify))
         {
-            ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
-            retVal = ms.getRetArr();
-            spotifyListContent.setSongInfo((ArrayList<Song>) retVal[0]);
+            MusicSorter ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
+            spotifyListContent.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifySpotifyAdapter();
         }
 
         else if (soundCloudListContent != null && soundCloudListContent.size() > 0
                 && list.equals(Constants.soundCloud))
         {
-            ms = new MusicSorter(soundCloudListContent.getSongInfo(), type);
-            retVal = ms.getRetArr();
-            soundCloudListContent.setSongInfo((ArrayList<Song>) retVal[0]);
+            MusicSorter ms = new MusicSorter(soundCloudListContent.getSongInfo(), type);
+            soundCloudListContent.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifySoundCloudAdapter();
         }
 
         else if (playlists != null && list.equals(Constants.playlists))
         {
-
-            PlaylistSorter ps;
-            ps = new PlaylistSorter(playlists, type);
-            retVal = ps.getRetArr();
-            playlists = ((ArrayList<Playlist>) retVal[0]);
+            PlaylistSorter ps = new PlaylistSorter(playlists, type);
+            playlists = ps.getSortedArray();
         }
 
         else if (combinedList != null && list.equals(Constants.library))
         {
 
-            ms = new MusicSorter(combinedList.getSongInfo(), type);
-            retVal = ms.getRetArr();
-            combinedList.setSongInfo((ArrayList<Song>) retVal[0]);
+            MusicSorter ms = new MusicSorter(combinedList.getSongInfo(), type);
+            combinedList.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifyLibraryAdapter();
         }
-
         else if (artists != null && list.equals(Constants.artists))
         {
-
-            PlaylistSorter ps;
-            ps = new PlaylistSorter(artists, type);
-            retVal = ps.getRetArr();
-            artists = ((ArrayList<Playlist>) retVal[0]);
+            PlaylistSorter ps = new PlaylistSorter(artists, type);
+            artists = ps.getSortedArray();
             OneStreamActivity.notifyArtistsAdapter();
         }
 
         else if (albums != null && list.equals(Constants.albums))
         {
-
-            PlaylistSorter ps;
-            ps = new PlaylistSorter(albums, type);
-            retVal = ps.getRetArr();
-            albums = ((ArrayList<Playlist>) retVal[0]);
+            PlaylistSorter ps = new PlaylistSorter(albums, type);
+            albums = (ps.getSortedArray());
             OneStreamActivity.notifyAlbumsAdapter();
+        }
+        else if (genres != null && list.equals(Constants.genres))
+        {
+            PlaylistSorter ps = new PlaylistSorter(genres, type);
+            genres = ps.getSortedArray();
+            OneStreamActivity.notifyGenresAdapter();
         }
 
     }
@@ -234,7 +226,7 @@ public class PlaylistHandler implements AsyncResponse {
         {
             listContent = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists)).get(0);
         }
-        cachedLists =(tinyDB.getListObject(Constants.playlists, Object.class));
+        cachedLists =(tinyDB.getListObject(getDomain()+Constants.playlists, Object.class));
         if (cachedLists != null && cachedLists.size() > 0)
         {
             playlists = JSONExtractor.processPlaylistJSON(gson.toJson(cachedLists));
@@ -275,10 +267,11 @@ public class PlaylistHandler implements AsyncResponse {
         {
             soundCloudListContent = new Playlist();
         }
-        if (artists == null || albums == null)
+        if (artists == null || albums == null || genres == null)
         {
             artists = new ArrayList<Playlist>();
             albums = new ArrayList<Playlist>();
+            genres = new ArrayList<Playlist>();
         }
         getSpotifyLibrary();
         getSoundCloudLibrary(Constants.defaultHref);
@@ -382,11 +375,16 @@ public class PlaylistHandler implements AsyncResponse {
             playlists = (ArrayList<Playlist>) retVal;
             sortLists(sortType, Constants.playlists);
             OneStreamActivity.initPlaylistAdapter(context);
+            //Ensure playlists are cached regardless of it being enabled
+            if (playlists.size() > 0) {
+                cacheResult(type);
+            }
         }
-        else if (type.equals(Constants.artistsAlbumsMusicLoader)) {
+        else if (type.equals(Constants.artistsAlbumsGenresLoader)) {
             OneStreamActivity.notifyArtistsAdapter();
             OneStreamActivity.notifyAlbumsAdapter();
-            addingToArtistAlbums.unlock();
+            OneStreamActivity.notifyGenresAdapter();
+            addingToArtistAlbumsGenres.unlock();
         }
 
         else if (type.equals(Constants.musicLoaderService)) {
@@ -410,14 +408,14 @@ public class PlaylistHandler implements AsyncResponse {
                 sortLists(sortType, Constants.library);
                 OneStreamActivity.notifyLocalAdapter();
                 OneStreamActivity.notifyLibraryAdapter();
-                addToArtistsAlbums(listContent.getSongInfo(), this);
+                addToArtistsAlbumsGenres(listContent.getSongInfo(), this);
             }
         } else if (type.equals(Constants.soundCloudMusicGetter)) {
             processRemoteSongs(retVal, Constants.soundCloud);
         } else if (type.equals(Constants.spotifyMusicGetter)) {
             processRemoteSongs(retVal, Constants.spotify);
         }
-        if (playlistCachingOn)
+        if (playlistCachingOn && !type.equals(Constants.restServiceActionsHandler))
         {
             cacheResult(type);
         }
@@ -445,7 +443,7 @@ public class PlaylistHandler implements AsyncResponse {
             sortLists(sortType, Constants.spotify);
             sortLists(sortType, Constants.soundCloud);
             sortLists(sortType, Constants.library);
-            addToArtistsAlbums(targetList.getSongInfo(), this);
+            addToArtistsAlbumsGenres(targetList.getSongInfo(), this);
         }
         OneStreamActivity.notifySoundCloudAdapter();
         OneStreamActivity.notifyLibraryAdapter();
@@ -456,7 +454,7 @@ public class PlaylistHandler implements AsyncResponse {
         }
     }
 
-    //Dont calculate artist/albums: Do that at runtime for sanity purposes
+    //Dont calculate artist/albums/genres: Do that at runtime for sanity purposes
     public void cacheResult(String type) {
         ArrayList<Object> listContainer = new ArrayList<Object>();
         if (type.equals(Constants.spotifyMusicGetter)) {
@@ -482,7 +480,7 @@ public class PlaylistHandler implements AsyncResponse {
         }
         if (type.equals(Constants.restServiceActionsHandler)) {
             listContainer.add(playlists);
-            cachePlaylist(listContainer, Constants.playlists);
+            cachePlaylist(listContainer, getDomain() + Constants.playlists);
         }
     }
 
@@ -492,18 +490,19 @@ public class PlaylistHandler implements AsyncResponse {
     }
 
 
-    public static void addToArtistsAlbums(ArrayList<Song> songs, AsyncResponse SAR) {
-        while (!addingToArtistAlbums.tryLock())
+    public static void addToArtistsAlbumsGenres(ArrayList<Song> songs, AsyncResponse SAR) {
+        while (!addingToArtistAlbumsGenres.tryLock())
         {
 
         }
-        Object[] params = new Object[3];
+        Object[] params = new Object[4];
         params[0] = artists;
         params[1] = albums;
-        params[2] = songs;
-        ArtistAlbumMusicLoader aaml = new ArtistAlbumMusicLoader();
-        aaml.SAR = SAR;
-        aaml.execute(params);
+        params[2] = genres;
+        params[3] = songs;
+        AlbumArtistGenreLoader albumArtistGenreLoader = new AlbumArtistGenreLoader();
+        albumArtistGenreLoader.SAR = SAR;
+        albumArtistGenreLoader.execute(params);
     }
 
     public ArrayList<Playlist> getPlaylists() {
@@ -515,6 +514,7 @@ public class PlaylistHandler implements AsyncResponse {
     public ArrayList<Playlist> getAlbums() {
         return albums;
     }
+    public ArrayList<Playlist> getGenres() { return genres; }
 
 }
 

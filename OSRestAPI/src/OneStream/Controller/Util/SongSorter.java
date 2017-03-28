@@ -30,14 +30,14 @@ public class SongSorter {
             metaData.add(new compString(Array1.get(i).getName(), Array1.get(i).getUri(),
                     Array1.get(i).getArtist(),
                     Array1.get(i).getAlbum(), Array1.get(i).getType(), Array1.get(i).getPosition(),
-                    Array1.get(i).getAlbumArt()));
+                    Array1.get(i).getAlbumArt(), Array1.get(i).getGenre()));
         }
 
         Collections.sort(metaData, new ResultComparatorString());
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
             Array1.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album,
-                    comp.type, comp.position, comp.albArt));
+                    comp.type, comp.position, comp.albArt, comp.genre));
         }
     }
 
@@ -58,8 +58,9 @@ class compString{
     String type;
     int position;
     String albArt;
+    String genre;
 
-    compString(String n, String u, String a, String a2, String t, int pos, String art) {
+    compString(String n, String u, String a, String a2, String t, int pos, String art, String gnre) {
         name = n;
         uri = u;
         artist = a;
@@ -67,5 +68,6 @@ class compString{
         type = t;
         position = pos;
         albArt = art;
+        genre = gnre;
     }
 }

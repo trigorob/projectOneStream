@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import music.onestream.R;
-import music.onestream.song.Song;
+import music.onestream.util.Constants;
 
 /**
  * Created by ruspe_000 on 2017-03-04.
@@ -66,7 +66,17 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
         }
         t1.setText(name);
         TextView t2= (TextView) customView.findViewById(R.id.listSongArtistAlbum);
-        t2.setText(song.getArtist() + " ---- " + song.getAlbum());
+        String bottomText = "";
+        if (!song.getArtist().equals(Constants.defaultArtistsAlbumGenreName) &&
+                !song.getAlbum().equals(Constants.defaultArtistsAlbumGenreName))
+        {
+            bottomText = song.getArtist() + " ---- " + song.getAlbum();
+        }
+        else if (!song.getGenre().equals(Constants.defaultArtistsAlbumGenreName))
+        {
+            bottomText = song.getGenre();
+        }
+        t2.setText(bottomText);
 
         return customView;
     }
@@ -96,10 +106,12 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
                 for (int i = 0; i < songs.size(); i++) {
                     String dataNames = songs.get(i).getName();
                     String dataArtists = songs.get(i).getArtist();
+                    String dataGenres = songs.get(i).getGenre();
                     String dataAlbums = songs.get(i).getAlbum();
                     if (dataNames.toLowerCase().contains(constraint.toString()) ||
                         dataArtists.toLowerCase().contains(constraint.toString()) ||
-                        dataAlbums.toLowerCase().contains(constraint.toString()))
+                        dataAlbums.toLowerCase().contains(constraint.toString()) ||
+                        dataGenres.toLowerCase().contains(constraint.toString()))
                         {
                             FilteredSongNames.add(songs.get(i));
                         }

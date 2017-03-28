@@ -15,7 +15,6 @@ public class PlaylistSorter {
 
     ArrayList<Playlist> Array1;
     String type;
-    Object[] retArr = null;
 
     public PlaylistSorter(ArrayList<Playlist> listContent, String type) {
         this.Array1 = listContent;
@@ -23,15 +22,14 @@ public class PlaylistSorter {
 
         if (this.Array1 != null) {
             sort();
-            retArr = new Object[]{Array1};
         }
         else {
             return;
         }
     }
 
-    public Object[] getRetArr() {
-        return retArr;
+    public ArrayList<Playlist> getSortedArray() {
+        return Array1;
     }
 
 
