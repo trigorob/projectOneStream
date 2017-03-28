@@ -465,17 +465,17 @@ private ViewPager mViewPager;
                         }
                         break;
                     case 3:
-                        currentPage = Constants.OneStream_Playlists_Pos;
-                        mainList.setAdapter(playlistAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 4:
                         currentPage = Constants.OneStream_SoundCloud_Pos;
                         if (playerHandler.isSoundCloudLoggedOut())
                         {
                             setLoginButtonVisible(true, loginButton);
                         }
                         mainList.setAdapter(soundCloudAdapter);
+                        break;
+                    case 4:
+                        currentPage = Constants.OneStream_Playlists_Pos;
+                        mainList.setAdapter(playlistAdapter);
+                        setLoginButtonVisible(false, loginButton);
                         break;
                     case 5:
                         currentPage = Constants.OneStream_Artists_Pos;

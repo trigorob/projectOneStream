@@ -46,9 +46,9 @@ public class OneStreamActivityAdapter extends FragmentPagerAdapter {
             case 2:
                 return Constants.OneStream_Spotify;
             case 3:
-                return Constants.OneStream_Playlists;
-            case 4:
                 return Constants.OneStream_SoundCloud;
+            case 4:
+                return Constants.OneStream_Playlists;
             case 5:
                 return Constants.OneStream_Artists;
             case 6:

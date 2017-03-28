@@ -53,8 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:tabMode="scrollable"
-            app:tabPaddingStart="30dp"
-            app:tabPaddingEnd="30dp"/>
+            app:tabPaddingStart="20dp"
+            app:tabPaddingEnd="20dp"/>
 
     </android.support.design.widget.AppBarLayout>
 
