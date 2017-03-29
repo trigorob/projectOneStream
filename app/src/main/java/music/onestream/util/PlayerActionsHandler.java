@@ -510,8 +510,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
         if (viewingCurrentList())
         {
-            ((SongAdapter) mainList.getAdapter()).setSelected(songIndex);
-            mainList.smoothScrollToPosition(songIndex);
+            ((SongAdapter) mainList.getAdapter()).setSelected(currentSong);
+            mainList.smoothScrollToPositionFromTop(songIndex, 0, 0);
             mainList.setItemChecked(songIndex, true);
         }
         fabIO.setImageResource(R.drawable.pause);
@@ -649,8 +649,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             serviceIconPausePlay(true);
             if (viewingCurrentList())
             {
-                ((SongAdapter) mainList.getAdapter()).setSelected(songIndex);
-                mainList.smoothScrollToPosition(songIndex);
+                ((SongAdapter) mainList.getAdapter()).setSelected(currentSong);
+                mainList.smoothScrollToPositionFromTop(songIndex, 0, 0);
                 mainList.setItemChecked(songIndex, true);
             }
         }
