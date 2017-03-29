@@ -44,13 +44,14 @@ public class LoginActivity extends OSAuthenticationActivity {
         CredentialsHandler.setToken(getContext(), null, 0,
                 SECONDS, Constants.spotify);
         getPlayerHandler().getSpotifyPlayer().logout();
-        startMainActivity();
+        super.onBackPressed();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (intent != null && requestCode == Constants.REQUEST_CODE) {
             onLoginActivityResult(requestCode, resultCode, intent);
+            super.onBackPressed();
         }
     }
 

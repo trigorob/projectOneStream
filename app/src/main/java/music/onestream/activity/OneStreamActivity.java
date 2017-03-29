@@ -102,6 +102,8 @@ private ViewPager mViewPager;
             firstRun = false;
         }
         notifyLibraryAdapter();
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(currentPage);
     }
 
     @Override
@@ -524,6 +526,14 @@ private ViewPager mViewPager;
         if (intent != null && requestCode == Constants.REQUEST_CODE) {
             onLoginActivityResult(requestCode, resultCode, intent);
         }
+        final Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+                mViewPager.setCurrentItem(currentPage);
+            }
+        }, 1000);
     }
 
     /**
