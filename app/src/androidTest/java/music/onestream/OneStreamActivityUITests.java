@@ -1,5 +1,6 @@
 package music.onestream;
 
+import android.os.SystemClock;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -12,9 +13,12 @@ import org.junit.runner.RunWith;
 import music.onestream.activity.OneStreamActivity;
 import music.onestream.util.Constants;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
@@ -154,5 +158,19 @@ public class OneStreamActivityUITests {
         onView(withText(Constants.OneStream_Genre)).check(ViewAssertions.matches(isSelected()));
 
     }
+
+    @Test
+    public void goToSettingsTest() {
+        //Click options menu and click settings
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(withText("Settings")).perform(click());
+
+        onView(withId(R.id.playlistPage)).check(matches(isDisplayed()));
+        onView(withId(R.id.playlistPage)).check(matches(withText("Create Playlist")));
+    }
+
+
+
+
 }
 
