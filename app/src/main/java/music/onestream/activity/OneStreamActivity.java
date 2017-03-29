@@ -102,13 +102,15 @@ private ViewPager mViewPager;
             firstRun = false;
         }
         notifyLibraryAdapter();
-        if (currentPage == 0) {
-            if (combinedAdapter != null & combinedAdapter.getSongs().size() == 0)
+        if (currentPage == Constants.OneStream_Library_Pos) {
+            if (combinedAdapter == null || combinedAdapter.getSongs() == null ||
+                    combinedAdapter.getSongs().size() == 0)
             {
                 combinedAdapter = new SongAdapter(this, R.layout.songlayout,
                         playlistHandler.getList(Constants.library).getSongInfo());
             }
             mainList.setAdapter(combinedAdapter);
+            mainList.invalidateViews();
         }
     }
 
@@ -522,6 +524,11 @@ private ViewPager mViewPager;
                 mViewPager.setCurrentItem(currentPage);
             }
         }, 1000);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 
     /**
