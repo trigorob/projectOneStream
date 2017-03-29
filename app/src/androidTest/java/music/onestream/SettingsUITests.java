@@ -1,5 +1,6 @@
 package music.onestream;
 
+import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.matcher.ViewMatchers;
@@ -13,7 +14,9 @@ import org.junit.runner.RunWith;
 
 import music.onestream.activity.SettingsActivity;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -74,5 +77,52 @@ public class SettingsUITests {
         onView(withText("Cancel")).check(matches(isDisplayed()));
 
     }
+
+    @Test
+    public void selectMusicSuggestionsButton() {
+
+        onView(withId(R.id.playlistRecommendationButton)).perform(click());
+
+        onView(withId(R.id.appbarPR)).check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void selectReturnToOneStreamButton() {
+
+        onView(withId(R.id.back)).perform(click());
+
+        onView(withText("OneStream")).check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void selectUserAccountsButton() {
+
+        onView(withId(R.id.accountsPage)).perform(click());
+
+        onView(withId(R.id.soundCloudMusicLoginLauncherButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.oneStreamDomainLauncherButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.spotifyLoginLauncherButton)).check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void selectOrganizeSongsButton() {
+
+        onView(withId(R.id.sortPage)).perform(click());
+
+        onView(withId(R.id.sortAlphDescend)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphAscend)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphAscendGenre)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphDescendArtist)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphAscendArtist)).check(matches(isDisplayed()));
+        onView(withId(R.id.resetSortingType)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphDescendAlbum)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphAscendAlbum)).check(matches(isDisplayed()));
+        onView(withId(R.id.sortAlphDescendGenre)).check(matches(isDisplayed()));
+
+    }
+
 }
 
