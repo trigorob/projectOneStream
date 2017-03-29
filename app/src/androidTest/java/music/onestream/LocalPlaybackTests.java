@@ -21,6 +21,7 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -78,29 +79,24 @@ public class LocalPlaybackTests {
 
         onView(withId(R.id.listSongName)).perform(click());
 
-        //Check if album art, artist name, and album name are displayed in song view
-        onView(withId(R.id.album)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.artistOrGenreName)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.albumName)).check(ViewAssertions.matches(isDisplayed()));
-
-        //Check if seek bar and playback controls are displayed
-        onView(withId(R.id.seekBarSV)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.RewindSV)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.PrevSV)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.fabIOSV)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.NextSV)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.RandomSV)).check(ViewAssertions.matches(isDisplayed()));
+        //Check if play controls are displayed
+        onView(withId(R.id.fabIO)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Random)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Rewind)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Prev)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.Next)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.seekBar)).check(ViewAssertions.matches(isDisplayed()));
 
     }
 
     @Test
-    public void songViewDisabledPlayLocalSong() {
+    public void songViewEnabledPlayLocalSong() {
 
         //Click options menu and click settings
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(withText("Settings")).perform(click());
 
-        //Disable song view
+        //Enable song view
         onView(withId(R.id.songViewToggleButton)).perform(click());
 
         //Go back to Onestream
@@ -116,13 +112,28 @@ public class LocalPlaybackTests {
 
         onView(withId(R.id.listSongName)).perform(click());
 
-        //Check if play controls are displayed
-        onView(withId(R.id.fabIO)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.Random)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.Rewind)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.Prev)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.Next)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.seekBar)).check(ViewAssertions.matches(isDisplayed()));
+        //Check if album art, artist name, and album name are displayed in song view
+        onView(withId(R.id.album)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.artistOrGenreName)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.albumName)).check(ViewAssertions.matches(isDisplayed()));
+
+        //Check if seek bar and playback controls are displayed
+        onView(withId(R.id.seekBarSV)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.RewindSV)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.PrevSV)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.fabIOSV)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.NextSV)).check(ViewAssertions.matches(isDisplayed()));
+        onView(withId(R.id.RandomSV)).check(ViewAssertions.matches(isDisplayed()));
+
+        //hit back button
+        pressBack();
+
+        //Click options menu and click settings
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(withText("Settings")).perform(click());
+
+        //Disable song view
+        onView(withId(R.id.songViewToggleButton)).perform(click());
 
     }
 }
