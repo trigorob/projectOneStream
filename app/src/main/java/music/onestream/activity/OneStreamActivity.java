@@ -102,7 +102,7 @@ private ViewPager mViewPager;
             firstRun = false;
         }
         notifyLibraryAdapter();
-        if (currentPage == Constants.OneStream_Library_Pos) {
+        if (mainList.getAdapter() == null || currentPage == Constants.OneStream_Library_Pos) {
             if (combinedAdapter == null || combinedAdapter.getSongs() == null ||
                     combinedAdapter.getSongs().size() == 0)
             {
@@ -254,6 +254,7 @@ private ViewPager mViewPager;
         genresAdapter.setNotifyOnChange(true);
 
         mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
+        currentPage = Constants.OneStream_Library_Pos;
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
