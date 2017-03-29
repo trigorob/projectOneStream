@@ -103,6 +103,11 @@ private ViewPager mViewPager;
         }
         notifyLibraryAdapter();
         if (currentPage == 0) {
+            if (combinedAdapter != null & combinedAdapter.getSongs().size() == 0)
+            {
+                combinedAdapter = new SongAdapter(this, R.layout.songlayout,
+                        playlistHandler.getList(Constants.library).getSongInfo());
+            }
             mainList.setAdapter(combinedAdapter);
         }
     }
