@@ -170,7 +170,7 @@ public class OneStreamPlayerService extends Service {
 
         builder.addAction(R.drawable.rewind, "Rewind", generatePendingIntent(Constants.ACTION_REWIND));
         builder.addAction(R.drawable.previous, "Previous", generatePendingIntent(Constants.ACTION_PREVIOUS));
-        if (playerHandler.isPlaying() || action.title.equals("Pause") ||
+        if (playerHandler != null && playerHandler.isPlaying() || action.title.equals("Pause") ||
                 action.title.equals("Previous") || action.title.equals("Next")) {
             builder.addAction(R.drawable.pause, "Pause", generatePendingIntent(Constants.ACTION_PAUSE));
         }
@@ -178,7 +178,7 @@ public class OneStreamPlayerService extends Service {
             builder.addAction(R.drawable.play, "Play", generatePendingIntent(Constants.ACTION_PLAY));
         }
         builder.addAction(R.drawable.skip, "Next", generatePendingIntent(Constants.ACTION_NEXT));
-        if (playerHandler.isRandomNext()) {
+        if (playerHandler != null && playerHandler.isRandomNext()) {
             builder.addAction(R.drawable.shuffleoff, "Shuffle", generatePendingIntent(Constants.ACTION_SHUFFLE));
         }
         else {

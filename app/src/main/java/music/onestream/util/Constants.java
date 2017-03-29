@@ -103,9 +103,9 @@ public class Constants {
     public static String OneStream_Library = "Library";
     public static int OneStream_Spotify_Pos = 2;
     public static String OneStream_Spotify = "Spotify";
-    public static int OneStream_SoundCloud_Pos = 4;
+    public static int OneStream_SoundCloud_Pos = 3;
     public static String OneStream_SoundCloud = "SoundCloud";
-    public static int OneStream_Playlists_Pos = 3;
+    public static int OneStream_Playlists_Pos = 4;
     public static String OneStream_Playlists = "Playlists";
     public static int OneStream_Artists_Pos = 5;
     public static String OneStream_Artists = "Artists";

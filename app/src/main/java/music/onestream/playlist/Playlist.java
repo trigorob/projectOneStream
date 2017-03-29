@@ -28,6 +28,7 @@ public class Playlist implements Serializable {
     {
         this.name = name;
         this.owner = owner;
+        this.songInfo = new ArrayList<Song>();
         setSongInfo(songInfo);
     }
 
@@ -60,7 +61,8 @@ public class Playlist implements Serializable {
     }
 
     public void setSongInfo(ArrayList<Song> songs) {
-        this.songInfo = songs;
+        songInfo.clear();
+        addSongs(songs);
     }
     public void removeSong(int position)
     {

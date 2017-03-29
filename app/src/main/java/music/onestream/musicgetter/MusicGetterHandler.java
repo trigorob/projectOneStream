@@ -20,6 +20,10 @@ public class MusicGetterHandler {
         this.context = returnLocation;
     }
 
+    public void freeLocalMusicGetters() {
+        localMusicGetters.clear();
+    }
+
     public void addSpotifyMusicGetter(SpotifyMusicGetter spotifyMusicGetter) {
         this.spotifyMusicGetter = spotifyMusicGetter;
     }

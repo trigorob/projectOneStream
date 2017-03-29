@@ -8,7 +8,8 @@ import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+
 import music.onestream.song.Song;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.Constants;
@@ -87,24 +88,23 @@ public class LocalMusicGetter extends AsyncTask implements MusicGetter {
             String album;
             String genre;
             for (int i = 0; i < files.size(); i++) {
-                artist = artists.get(i);
-                album = albums.get(i);
-                genre = genres.get(i);
-                if (artist == null ||artist.equals(""))
-                {
-                    artist = Constants.defaultArtistsAlbumGenreName;
+                if (filess.get(i) != null) {
+                    artist = artists.get(i);
+                    album = albums.get(i);
+                    genre = genres.get(i);
+                    if (artist == null || artist.equals("")) {
+                        artist = Constants.defaultArtistsAlbumGenreName;
+                    }
+                    if (album == null || album.equals("")) {
+                        album = Constants.defaultArtistsAlbumGenreName;
+                    }
+                    if (genre == null || genre.equals("")) {
+                        genre = Constants.defaultArtistsAlbumGenreName;
+                    }
+                    Song song = new Song(filess.get(i), files.get(i).toURI().toString(),
+                            artist, album, Constants.local, 0, files.get(i).getPath(), genre);
+                    songs.add(song);
                 }
-                if (album == null || album.equals(""))
-                {
-                    album =  Constants.defaultArtistsAlbumGenreName;
-                }
-                if (genre == null || genre.equals(""))
-                {
-                    album =  Constants.defaultArtistsAlbumGenreName;
-                }
-                Song song = new Song(filess.get(i), files.get(i).toURI().toString(),
-                        artist, album, Constants.local, 0, files.get(i).getPath(), genre);
-                songs.add(song);
             }
         }
     }

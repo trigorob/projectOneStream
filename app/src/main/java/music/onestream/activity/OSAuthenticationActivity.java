@@ -18,15 +18,6 @@ public class OSAuthenticationActivity extends OSActivity {
 
     private static LoginHandler loginHandler;
 
-    public void startMainActivity() {
-        if (!this.getClass().equals(PlaylistActivity.class)) {
-            Intent intent;
-            intent = OneStreamActivity.createIntent(this);
-            startActivity(intent);
-            finish();
-        }
-    }
-
     public LoginHandler getLoginHandler() {
         if (loginHandler == null)
         {
@@ -50,7 +41,6 @@ public class OSAuthenticationActivity extends OSActivity {
             else {
                 getLoginHandler().getSoundCloudToken(intent);
                 logger.logMessage("Login Success!");
-                startMainActivity();
             }
         }
         else {
@@ -59,7 +49,6 @@ public class OSAuthenticationActivity extends OSActivity {
                 logger.logMessage("Login Failed");
             } else {
                 logger.logMessage("Login Success!");
-                startMainActivity();
             }
         }
     }

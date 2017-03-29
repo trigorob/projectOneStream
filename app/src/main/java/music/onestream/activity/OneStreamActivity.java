@@ -102,6 +102,16 @@ private ViewPager mViewPager;
             firstRun = false;
         }
         notifyLibraryAdapter();
+        if (mainList.getAdapter() == null || currentPage == Constants.OneStream_Library_Pos) {
+            if (combinedAdapter == null || combinedAdapter.getSongs() == null ||
+                    combinedAdapter.getSongs().size() == 0)
+            {
+                combinedAdapter = new SongAdapter(this, R.layout.songlayout,
+                        playlistHandler.getList(Constants.library).getSongInfo());
+            }
+            mainList.setAdapter(combinedAdapter);
+            mainList.invalidateViews();
+        }
     }
 
     @Override
@@ -146,17 +156,7 @@ private ViewPager mViewPager;
 
     public static void notifyLocalAdapter() {
         if (adapter != null) {
-            adapter = new SongAdapter(getContext(), R.layout.songlayout,
-                    playlistHandler.getList(Constants.local).getSongInfo());
-            if (currentPage == Constants.OneStream_Local_Pos)
-            {
-                mainList.setAdapter(adapter);
-                int currentPos = getPlayerHandler().getCurrentSongListPosition();
-                if (currentPos > 0 && currentPos < adapter.getSongs().size())
-                {
-                    mainList.setSelection(currentPos);
-                }
-            }
+            adapter.notifyDataSetChanged();
             mainList.invalidateViews();
         }
     }
@@ -197,7 +197,7 @@ private ViewPager mViewPager;
 
     public static void initPlaylistAdapter(Context context) {
         boolean refreshView = false;
-        if (mainList.getAdapter().equals(playlistAdapter))
+        if (mainList.getAdapter() != null && mainList.getAdapter().equals(playlistAdapter))
         {
             refreshView = true;
         }
@@ -212,18 +212,10 @@ private ViewPager mViewPager;
     }
 
     public static void notifyLibraryAdapter() {
-        combinedAdapter = new SongAdapter(getContext(), R.layout.songlayout,
-                playlistHandler.getList(Constants.library).getSongInfo());
-        if (currentPage == Constants.OneStream_Library_Pos || mainList.getAdapter() == null)
-        {
-                mainList.setAdapter(combinedAdapter);
-                int currentPos = getPlayerHandler().getCurrentSongListPosition();
-                if (currentPos > 0 && currentPos < combinedAdapter.getSongs().size())
-                {
-                    mainList.setSelection(currentPos);
-                }
+        if (combinedAdapter != null) {
+            combinedAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
         }
-        mainList.invalidateViews();
     }
 
     public boolean onPlaylistPage() {
@@ -262,6 +254,7 @@ private ViewPager mViewPager;
         genresAdapter.setNotifyOnChange(true);
 
         mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
+        currentPage = Constants.OneStream_Library_Pos;
 
         final EditText textFilter = (EditText) findViewById(R.id.songFilter);
         textFilter.addTextChangedListener(new TextWatcher() {
@@ -463,19 +456,25 @@ private ViewPager mViewPager;
                         {
                             setLoginButtonVisible(true, loginButton);
                         }
+                        else {
+                            setLoginButtonVisible(false, loginButton);
+                        }
                         break;
                     case 3:
-                        currentPage = Constants.OneStream_Playlists_Pos;
-                        mainList.setAdapter(playlistAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 4:
                         currentPage = Constants.OneStream_SoundCloud_Pos;
                         if (playerHandler.isSoundCloudLoggedOut())
                         {
                             setLoginButtonVisible(true, loginButton);
                         }
+                        else {
+                            setLoginButtonVisible(false, loginButton);
+                        }
                         mainList.setAdapter(soundCloudAdapter);
+                        break;
+                    case 4:
+                        currentPage = Constants.OneStream_Playlists_Pos;
+                        mainList.setAdapter(playlistAdapter);
+                        setLoginButtonVisible(false, loginButton);
                         break;
                     case 5:
                         currentPage = Constants.OneStream_Artists_Pos;
@@ -518,6 +517,19 @@ private ViewPager mViewPager;
         if (intent != null && requestCode == Constants.REQUEST_CODE) {
             onLoginActivityResult(requestCode, resultCode, intent);
         }
+        final Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+                mViewPager.setCurrentItem(currentPage);
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 
     /**
