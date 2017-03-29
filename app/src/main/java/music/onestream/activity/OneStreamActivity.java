@@ -463,12 +463,18 @@ private ViewPager mViewPager;
                         {
                             setLoginButtonVisible(true, loginButton);
                         }
+                        else {
+                            setLoginButtonVisible(false, loginButton);
+                        }
                         break;
                     case 3:
                         currentPage = Constants.OneStream_SoundCloud_Pos;
                         if (playerHandler.isSoundCloudLoggedOut())
                         {
                             setLoginButtonVisible(true, loginButton);
+                        }
+                        else {
+                            setLoginButtonVisible(false, loginButton);
                         }
                         mainList.setAdapter(soundCloudAdapter);
                         break;

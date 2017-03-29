@@ -19,11 +19,12 @@ public class OSAuthenticationActivity extends OSActivity {
     private static LoginHandler loginHandler;
 
     public void startMainActivity() {
-        if (!this.getClass().equals(PlaylistActivity.class)) {
-            Intent intent;
-            intent = OneStreamActivity.createIntent(this);
-            startActivity(intent);
-            finish();
+        if (this.getClass().equals(OneStreamActivity.class))
+        {
+            startActivity(getIntent());
+        }
+        else if (!this.getClass().equals(PlaylistActivity.class)) {
+            super.onBackPressed();
         }
     }
 
