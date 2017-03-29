@@ -303,7 +303,10 @@ private ViewPager mViewPager;
                     startActivityForResult(playlist, 0);
                 }
                 else {
-                    ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
+                    SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
+                    ArrayList<Song> songs = sAdapter.getSongs();
+                    sAdapter.setSelected(position);
+                    sAdapter.notifyDataSetChanged();
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                     playerHandler.setCurrentListSize(songs.size());
                     playerHandler.setCurrentSongListPosition(position);
@@ -410,6 +413,13 @@ private ViewPager mViewPager;
         return playlistHandler;
     }
 
+    private void resetAdapterSelection() {
+        if (!onPlaylistPage())
+        {
+            ((SongAdapter) mainList.getAdapter()).setSelected(-1);
+        }
+    }
+
     public void initButtonListeners() {
 
         final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButton);
@@ -428,6 +438,7 @@ private ViewPager mViewPager;
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
             @Override
             public void onPageSelected(int position) {
+                resetAdapterSelection();
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
                         currentPage = Constants.OneStream_Library_Pos;

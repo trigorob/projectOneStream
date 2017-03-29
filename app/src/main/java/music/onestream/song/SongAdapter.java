@@ -1,6 +1,7 @@
 package music.onestream.song;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +24,25 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
 
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredSongs;
+    private int selected;
 
         public SongAdapter(Context context, int textViewResourceId, List<Song> songs) {
             super(context, textViewResourceId, songs);
             this.songs = (ArrayList<Song>) songs;
             this.filteredSongs = (ArrayList<Song>) songs;
+            selected = -1;
         }
 
     public int getCount() {
         return filteredSongs.size();
+    }
+
+    public void setSelected(int selection) {
+        selected = selection;
+    }
+
+    public int getSelected() {
+        return selected;
     }
 
     public ArrayList<Song> getSongs() {
@@ -54,6 +65,7 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         View customView = convertView;
         Song song = getItem(position);
+
         if (customView == null) {
           final LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
           customView = vi.inflate(R.layout.songlayout, null);
@@ -77,6 +89,13 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
             bottomText = song.getGenre();
         }
         t2.setText(bottomText);
+
+        if (position == selected) {
+            customView.setBackgroundColor(Color.parseColor("#E0ECF8"));
+        }
+        else {
+            customView.setBackgroundResource(android.R.color.transparent);
+        }
 
         return customView;
     }
