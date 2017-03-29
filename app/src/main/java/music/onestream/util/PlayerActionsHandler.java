@@ -13,7 +13,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -28,15 +27,14 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import java.util.ArrayList;
-
-import music.onestream.service.OneStreamPlayerService;
-import music.onestream.playlist.Playlist;
 import music.onestream.R;
-import music.onestream.song.Song;
-import music.onestream.activity.SongActivity;
 import music.onestream.activity.OneStreamActivity;
+import music.onestream.activity.SongActivity;
 import music.onestream.musicgetter.ImageGetter;
+import music.onestream.playlist.Playlist;
+import music.onestream.service.OneStreamPlayerService;
+import music.onestream.song.Song;
+import music.onestream.song.SongAdapter;
 
 /**
  * Created by ruspe_000 on 2017-02-21.
@@ -250,14 +248,14 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
                     //Play or resume song
                     if (currentSongListPosition == -1)
                     {
-                        if (mp.isPlaying() || (spotPlayer != null && spotPlayer.getPlaybackState().isPlaying))
+                        if (isPlaying())
                         {
                             stopSong();
                         }
                     }
                     else {
                         if (currentSongNotSpotify()) {
-                            if (!mp.isPlaying()) {
+                            if (!isPlayerPlaying()) {
                                 resumeSong(currentSongListPosition);
                             } else //Stop song.
                             {
@@ -266,7 +264,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
                         }
                         else if (currentSongType.equals(Constants.spotify))
                         {
-                            if (!spotPlayer.getPlaybackState().isPlaying) {
+                            if (!isSpotifyPlaying()) {
                                 resumeSong(currentSongListPosition);
                             } else //Stop song.
                             {
@@ -500,7 +498,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             return;
         }
 
-
         if (type.equals(Constants.local)) {
             playLocalSong(currentSong);
         }
@@ -510,10 +507,20 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         else if (type.equals(Constants.soundCloud)) {
             playSoundCloudSong(currentSong);
         }
+
+        if (viewingCurrentList())
+        {
+            mainList.smoothScrollToPosition(songIndex);
+            mainList.setItemChecked(songIndex, true);
+        }
         fabIO.setImageResource(R.drawable.pause);
-        mainList.setSelection(songIndex);
         setSongViewDisplay(currentSong);
         serviceIconPausePlay(true);
+    }
+
+    public boolean viewingCurrentList() {
+        return (OneStreamActivity.getPlaylistHandler().getCurrentSongs() != null && ((SongAdapter)mainList.getAdapter()).getSongs()
+                .equals(OneStreamActivity.getPlaylistHandler().getCurrentSongs()));
     }
 
     public void setSongViewDisplay(Song song) {
@@ -639,8 +646,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
                 playSong(songIndex);
             }
             serviceIconPausePlay(true);
+            if (viewingCurrentList())
+            {
+                mainList.smoothScrollToPosition(songIndex);
+                mainList.setItemChecked(songIndex, true);
+            }
         }
-        mainList.setSelection(songIndex);
     }
 
     public void nextSong() {
@@ -656,7 +667,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             next = 0;
         }
         currentSongListPosition = next;
-        mainList.setSelection(next);
         playSong(next);
     }
 

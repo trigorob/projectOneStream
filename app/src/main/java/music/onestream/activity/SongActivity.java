@@ -2,6 +2,7 @@ package music.onestream.activity;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
@@ -120,14 +121,31 @@ public class SongActivity extends OSActivity {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(song.getAlbumArt());
         byte[] art = mmr.getEmbeddedPicture();
-        Bitmap image = ColorCalculator.getBitmapFromBytes(art);
-        albumArt.setImageBitmap(image);
-        setSongViewBackground(image);
+        if (art != null)
+        {
+            Bitmap image = ColorCalculator.getBitmapFromBytes(art);
+            albumArt.setImageBitmap(image);
+            setSongViewBackground(image);
+        }
+        else {
+            albumArt.setImageResource(R.drawable.logo);
+            setSongViewDefaultBackground();
+        }
     }
 
     public static void setSongViewBackground(Bitmap bitmap) {
         View rootView = albumArt.getRootView();
         int backgroundColor = ColorCalculator.getAverageColor(bitmap);
+        rootView.setBackgroundColor(backgroundColor);
+        int textColor = ColorCalculator.getColorInversion(backgroundColor);
+        getPlayerHandler().setButtonColors(textColor);
+        albumName.setTextColor(textColor);
+        artistOrGenreName.setTextColor(textColor);
+    }
+
+    public static void setSongViewDefaultBackground() {
+        View rootView = albumArt.getRootView();
+        int backgroundColor = Color.parseColor("#242738");
         rootView.setBackgroundColor(backgroundColor);
         int textColor = ColorCalculator.getColorInversion(backgroundColor);
         getPlayerHandler().setButtonColors(textColor);

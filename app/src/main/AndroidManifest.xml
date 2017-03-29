@@ -16,9 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:screenOrientation="nosensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.OneStreamActivity"
             android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,42 +28,51 @@
             </intent-filter>
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:name=".activity.SettingsActivity"
             android:label="Settings">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:name=".activity.SortingActivity"
             android:label="SortingActivity">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.EditPlaylistActivity"
             android:label="EditPlaylistActivity">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.AddSongsActivity"
             android:label="AddSongsActivity">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:name=".activity.PlaylistActivity"
             android:label="PlaylistActivity">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:name=".activity.SongActivity">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.OneStreamDomainActivity"
             android:label="OneStreamDomainActivity">
         </activity>
         <activity
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:name=".activity.PlaylistRecommendationsActivity"
             android:label="Recommendations">
         </activity>
-        <activity android:name=".activity.LoginActivity">
+        <activity android:name=".activity.LoginActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <data

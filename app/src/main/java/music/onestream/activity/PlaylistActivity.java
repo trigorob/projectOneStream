@@ -124,9 +124,7 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                 ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
                 OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                 playerHandler.setCurrentListSize(songs.size());
-
                 playerHandler.setCurrentSongListPosition(position);
-                mainList.setItemChecked(position, true);
                 playerHandler.playSong(songs.indexOf(mainList.getAdapter().getItem(position)));
             }});
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {

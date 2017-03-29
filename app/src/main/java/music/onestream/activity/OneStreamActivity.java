@@ -157,41 +157,35 @@ private ViewPager mViewPager;
     public static void notifyLocalAdapter() {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
     public static void notifySpotifyAdapter() {
         if (spotifyAdapter != null) {
             spotifyAdapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
 
     public static void notifySoundCloudAdapter() {
         if (soundCloudAdapter != null) {
             soundCloudAdapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
 
     public static void notifyArtistsAdapter() {
         if (artistsAdapter != null) {
             artistsAdapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
 
     public static void notifyAlbumsAdapter() {
         if (albumsAdapter != null) {
             albumsAdapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
 
     public static void notifyGenresAdapter() {
         if (genresAdapter != null) {
             genresAdapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
 
@@ -214,7 +208,6 @@ private ViewPager mViewPager;
     public static void notifyLibraryAdapter() {
         if (combinedAdapter != null) {
             combinedAdapter.notifyDataSetChanged();
-            mainList.invalidateViews();
         }
     }
 
@@ -260,15 +253,14 @@ private ViewPager mViewPager;
         textFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                if (onPlaylistPage())
-                {
-                    ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
+                if (mainList.getAdapter() != null) {
+                    if (onPlaylistPage()) {
+                        ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
+                    } else {
+                        ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
+                    }
+                    mainList.invalidateViews();
                 }
-                else
-                {
-                    ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
-                }
-                mainList.invalidateViews();
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -314,9 +306,7 @@ private ViewPager mViewPager;
                     ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                     playerHandler.setCurrentListSize(songs.size());
-
                     playerHandler.setCurrentSongListPosition(position);
-                    mainList.setItemChecked(position, true);
                     playerHandler.playSong(songs.indexOf(mainList.getAdapter().getItem(position)));
                 }
             }});
