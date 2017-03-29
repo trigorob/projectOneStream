@@ -1,9 +1,5 @@
 package music.onestream;
 
-import android.os.SystemClock;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.assertion.ViewAssertions;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -14,9 +10,7 @@ import org.junit.runner.RunWith;
 
 import music.onestream.activity.SettingsActivity;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -41,8 +35,8 @@ public class SettingsUITests {
         onView(withId(R.id.playlistRecommendationButton)).check(matches(isDisplayed()));
         onView(withId(R.id.playlistRecommendationButton)).check(matches(withText("Music Suggestions")));
 
-        onView(withId(R.id.back)).check(matches(isDisplayed()));
-        onView(withId(R.id.back)).check(matches(withText("Return to OneStream")));
+        onView(withId(R.id.storageLocation)).check(matches(isDisplayed()));
+        onView(withId(R.id.storageLocation)).check(matches(withText("Return to OneStream")));
 
         onView(withId(R.id.resetDir)).check(matches(isDisplayed()));
         onView(withId(R.id.resetDir)).check(matches(withText("Reset directory")));
@@ -90,7 +84,7 @@ public class SettingsUITests {
     @Test
     public void selectReturnToOneStreamButton() {
 
-        onView(withId(R.id.back)).perform(click());
+        onView(withId(R.id.storageLocation)).perform(click());
 
         onView(withText("OneStream")).check(matches(isDisplayed()));
 

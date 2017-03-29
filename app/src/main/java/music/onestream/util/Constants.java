@@ -67,6 +67,7 @@ public class Constants {
     public static String sortType = "sortType";
     public static String directory = "dir";
     public static String directoryChanged = "directoryChanged";
+    public static String useExternalStorage = "useExternalStorage";
     public static String songViewOn = "SongView";
     public static String cacheSongOn = "CacheSongs";
     public static String cachePlaylistsOn = "CachePlaylists";
