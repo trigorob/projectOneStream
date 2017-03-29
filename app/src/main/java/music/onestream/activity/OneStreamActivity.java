@@ -305,12 +305,12 @@ private ViewPager mViewPager;
                 else {
                     SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
                     ArrayList<Song> songs = sAdapter.getSongs();
-                    sAdapter.setSelected(position);
+                    sAdapter.setSelected(sAdapter.getItem(position));
                     sAdapter.notifyDataSetChanged();
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                     playerHandler.setCurrentListSize(songs.size());
                     playerHandler.setCurrentSongListPosition(position);
-                    playerHandler.playSong(songs.indexOf(mainList.getAdapter().getItem(position)));
+                    playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
                 }
             }});
     }
@@ -416,7 +416,7 @@ private ViewPager mViewPager;
     private void resetAdapterSelection() {
         if (!onPlaylistPage())
         {
-            ((SongAdapter) mainList.getAdapter()).setSelected(-1);
+            ((SongAdapter) mainList.getAdapter()).setSelected(null);
         }
     }
 

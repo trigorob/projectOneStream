@@ -24,27 +24,21 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
 
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredSongs;
-    private int selected;
+    private Song selected;
 
         public SongAdapter(Context context, int textViewResourceId, List<Song> songs) {
             super(context, textViewResourceId, songs);
             this.songs = (ArrayList<Song>) songs;
             this.filteredSongs = (ArrayList<Song>) songs;
-            selected = -1;
         }
 
     public int getCount() {
         return filteredSongs.size();
     }
 
-    public void setSelected(int selection) {
-        selected = selection;
+    public void setSelected(Song song) {
+        selected = song;
     }
-
-    public int getSelected() {
-        return selected;
-    }
-
     public ArrayList<Song> getSongs() {
         return songs;
     }
@@ -90,7 +84,7 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
         }
         t2.setText(bottomText);
 
-        if (position == selected) {
+        if (selected != null && getItem(position).equals(selected)) {
             customView.setBackgroundColor(Color.parseColor("#E0ECF8"));
         }
         else {
