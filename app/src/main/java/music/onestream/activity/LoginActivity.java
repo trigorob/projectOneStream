@@ -44,6 +44,7 @@ public class LoginActivity extends OSAuthenticationActivity {
         CredentialsHandler.setToken(getContext(), null, 0,
                 SECONDS, Constants.spotify);
         getPlayerHandler().getSpotifyPlayer().logout();
+        OneStreamActivity.getPlaylistHandler().removeRemoteSongsFromLibrary();
         super.onBackPressed();
     }
 
