@@ -102,8 +102,9 @@ private ViewPager mViewPager;
             firstRun = false;
         }
         notifyLibraryAdapter();
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setCurrentItem(currentPage);
+        if (currentPage == 0) {
+            mainList.setAdapter(combinedAdapter);
+        }
     }
 
     @Override
@@ -148,17 +149,7 @@ private ViewPager mViewPager;
 
     public static void notifyLocalAdapter() {
         if (adapter != null) {
-            adapter = new SongAdapter(getContext(), R.layout.songlayout,
-                    playlistHandler.getList(Constants.local).getSongInfo());
-            if (currentPage == Constants.OneStream_Local_Pos)
-            {
-                mainList.setAdapter(adapter);
-                int currentPos = getPlayerHandler().getCurrentSongListPosition();
-                if (currentPos > 0 && currentPos < adapter.getSongs().size())
-                {
-                    mainList.setSelection(currentPos);
-                }
-            }
+            adapter.notifyDataSetChanged();
             mainList.invalidateViews();
         }
     }
@@ -199,7 +190,7 @@ private ViewPager mViewPager;
 
     public static void initPlaylistAdapter(Context context) {
         boolean refreshView = false;
-        if (mainList.getAdapter().equals(playlistAdapter))
+        if (mainList.getAdapter() != null && mainList.getAdapter().equals(playlistAdapter))
         {
             refreshView = true;
         }
@@ -214,18 +205,10 @@ private ViewPager mViewPager;
     }
 
     public static void notifyLibraryAdapter() {
-        combinedAdapter = new SongAdapter(getContext(), R.layout.songlayout,
-                playlistHandler.getList(Constants.library).getSongInfo());
-        if (currentPage == Constants.OneStream_Library_Pos || mainList.getAdapter() == null)
-        {
-                mainList.setAdapter(combinedAdapter);
-                int currentPos = getPlayerHandler().getCurrentSongListPosition();
-                if (currentPos > 0 && currentPos < combinedAdapter.getSongs().size())
-                {
-                    mainList.setSelection(currentPos);
-                }
+        if (combinedAdapter != null) {
+            combinedAdapter.notifyDataSetChanged();
+            mainList.invalidateViews();
         }
-        mainList.invalidateViews();
     }
 
     public boolean onPlaylistPage() {

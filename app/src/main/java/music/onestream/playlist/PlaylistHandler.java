@@ -128,9 +128,16 @@ public class PlaylistHandler implements AsyncResponse {
         if (totalDirectories == -1)
         {
             totalDirectories = 1;
+            for (Song song: listContent.getSongInfo())
+            {
+                combinedList.removeSongItem(song);
+            }
+            listContent.getSongInfo().clear();
         }
-        musicGetterHandler.addLocalMusicGetter(new LocalMusicGetter(dir), dir);
-        musicGetterHandler.initLocalMusicGetter(dir);
+        if (!dir.equals(Constants.defaultDirectory)) {
+            musicGetterHandler.addLocalMusicGetter(new LocalMusicGetter(dir), dir);
+            musicGetterHandler.initLocalMusicGetter(dir);
+        }
     }
 
     public void sortAllLists(String type)
@@ -149,14 +156,12 @@ public class PlaylistHandler implements AsyncResponse {
         if (list.equals(Constants.local) && listContent != null)
         {
             MusicSorter ms = new MusicSorter(listContent.getSongInfo(), type);
-            listContent.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifyLocalAdapter();
         }
         else if (spotifyListContent != null && spotifyListContent.size() > 0
                 && list.equals(Constants.spotify))
         {
             MusicSorter ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
-            spotifyListContent.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifySpotifyAdapter();
         }
 
@@ -164,40 +169,34 @@ public class PlaylistHandler implements AsyncResponse {
                 && list.equals(Constants.soundCloud))
         {
             MusicSorter ms = new MusicSorter(soundCloudListContent.getSongInfo(), type);
-            soundCloudListContent.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifySoundCloudAdapter();
         }
 
         else if (playlists != null && list.equals(Constants.playlists))
         {
             PlaylistSorter ps = new PlaylistSorter(playlists, type);
-            playlists = ps.getSortedArray();
         }
 
         else if (combinedList != null && list.equals(Constants.library))
         {
 
             MusicSorter ms = new MusicSorter(combinedList.getSongInfo(), type);
-            combinedList.setSongInfo(ms.getSortedArray());
             OneStreamActivity.notifyLibraryAdapter();
         }
         else if (artists != null && list.equals(Constants.artists))
         {
             PlaylistSorter ps = new PlaylistSorter(artists, type);
-            artists = ps.getSortedArray();
             OneStreamActivity.notifyArtistsAdapter();
         }
 
         else if (albums != null && list.equals(Constants.albums))
         {
             PlaylistSorter ps = new PlaylistSorter(albums, type);
-            albums = (ps.getSortedArray());
             OneStreamActivity.notifyAlbumsAdapter();
         }
         else if (genres != null && list.equals(Constants.genres))
         {
             PlaylistSorter ps = new PlaylistSorter(genres, type);
-            genres = ps.getSortedArray();
             OneStreamActivity.notifyGenresAdapter();
         }
 
@@ -254,7 +253,8 @@ public class PlaylistHandler implements AsyncResponse {
             for (Song song: listContent.getSongInfo()) {
                 combinedList.removeSongItem(song);
             }
-            listContent.setSongInfo(new ArrayList<Song>());
+            listContent.getSongInfo().clear();
+            totalDirectories = -1;
             getMusicFromDirectory(directory);
             directoryChanged();
         }
@@ -411,21 +411,22 @@ public class PlaylistHandler implements AsyncResponse {
                 ((LocalMusicGetter) musicGetterHandler.getLocalMusicGetter().get(nestedDirectory));
         ArrayList<Song> totalListContent = directoryContent.getSongs();
         listContent.addSongs(totalListContent);
-        combinedList.addSongs(totalListContent);
         OneStreamActivity.notifyLocalAdapter();
+        combinedList.addSongs(totalListContent);
         OneStreamActivity.notifyLibraryAdapter();
 
         totalDirectories += directoryContent.getDirectories().size() - 1;
         for (File file : directoryContent.getDirectories()) {
             getMusicFromDirectory(file.getPath());
         }
+
         if (totalDirectories == 0) {
             sortLists(sortType, Constants.local);
             sortLists(sortType, Constants.library);
             OneStreamActivity.notifyLocalAdapter();
             OneStreamActivity.notifyLibraryAdapter();
             addToArtistsAlbumsGenres(listContent.getSongInfo(), this);
-
+            musicGetterHandler.freeLocalMusicGetters();
         }
     }
     private void processRemoteSongs(Object retVal, String type) {
