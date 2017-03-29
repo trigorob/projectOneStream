@@ -510,6 +510,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
         if (viewingCurrentList())
         {
+            ((SongAdapter) mainList.getAdapter()).setSelected(songIndex);
             mainList.smoothScrollToPosition(songIndex);
             mainList.setItemChecked(songIndex, true);
         }

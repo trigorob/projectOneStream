@@ -303,7 +303,9 @@ private ViewPager mViewPager;
                     startActivityForResult(playlist, 0);
                 }
                 else {
-                    ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
+                    SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
+                    ArrayList<Song> songs = sAdapter.getSongs();
+                    sAdapter.setSelected(position);
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                     playerHandler.setCurrentListSize(songs.size());
                     playerHandler.setCurrentSongListPosition(position);
