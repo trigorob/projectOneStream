@@ -9,8 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import music.onestream.R;
-import music.onestream.activity.LoginActivity;
-import music.onestream.activity.OneStreamActivity;
+import music.onestream.util.Constants;
 
 /**
  * Created by ruspe_000 on 2017-02-21.
@@ -26,8 +25,8 @@ public class OneStreamDomainActivity extends Activity {
         final EditText oneStreamDomain = (EditText) findViewById(R.id.oneStreamDomain);
         Button confirmDomainButton = (Button) findViewById(R.id.confirmDomainButton);
 
-        final SharedPreferences domainSettings = getSharedPreferences("Constants.oneStreamDomain", 0);
-        String oldDomain = domainSettings.getString("domain", "Admin");
+        final SharedPreferences domainSettings = getSharedPreferences(Constants.oneStreamDomainLoc, 0);
+        String oldDomain = domainSettings.getString(Constants.domain, Constants.defaultDomain);
         oneStreamDomain.setText(oldDomain);
 
         confirmDomainButton.setOnClickListener(new View.OnClickListener() {
@@ -35,7 +34,7 @@ public class OneStreamDomainActivity extends Activity {
             public void onClick(View v) {
                 String newDomain = oneStreamDomain.getText().toString();
                 SharedPreferences.Editor editor = domainSettings.edit();
-                editor.putString("domain", newDomain);
+                editor.putString(Constants.domain, newDomain);
                 editor.commit();
 
                 //Clear out old domain playlists

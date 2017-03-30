@@ -1,6 +1,5 @@
 package music.onestream.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,11 +13,12 @@ import music.onestream.util.Constants;
  * Created by ruspe_000 on 2017-02-07.
  */
 
-public class SortingActivity extends Activity {
+public class SortingActivity extends OSActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sorting_activity);
+
 
     final Button sortA = (Button) findViewById(R.id.sortAlphAscend);
     sortA.setOnClickListener(new View.OnClickListener() {

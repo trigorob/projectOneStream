@@ -35,7 +35,7 @@
         <activity
             android:screenOrientation="nosensor"
             android:name=".activity.SortingActivity"
-            android:label="SortingActivity">
+            android:label="Sorting Options">
         </activity>
         <activity
             android:screenOrientation="nosensor"

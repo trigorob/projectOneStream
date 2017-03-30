@@ -2,22 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/textColorPrimary">
+    android:background="@color/colorPrimary">
 
     <LinearLayout
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
     <Button
         android:layout_width="125dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@color/default_color"
         android:layout_height="125dp"
         android:id="@+id/sortAlphDescend"
         android:text="Sort in Descending order (Song)"/>
     <Button
         android:layout_width="125dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@color/default_color"
         android:layout_height="125dp"
         android:id="@+id/sortAlphAscend"
@@ -26,21 +29,23 @@
         <Button
             android:layout_width="125dp"
             android:layout_height="125dp"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@color/default_color"
             android:id="@+id/sortAlphAscendGenre"
             android:text="Sort in Ascending order (Genre)"/>
     </LinearLayout>
 
     <LinearLayout
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="vertical">
 
     <Button
         android:layout_width="125dp"
+        android:layout_marginBottom="20dp"
         android:layout_height="125dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@color/default_color"
         android:id="@+id/sortAlphDescendArtist"
         android:text="Sort in Descending order (Artist)"/>
@@ -48,13 +53,14 @@
     <Button
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@color/default_color"
         android:id="@+id/sortAlphAscendArtist"
         android:text="Sort in Ascending order (Artist)"/>
 
         <Button
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:layout_width="125dp"
             android:textColor="@color/default_color"
             android:layout_height="125dp"
@@ -64,14 +70,16 @@
     </LinearLayout>
 
     <LinearLayout
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:orientation="vertical">
 
     <Button
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@color/default_color"
         android:id="@+id/sortAlphDescendAlbum"
         android:text="Sort in Descending order (Album)"/>
@@ -79,7 +87,8 @@
     <Button
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@color/default_color"
         android:id="@+id/sortAlphAscendAlbum"
         android:text="Sort in Ascending order (Album)"/>
@@ -87,7 +96,7 @@
         <Button
             android:layout_width="125dp"
             android:layout_height="125dp"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@color/default_color"
             android:id="@+id/sortAlphDescendGenre"
             android:text="Sort in Descending order (Genre)"/>
