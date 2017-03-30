@@ -36,7 +36,7 @@ public class SettingsUITests {
         onView(withId(R.id.playlistRecommendationButton)).check(matches(withText("Music Suggestions")));
 
         onView(withId(R.id.storageLocation)).check(matches(isDisplayed()));
-        onView(withId(R.id.storageLocation)).check(matches(withText("Return to OneStream")));
+        onView(withId(R.id.storageLocation)).check(matches(withText("Internal storage")));
 
         onView(withId(R.id.resetDir)).check(matches(isDisplayed()));
         onView(withId(R.id.resetDir)).check(matches(withText("Reset directory")));
@@ -61,32 +61,12 @@ public class SettingsUITests {
 
     }
 
-//    @Test
-//    public void selectChangeLocalDirectoryButton() {
-//
-//        onView(withId(R.id.change_dir)).perform(click());
-//
-//        onView(withText("Select Music Directory")).check(matches(isDisplayed()));
-//        onView(withText("Select")).check(matches(isDisplayed()));
-//        onView(withText("Cancel")).check(matches(isDisplayed()));
-//
-//    }
-
     @Test
     public void selectMusicSuggestionsButton() {
 
         onView(withId(R.id.playlistRecommendationButton)).perform(click());
 
         onView(withId(R.id.appbarPR)).check(matches(isDisplayed()));
-
-    }
-
-    @Test
-    public void selectReturnToOneStreamButton() {
-
-        onView(withId(R.id.storageLocation)).perform(click());
-
-        onView(withText("OneStream")).check(matches(isDisplayed()));
 
     }
 

@@ -133,7 +133,7 @@ public class LocalPlaybackTests {
         onView(withId(R.id.songViewToggleButton)).perform(click());
 
         //Go back to Onestream
-        onView(withId(R.id.storageLocation)).perform(click());
+        pressBack();
 
         //Click Local tab
         onView(allOf(withClassName(endsWith("TabView")),
