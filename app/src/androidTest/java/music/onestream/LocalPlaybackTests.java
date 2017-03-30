@@ -67,14 +67,6 @@ public class LocalPlaybackTests {
                 .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
                 .atPosition(0).check(ViewAssertions.matches(isDisplayed()));
 
-//        onData(anything())
-//                .inAdapterView(anyOf(withId(R.id.listSongName), isCompletelyDisplayed()))
-//                .atPosition(0).check(ViewAssertions.matches(isDisplayed()));
-//
-//        onData(anything())
-//                .inAdapterView(anyOf(withId(R.id.listSongArtistAlbum), isCompletelyDisplayed()))
-//                .atPosition(0).check(ViewAssertions.matches(isDisplayed()));
-
     }
 
     //Make sure song view is disabled
@@ -89,7 +81,6 @@ public class LocalPlaybackTests {
 
         onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
 
-        //onView(withId(R.id.listSongName)).perform(click());
         onData(anything())
                 .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
                 .atPosition(0).perform(click());
@@ -116,7 +107,6 @@ public class LocalPlaybackTests {
 
         onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
 
-        //onView(withId(R.id.listSongName)).perform(click());
         onData(anything())
                 .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
                 .atPosition(0).perform(click());
@@ -157,8 +147,6 @@ public class LocalPlaybackTests {
         )).perform(scrollTo()).perform(click());
 
         onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
-
-        //onView(withId(R.id.listSongName)).perform(click());
 
         onData(anything())
                 .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))

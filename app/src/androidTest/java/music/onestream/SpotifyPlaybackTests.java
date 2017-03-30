@@ -148,8 +148,6 @@ public class SpotifyPlaybackTests {
 
         onView(withText(Constants.OneStream_Spotify)).check(ViewAssertions.matches(isDisplayed()));
 
-        //onView(withId(R.id.listSongName)).perform(click());
-
         onData(anything())
                 .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
                 .atPosition(0).perform(click());
