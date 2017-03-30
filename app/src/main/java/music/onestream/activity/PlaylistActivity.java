@@ -121,11 +121,13 @@ public class PlaylistActivity extends OSAuthenticationActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                ArrayList<Song> songs = ((SongAdapter) mainList.getAdapter()).getSongs();
+                SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
+                ArrayList<Song> songs = sAdapter.getSongs();
+                sAdapter.notifyDataSetChanged();
                 OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                 playerHandler.setCurrentListSize(songs.size());
                 playerHandler.setCurrentSongListPosition(position);
-                playerHandler.playSong(songs.indexOf(mainList.getAdapter().getItem(position)));
+                playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
             }});
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
