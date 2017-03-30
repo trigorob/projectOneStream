@@ -18,7 +18,6 @@
         <ListView
             android:cacheColorHint="@android:color/transparent"
             android:background="@drawable/listbackground"
-            android:listSelector="#E0ECF8"
             android:id="@+id/ListViewPL"
             android:choiceMode="singleChoice"
             android:layout_width="match_parent"

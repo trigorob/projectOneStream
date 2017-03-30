@@ -39,6 +39,10 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
     public void setSelected(Song song) {
         selected = song;
     }
+
+    public Song getSelected() {
+        return selected;
+    }
     public ArrayList<Song> getSongs() {
         return songs;
     }
