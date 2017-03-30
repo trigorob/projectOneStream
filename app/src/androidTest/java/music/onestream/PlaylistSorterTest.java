@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import music.onestream.playlist.Playlist;
+import music.onestream.song.Song;
 import music.onestream.util.PlaylistSorter;
 
 /**
@@ -47,8 +48,8 @@ public class PlaylistSorterTest {
         playlist = new Playlist();
         playlist.setName("TestList");
         playlist.setOwner("TestOwner");
-        playlist2 = new Playlist("OtherList", "OtherOwner", null);
-        playlist3 = new Playlist("Alist", "ATeam", null);
+        playlist2 = new Playlist("OtherList", "OtherOwner", new ArrayList<Song>());
+        playlist3 = new Playlist("Alist", "ATeam",  new ArrayList<Song>());
         playlists = new ArrayList<Playlist>();
         playlists.add(playlist);
         playlists.add(playlist2);

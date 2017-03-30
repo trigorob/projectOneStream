@@ -23,6 +23,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
@@ -36,6 +37,8 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 
 @RunWith(AndroidJUnit4.class)
@@ -60,12 +63,21 @@ public class LocalPlaybackTests {
         onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
 
         //Should just check if it exists do not need to check for exact name
-        onView(withId(R.id.listSongName)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withId(R.id.listSongArtistAlbum)).check(ViewAssertions.matches(isDisplayed()));
+        onData(anything())
+                .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
+                .atPosition(0).check(ViewAssertions.matches(isDisplayed()));
+
+//        onData(anything())
+//                .inAdapterView(anyOf(withId(R.id.listSongName), isCompletelyDisplayed()))
+//                .atPosition(0).check(ViewAssertions.matches(isDisplayed()));
+//
+//        onData(anything())
+//                .inAdapterView(anyOf(withId(R.id.listSongArtistAlbum), isCompletelyDisplayed()))
+//                .atPosition(0).check(ViewAssertions.matches(isDisplayed()));
 
     }
 
-    //Make sure song view is enabled
+    //Make sure song view is disabled
     @Test
     public void playLocalSong() {
 
@@ -77,7 +89,10 @@ public class LocalPlaybackTests {
 
         onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
 
-        onView(withId(R.id.listSongName)).perform(click());
+        //onView(withId(R.id.listSongName)).perform(click());
+        onData(anything())
+                .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
+                .atPosition(0).perform(click());
 
         //Check if play controls are displayed
         onView(withId(R.id.fabIO)).check(ViewAssertions.matches(isDisplayed()));
@@ -86,6 +101,39 @@ public class LocalPlaybackTests {
         onView(withId(R.id.Prev)).check(ViewAssertions.matches(isDisplayed()));
         onView(withId(R.id.Next)).check(ViewAssertions.matches(isDisplayed()));
         onView(withId(R.id.seekBar)).check(ViewAssertions.matches(isDisplayed()));
+
+    }
+
+    //Make sure song view is disabled
+    @Test
+    public void playbackControlsTest() {
+
+        //Click Local tab
+        onView(allOf(withClassName(endsWith("TabView")),
+                withChild(withText(Constants.OneStream_Local)),
+                withParent(withParent(withId(R.id.tabs)))
+        )).perform(scrollTo()).perform(click());
+
+        onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
+
+        //onView(withId(R.id.listSongName)).perform(click());
+        onData(anything())
+                .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
+                .atPosition(0).perform(click());
+
+        onView(withId(R.id.fabIO)).perform(click());
+        onView(withId(R.id.fabIO)).perform(click());
+
+        onView(withId(R.id.Random)).perform(click());
+        onView(withId(R.id.Random)).perform(click());
+
+        onView(withId(R.id.Rewind)).perform(click());
+        onView(withId(R.id.Rewind)).perform(click());
+
+        onView(withId(R.id.Next)).perform(click());
+        onView(withId(R.id.Prev)).perform(click());
+
+        onView(withId(R.id.seekBar)).perform(click());
 
     }
 
@@ -110,7 +158,11 @@ public class LocalPlaybackTests {
 
         onView(withText("Local")).check(ViewAssertions.matches(isDisplayed()));
 
-        onView(withId(R.id.listSongName)).perform(click());
+        //onView(withId(R.id.listSongName)).perform(click());
+
+        onData(anything())
+                .inAdapterView(allOf(withId(R.id.ListView1), isCompletelyDisplayed()))
+                .atPosition(0).perform(click());
 
         //Check if album art, artist name, and album name are displayed in song view
         onView(withId(R.id.album)).check(ViewAssertions.matches(isDisplayed()));
