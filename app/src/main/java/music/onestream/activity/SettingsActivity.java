@@ -25,17 +25,34 @@ public class SettingsActivity extends Activity {
     /**
      * Called when the activity is first created.
      */
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-        final Button back = (Button) findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
+
+        final ToggleButton storageLocation = (ToggleButton) findViewById(R.id.storageLocation);
+        SharedPreferences settings = getSharedPreferences(Constants.dirInfoLoc, 0);
+        if (settings.getBoolean(Constants.useExternalStorage, false))
+        {
+            storageLocation.setChecked(true);
+        }
+
+        storageLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                    Intent back = new Intent(v.getContext(), OneStreamActivity.class);
-                    startActivityForResult(back, 0);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences settings = getSharedPreferences(Constants.dirInfoLoc, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                if (storageLocation.isChecked())
+                {
+                    editor.putBoolean(Constants.useExternalStorage, true);
                 }
-            });
+                else
+                {
+                    editor.putBoolean(Constants.useExternalStorage, false);
+                }
+                editor.commit();
+            }
+        });
 
         final Button playlist = (Button) findViewById(R.id.playlistPage);
         playlist.setOnClickListener(new View.OnClickListener() {
@@ -60,8 +77,8 @@ public class SettingsActivity extends Activity {
         });
 
         final ToggleButton songViewToggle = (ToggleButton) findViewById(R.id.songViewToggleButton);
-        SharedPreferences settings = getSharedPreferences(Constants.songViewLoc, 0);
-        if (settings.getBoolean(Constants.songViewOn, false) == true)
+        settings = getSharedPreferences(Constants.songViewLoc, 0);
+        if (settings.getBoolean(Constants.songViewOn, false))
         {
             songViewToggle.setChecked(true);
         }
@@ -86,7 +103,7 @@ public class SettingsActivity extends Activity {
 
         final ToggleButton cacheSongsToggle = (ToggleButton) findViewById(R.id.cacheSongs);
         settings = getSharedPreferences(Constants.cacheSongsLoc, 0);
-        if (settings.getBoolean(Constants.cacheSongOn, false) == true)
+        if (settings.getBoolean(Constants.cacheSongOn, false))
         {
             songViewToggle.setChecked(true);
         }
@@ -137,14 +154,6 @@ public class SettingsActivity extends Activity {
         TextView directoryTxt = (TextView) findViewById(R.id.dirName);
         directoryTxt.setText(directory);
 
-        final DialogProperties properties=new DialogProperties();
-
-        properties.selection_mode= DialogConfigs.SINGLE_MODE;
-        properties.selection_type=DialogConfigs.FILE_AND_DIR_SELECT;
-        properties.root=new File(DialogConfigs.DEFAULT_DIR);
-        properties.error_dir=new File(DialogConfigs.DEFAULT_DIR);
-        properties.extensions=null;
-
         final Button accountsPage = (Button) findViewById(R.id.accountsPage);
         accountsPage.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -182,11 +191,12 @@ public class SettingsActivity extends Activity {
             }
         });
 
-
         final Button change_dir = (Button) findViewById(R.id.change_dir);
         change_dir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                final DialogProperties properties= getDialogProperties();
                 FilePickerDialog dialog = new FilePickerDialog(v.getContext(), properties);
                 dialog.setTitle("Select Music Directory");
                 dialog.show();
@@ -208,6 +218,38 @@ public class SettingsActivity extends Activity {
                 });
             }
         });
+    }
+
+    private DialogProperties getDialogProperties() {
+        SharedPreferences settings = getSharedPreferences(Constants.dirInfoLoc, 0);
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode= DialogConfigs.SINGLE_MODE;
+        properties.selection_type=DialogConfigs.FILE_AND_DIR_SELECT;
+        properties.error_dir=new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions=null;
+
+        if (settings.getBoolean(Constants.useExternalStorage, false))
+        {
+            File f = new File ("/storage");
+            String[] files = f.list();
+            for (String file: files)
+            {
+                String[] parts = file.toString().split("-");
+                if (parts.length == 2 && parts[0].length() == 4 && parts[1].length() == 4)
+                {
+                    properties.root= new File(f + "/" + file);
+                    return properties;
+                }
+            }
+            properties.root = f;
+
+        }
+        else
+        {
+            properties.root = new File((DialogConfigs.DEFAULT_DIR));
+        }
+
+        return properties;
     }
 
     @Override
