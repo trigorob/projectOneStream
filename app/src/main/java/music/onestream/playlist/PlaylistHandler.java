@@ -25,7 +25,7 @@ import music.onestream.util.MusicSorter;
 import music.onestream.util.PlayerActionsHandler;
 import music.onestream.util.PlaylistSorter;
 import music.onestream.util.RestServiceActionsHandler;
-import music.onestream.util.TinyDB;
+import external.TinyDB;
 
 public class PlaylistHandler implements AsyncResponse {
 
