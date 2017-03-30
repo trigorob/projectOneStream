@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
 
     <EditText
         android:layout_marginTop="40dp"
@@ -11,6 +12,7 @@
         android:ems="10"
         android:id="@+id/oneStreamDomain"
         android:text="@string/default_domain"
+        android:textColor="@color/default_color"
         android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
 
         <Button
@@ -18,6 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/confirmDomainButton"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/textColorPrimary"
             android:layout_below="@id/oneStreamDomain"
             android:layout_marginBottom="40dp"/>
 
@@ -26,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/oneStreamDomainDescription"
+        android:textColor="@color/default_color"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
 </LinearLayout>

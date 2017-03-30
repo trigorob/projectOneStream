@@ -187,6 +187,9 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void initPlayerService() {
         if (!serviceInit) {
+            currentSongPosition = -1;
+            currentSongListPosition = -1;
+
             Intent intent = new Intent(context, OneStreamPlayerService.class);
             intent.setAction(Constants.ACTION_INIT);
             intent.putExtra("currentActivity", parentClass);
@@ -330,12 +333,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mp != null && fromUser && currentSongNotSpotify())
+                if(isPlayerPlaying() && fromUser && currentSongNotSpotify())
                 {
                     currentSongPosition = progress;
                     mp.seekTo(currentSongPosition);
                 }
-                else if (fromUser && currentSongType.equals(Constants.spotify))
+                else if (fromUser && currentSongType.equals(Constants.spotify) && isSpotifyPlaying())
                 {
                     currentSongPosition = progress;
                     spotPlayer.resume(opCallback);
