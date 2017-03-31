@@ -1,6 +1,5 @@
 package music.onestream.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,13 +10,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import music.onestream.playlist.Playlist;
 import music.onestream.R;
+import music.onestream.playlist.Playlist;
 import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 import music.onestream.util.Constants;
@@ -118,6 +116,7 @@ public class AddSongsActivity extends AppCompatActivity {
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if(actionId== EditorInfo.IME_ACTION_DONE){
                         //Clear focus here from edittext
+                        adapter.getFilter().filter(textFilter.getText());
                         textFilter.clearFocus();
                         textFilter.setCursorVisible(false);
                     }

@@ -218,6 +218,18 @@ private ViewPager mViewPager;
                 || currentPage == Constants.OneStream_Genres_Pos);
     }
 
+
+    public void filter(CharSequence cs) {
+        if (mainList.getAdapter() != null) {
+            if (onPlaylistPage()) {
+                ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
+            } else {
+                ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
+            }
+            mainList.invalidateViews();
+        }
+    }
+
     public void initListDisplay() {
 
         adapter = new SongAdapter(this, R.layout.songlayout,
@@ -248,45 +260,6 @@ private ViewPager mViewPager;
 
         mViewPager.setCurrentItem(Constants.OneStream_Library_Pos);
         currentPage = Constants.OneStream_Library_Pos;
-
-        final EditText textFilter = (EditText) findViewById(R.id.songFilter);
-        textFilter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                if (mainList.getAdapter() != null) {
-                    if (onPlaylistPage()) {
-                        ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
-                    } else {
-                        ((SongAdapter) mainList.getAdapter()).getFilter().filter(cs);
-                    }
-                    mainList.invalidateViews();
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
-           });
-
-        textFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textFilter.setCursorVisible(true);
-                textFilter.requestFocus();
-            }
-        });
-
-        textFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId== EditorInfo.IME_ACTION_DONE){
-                    //Clear focus here from edittext
-                    textFilter.clearFocus();
-                    textFilter.setCursorVisible(false);
-                }
-                return false;
-            }
-        });
 
         mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -430,6 +403,39 @@ private ViewPager mViewPager;
             }
         });
 
+
+        final EditText textFilter = (EditText) findViewById(R.id.songFilter);
+        textFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                filter(cs);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+        });
+
+        textFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textFilter.setCursorVisible(true);
+                textFilter.requestFocus();
+            }
+        });
+
+        textFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId== EditorInfo.IME_ACTION_DONE){
+                    filter(textFilter.getText());
+                    textFilter.clearFocus();
+                    textFilter.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
+
         final Handler mHandler = new Handler();
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -491,7 +497,8 @@ private ViewPager mViewPager;
                         mainList.setAdapter(genresAdapter);
                         setLoginButtonVisible(false, loginButton);
                         break;
-                }
+                    }
+                    filter(textFilter.getText());
             }
             @Override
             public void onPageScrollStateChanged(int state) {}

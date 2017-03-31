@@ -69,6 +69,39 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setCurrentItem(0);
 
+        final EditText textFilter = (EditText) findViewById(R.id.songFilterPR);
+        textFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                filter(cs);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+        });
+
+        textFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textFilter.setCursorVisible(true);
+                textFilter.requestFocus();
+            }
+        });
+
+        textFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId== EditorInfo.IME_ACTION_DONE){
+                    //Clear focus here from edittext
+                    filter(textFilter.getText());
+                    textFilter.clearFocus();
+                    textFilter.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
+
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
@@ -97,11 +130,23 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
                         mainList.setAdapter(topAlbumsAdapter);
                         break;
                 }
+                filter(textFilter.getText());
             }
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
 
+    }
+
+    private void filter(CharSequence cs) {
+        if (mainList.getAdapter().equals(adapter)) {
+            adapter.getFilter().filter(cs);
+        }
+        else
+        {
+            ((PlaylistAdapter) mainList.getAdapter()).getFilter().filter(cs);
+        }
+        mainList.invalidateViews();
     }
 
     private void initSongList() {
@@ -157,45 +202,6 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
                     startActivityForResult(playlist, 0);
                 }
             }});
-
-        final EditText textFilter = (EditText) findViewById(R.id.songFilterPR);
-        textFilter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                if (mainList.getAdapter().equals(adapter)) {
-                    adapter.getFilter().filter(cs);
-                }
-                else
-                {
-                    playlistAdapter.getFilter().filter(cs);
-                }
-                mainList.invalidateViews();
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
-        });
-
-        textFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textFilter.setCursorVisible(true);
-                textFilter.requestFocus();
-            }
-        });
-
-        textFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId== EditorInfo.IME_ACTION_DONE){
-                    //Clear focus here from edittext
-                    textFilter.clearFocus();
-                    textFilter.setCursorVisible(false);
-                }
-                return false;
-            }
-        });
     }
 
     public void getTopRecommendations(String type) {
