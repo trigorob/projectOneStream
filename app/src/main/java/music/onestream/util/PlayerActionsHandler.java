@@ -187,8 +187,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void initPlayerService() {
         if (!serviceInit) {
-            currentSongPosition = -1;
-            currentSongListPosition = -1;
+            if (!isPlaying()) {
+                currentSongPosition = -1;
+                currentSongListPosition = -1;
+            }
 
             Intent intent = new Intent(context, OneStreamPlayerService.class);
             intent.setAction(Constants.ACTION_INIT);
