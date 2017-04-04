@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -48,7 +47,6 @@ public class OneStreamActivity extends OSAuthenticationActivity {
     private static int currentPage;
     private static ListView mainList;
 
-    // variable declaration
     private static SongAdapter adapter;
     private static SongAdapter spotifyAdapter;
     private static PlaylistAdapter playlistAdapter;
@@ -58,20 +56,8 @@ public class OneStreamActivity extends OSAuthenticationActivity {
     private static PlaylistAdapter albumsAdapter;
     private static PlaylistAdapter genresAdapter;
 
-/**
- * The {@link android.support.v4.view.PagerAdapter} that will provide
- * fragments for each of the sections. We use a
- * {@link FragmentPagerAdapter} derivative, which will keep every
- * loaded fragment in memory. If this becomes too memory intensive, it
- * may be best to switch to a
- * {@link android.support.v4.app.FragmentStatePagerAdapter}.
- */
-private OneStreamActivityAdapter mSectionsPagerAdapter;
-
-/**
- * The {@link ViewPager} that will host the section contents.
- */
-private ViewPager mViewPager;
+    private OneStreamActivityAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     @Override
     public void onDestroy() {
@@ -81,7 +67,6 @@ private ViewPager mViewPager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -116,9 +101,7 @@ private ViewPager mViewPager;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             Intent settings = new Intent(mViewPager.getContext(), SettingsActivity.class);
@@ -162,13 +145,27 @@ private ViewPager mViewPager;
     public static void notifySpotifyAdapter() {
         if (spotifyAdapter != null) {
             spotifyAdapter.notifyDataSetChanged();
+
+            if (currentPage == Constants.OneStream_Spotify_Pos)
+            {
+                resetFilter(spotifyAdapter);
+            }
         }
     }
 
     public static void notifySoundCloudAdapter() {
         if (soundCloudAdapter != null) {
             soundCloudAdapter.notifyDataSetChanged();
+
+            if (currentPage == Constants.OneStream_SoundCloud_Pos)
+            {
+                resetFilter(soundCloudAdapter);
+            }
         }
+    }
+
+    public static void resetFilter(SongAdapter adapter) {
+        adapter.resetFilter();
     }
 
     public static void notifyArtistsAdapter() {
@@ -337,7 +334,7 @@ private ViewPager mViewPager;
 
         if (sortOnLoad)
         {
-            playlistHandler.sortAllLists(sortType);
+            playlistHandler.sortAllLists();
             editor.putBoolean(Constants.sortOnLoad, false);
             editor.commit();
         }
@@ -539,23 +536,13 @@ private ViewPager mViewPager;
         moveTaskToBack(true);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -569,7 +556,6 @@ private ViewPager mViewPager;
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
 

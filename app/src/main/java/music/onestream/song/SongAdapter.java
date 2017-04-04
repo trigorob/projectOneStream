@@ -25,11 +25,13 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredSongs;
     private Song selected;
+    private CharSequence filterText;
 
         public SongAdapter(Context context, int textViewResourceId, List<Song> songs) {
             super(context, textViewResourceId, songs);
             this.songs = (ArrayList<Song>) songs;
             this.filteredSongs = (ArrayList<Song>) songs;
+            this.filterText = "";
         }
 
     public int getCount() {
@@ -40,15 +42,16 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
         selected = song;
     }
 
-    public Song getSelected() {
-        return selected;
-    }
     public ArrayList<Song> getSongs() {
         return songs;
     }
 
     public ArrayList<Song> getFilteredSongs() {
         return filteredSongs;
+    }
+
+    public void resetFilter() {
+        getFilter().filter(filterText);
     }
 
     public Song getItem(int position) {
@@ -136,6 +139,7 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
 
                 results.count = FilteredSongNames.size();
                 results.values = FilteredSongNames;
+                filterText = constraint;
 
                 return results;
             }

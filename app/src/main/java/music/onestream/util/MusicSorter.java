@@ -12,14 +12,18 @@ import music.onestream.song.Song;
 
 public class MusicSorter {
 
-    ArrayList<Song> Array1;
+    ArrayList<Song> sortedArray;
     String type;
 
     public MusicSorter(ArrayList<Song> listContent, String type) {
-        this.Array1 = listContent;
+        this.sortedArray = listContent;
         this.type = type;
 
-        if (this.Array1 != null) {
+        if (this.type.equals(Constants.defaultSortType)) {
+            this.sortedArray = listContent;
+        }
+
+        else if (this.sortedArray != null) {
             sort();
         }
          else {
@@ -28,19 +32,19 @@ public class MusicSorter {
     }
 
     public ArrayList<Song> getSortedArray() {
-        return Array1;
+        return sortedArray;
     }
 
 
     public void sort() {
 
         ArrayList<compString> metaData = new ArrayList<compString>();
-        for (int i = 0; i < Array1.size(); i++) {
-            metaData.add(new compString(Array1.get(i).getName(), Array1.get(i).getUri(),
-                    Array1.get(i).getArtist(),
-                    Array1.get(i).getAlbum(), Array1.get(i).getType(),
-                    Array1.get(i).getAlbumArt(),
-                    Array1.get(i).getGenre()));
+        for (int i = 0; i < sortedArray.size(); i++) {
+            metaData.add(new compString(sortedArray.get(i).getName(), sortedArray.get(i).getUri(),
+                    sortedArray.get(i).getArtist(),
+                    sortedArray.get(i).getAlbum(), sortedArray.get(i).getType(),
+                    sortedArray.get(i).getAlbumArt(),
+                    sortedArray.get(i).getGenre()));
         }
 
         try {
@@ -51,7 +55,7 @@ public class MusicSorter {
         }
         for (int i = 0; i < metaData.size(); i++) {
             compString comp = metaData.get(i);
-            Array1.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album,
+            sortedArray.set(i, new Song(comp.name, comp.uri, comp.artist, comp.album,
                     comp.type, 1, comp.albArt, comp.genre));
         }
     }

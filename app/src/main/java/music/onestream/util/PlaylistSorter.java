@@ -13,14 +13,18 @@ import music.onestream.song.Song;
 
 public class PlaylistSorter {
 
-    ArrayList<Playlist> Array1;
+    ArrayList<Playlist> sortedArray;
     String type;
 
     public PlaylistSorter(ArrayList<Playlist> listContent, String type) {
-        this.Array1 = listContent;
+        this.sortedArray = listContent;
         this.type = type;
 
-        if (this.Array1 != null) {
+        if (this.type.equals(Constants.defaultSortType)) {
+            this.sortedArray = listContent;
+        }
+
+        if (this.sortedArray != null) {
             sort();
         }
         else {
@@ -29,22 +33,22 @@ public class PlaylistSorter {
     }
 
     public ArrayList<Playlist> getSortedArray() {
-        return Array1;
+        return sortedArray;
     }
 
 
     public void sort() {
 
         ArrayList<playlistComp> metaData = new ArrayList<playlistComp>();
-        for (int i = 0; i < Array1.size(); i++) {
-            metaData.add(new playlistComp(Array1.get(i).getName(), Array1.get(i).getOwner(),
-                    Array1.get(i).getSongInfo()));
+        for (int i = 0; i < sortedArray.size(); i++) {
+            metaData.add(new playlistComp(sortedArray.get(i).getName(), sortedArray.get(i).getOwner(),
+                    sortedArray.get(i).getSongInfo()));
         }
 
         Collections.sort(metaData, new PlaylistComparator(type));
         for (int i = 0; i < metaData.size(); i++) {
             playlistComp playlist = metaData.get(i);
-            Array1.set(i, new Playlist(playlist.name, playlist.owner, playlist.songlist));
+            sortedArray.set(i, new Playlist(playlist.name, playlist.owner, playlist.songlist));
         }
     }
 

@@ -140,66 +140,31 @@ public class PlaylistHandler implements AsyncResponse {
         }
     }
 
-    public void sortAllLists(String type)
+    public void sortAllLists()
     {
-        sortLists(type, Constants.local);
-        sortLists(type, Constants.spotify);
-        sortLists(type, Constants.playlists);
-        sortLists(type, Constants.library);
-        sortLists(type, Constants.albums);
-        sortLists(type, Constants.genres);
-        sortLists(type, Constants.artists);
+        sortPlaylist(listContent);
+        sortPlaylist(spotifyListContent);
+        sortPlaylist(soundCloudListContent);
+        sortPlaylist(combinedList);
+        albums = getSortedPlaylistCollection(albums);
+        genres = getSortedPlaylistCollection(genres);
+        artists = getSortedPlaylistCollection(artists);
+
+        OneStreamActivity.notifyLocalAdapter();
+        OneStreamActivity.notifyLibraryAdapter();
+        OneStreamActivity.notifySoundCloudAdapter();
+        OneStreamActivity.notifyAlbumsAdapter();
+        OneStreamActivity.notifyGenresAdapter();
+        OneStreamActivity.notifyArtistsAdapter();
+        OneStreamActivity.notifySpotifyAdapter();
     }
 
-    public void sortLists(String type, String list) {
+    public ArrayList getSortedPlaylistCollection(ArrayList collection) {
+        return (new PlaylistSorter(collection, sortType)).getSortedArray();
+    }
 
-        if (list.equals(Constants.local) && listContent != null)
-        {
-            MusicSorter ms = new MusicSorter(listContent.getSongInfo(), type);
-            OneStreamActivity.notifyLocalAdapter();
-        }
-        else if (spotifyListContent != null && spotifyListContent.size() > 0
-                && list.equals(Constants.spotify))
-        {
-            MusicSorter ms = new MusicSorter(spotifyListContent.getSongInfo(), type);
-            OneStreamActivity.notifySpotifyAdapter();
-        }
-
-        else if (soundCloudListContent != null && soundCloudListContent.size() > 0
-                && list.equals(Constants.soundCloud))
-        {
-            MusicSorter ms = new MusicSorter(soundCloudListContent.getSongInfo(), type);
-            OneStreamActivity.notifySoundCloudAdapter();
-        }
-
-        else if (playlists != null && list.equals(Constants.playlists))
-        {
-            PlaylistSorter ps = new PlaylistSorter(playlists, type);
-        }
-
-        else if (combinedList != null && list.equals(Constants.library))
-        {
-
-            MusicSorter ms = new MusicSorter(combinedList.getSongInfo(), type);
-            OneStreamActivity.notifyLibraryAdapter();
-        }
-        else if (artists != null && list.equals(Constants.artists))
-        {
-            PlaylistSorter ps = new PlaylistSorter(artists, type);
-            OneStreamActivity.notifyArtistsAdapter();
-        }
-
-        else if (albums != null && list.equals(Constants.albums))
-        {
-            PlaylistSorter ps = new PlaylistSorter(albums, type);
-            OneStreamActivity.notifyAlbumsAdapter();
-        }
-        else if (genres != null && list.equals(Constants.genres))
-        {
-            PlaylistSorter ps = new PlaylistSorter(genres, type);
-            OneStreamActivity.notifyGenresAdapter();
-        }
-
+    public void sortPlaylist(Playlist list) {
+        new MusicSorter(list.getSongInfo(), sortType);
     }
 
     public void getCachedLists() {
@@ -384,7 +349,7 @@ public class PlaylistHandler implements AsyncResponse {
         else if (type.equals(Constants.restServiceActionsHandler))
         {
             playlists = (ArrayList<Playlist>) retVal;
-            sortLists(sortType, Constants.playlists);
+            playlists = getSortedPlaylistCollection(playlists);
             OneStreamActivity.initPlaylistAdapter(context);
             //Ensure playlists are cached regardless of it being enabled
             if (playlists.size() > 0) {
@@ -429,8 +394,8 @@ public class PlaylistHandler implements AsyncResponse {
         }
 
         if (totalDirectories == 0) {
-            sortLists(sortType, Constants.local);
-            sortLists(sortType, Constants.library);
+            sortPlaylist(listContent);
+            sortPlaylist(combinedList);
             OneStreamActivity.notifyLocalAdapter();
             OneStreamActivity.notifyLibraryAdapter();
             addToArtistsAlbumsGenres(listContent.getSongInfo(), this);
@@ -456,9 +421,9 @@ public class PlaylistHandler implements AsyncResponse {
         combinedList.addSongs(songs);
 
         if (songs.size() < 50) {
-            sortLists(sortType, Constants.spotify);
-            sortLists(sortType, Constants.soundCloud);
-            sortLists(sortType, Constants.library);
+            sortPlaylist(spotifyListContent);
+            sortPlaylist(soundCloudListContent);
+            sortPlaylist(combinedList);
             addToArtistsAlbumsGenres(targetList.getSongInfo(), this);
         }
         OneStreamActivity.notifySoundCloudAdapter();
