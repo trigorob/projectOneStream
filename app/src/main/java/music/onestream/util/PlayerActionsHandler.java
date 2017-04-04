@@ -114,7 +114,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         instance.mainList = list;
         instance.seekBar = seekBar;
         instance.parentClass = parentClass;
-        instance.serviceInit = false;
         if (isPlaying())
         {
             instance.fabIO.setImageResource(R.drawable.pause);
@@ -187,11 +186,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void initPlayerService() {
         if (!serviceInit) {
-            if (!isPlaying()) {
-                currentSongPosition = -1;
-                currentSongListPosition = -1;
-            }
-
+            currentSongPosition = -1;
+            currentSongListPosition = -1;
             Intent intent = new Intent(context, OneStreamPlayerService.class);
             intent.setAction(Constants.ACTION_INIT);
             intent.putExtra("currentActivity", parentClass);

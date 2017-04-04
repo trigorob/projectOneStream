@@ -117,8 +117,22 @@ public class JSONExtractor {
                 if ((Boolean) jsonObject.get("streamable")) {
                     String uri = (String) jsonObject.get("stream_url");
                     String name = (String) jsonObject.get("title");
-                    String albumArt = (String) jsonObject.get("artwork_url");
-                    String genre = (String) jsonObject.get("genre");
+                    String albumArt = "";
+                    String genre = "";
+                    try {
+                        albumArt = (String) jsonObject.get("artwork_url");
+                    }
+                    catch (Exception e)
+                    {
+                        albumArt = null;
+                    }
+                    try {
+                        genre = (String) jsonObject.get("genre");
+                    }
+                    catch (Exception e)
+                    {
+                        genre = Constants.defaultArtistsAlbumGenreName;
+                    }
                     Song song = new Song(name, uri, artist, album, Constants.soundCloud, 1, albumArt, genre);
                     tempList.add(song);
                 }
