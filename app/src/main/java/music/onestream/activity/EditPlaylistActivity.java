@@ -249,12 +249,12 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
 
         restActionHandler.execute(params);
 
-        playlist.setName(playlistTitle.getText().toString());
         if (playlists != null)
         {
-            if (playlists.contains(playlist)) {
-                playlists.remove(playlist);
+            if (playlists.contains(oldPlaylist)) {
+                playlists.remove(oldPlaylist);
             }
+            playlist.setName(playlistTitle.getText().toString());
             playlists.add(playlist);
         }
 

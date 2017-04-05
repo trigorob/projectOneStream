@@ -64,6 +64,7 @@ public class LocalMusicGetter extends AsyncTask implements MusicGetter {
                             if (fname != null) {
                                 MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                                 mmr.setDataSource(file.getPath());
+
                                 String artistName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                                 String albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                                 fname = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
