@@ -74,7 +74,6 @@ public class PlaylistUITests {
         //Check if playlist is displayed in list
         onView(withText("Playlists")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText(playlistName)).check(ViewAssertions.matches(isDisplayed()));
-        onView(withText("0 Songs")).check(ViewAssertions.matches(isDisplayed()));
 
         deletePlaylist("TestPlaylist");
 
@@ -183,13 +182,6 @@ public class PlaylistUITests {
                 .atPosition(0).perform(click());
 
         SystemClock.sleep(1000);
-
-//        //Check if album art, artist name, and album name are displayed in song view
-//        onView(withId(R.id.album)).check(ViewAssertions.matches(isDisplayed()));
-//        onView(withId(R.id.artistOrGenreName)).check(ViewAssertions.matches(isDisplayed()));
-//        onView(withId(R.id.albumName)).check(ViewAssertions.matches(isDisplayed()));
-//
-//        pressBack();
 
         deletePlaylist(playlistName);
     }
