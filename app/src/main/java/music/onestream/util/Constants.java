@@ -111,11 +111,11 @@ public class Constants {
     public static int OneStream_Artists_Pos = 5;
     public static String OneStream_Artists = "Artists";
     public static int OneStream_Albums_Pos = 6;
-    public static String OneStream_Albums = "Album";
+    public static String OneStream_Albums = "Albums";
     public static int OneStream_Local_Pos = 1;
     public static String OneStream_Local = "Local";
     public static int OneStream_Genres_Pos = 7;
-    public static String OneStream_Genre = "Genre";
+    public static String OneStream_Genre = "Genres";
 
     /*OneStreamActivity Tabs */
     public static int Recommendations_Songs_Pos = 0;

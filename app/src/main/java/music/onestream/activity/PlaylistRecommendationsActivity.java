@@ -225,6 +225,8 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
     public void processFinish(Object[] result) {
         String type = (String) ((Object[]) result[1])[0];
         ArrayList<Playlist> resultList = (ArrayList<Playlist>) ((Object[]) result[1])[1];
+        Playlist defaultList = new Playlist(Constants.defaultArtistsAlbumGenreName, "",
+                new ArrayList<Song>());
         if (resultList != null && resultList.size() > 0)
         {
             if (type.equals(Constants.getRecommendations)) {
@@ -242,12 +244,14 @@ public class PlaylistRecommendationsActivity extends OSActivity implements Async
             }
             else if (type.equals(Constants.getTopArtists)) {
                 topArtists = resultList;
+                topArtists.remove(defaultList);
                 topArtistsAdapter = new PlaylistAdapter(this, R.layout.songlayout, topArtists);
                 topArtistsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
             }
             else if (type.equals(Constants.getTopAlbums)) {
                 topAlbums = resultList;
+                topAlbums.remove(defaultList);
                 topAlbumsAdapter = new PlaylistAdapter(this, R.layout.songlayout, resultList);
                 topAlbumsAdapter.setNotifyOnChange(true);
                 mainList.invalidateViews();
