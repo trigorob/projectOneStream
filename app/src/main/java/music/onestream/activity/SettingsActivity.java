@@ -105,7 +105,7 @@ public class SettingsActivity extends Activity {
         settings = getSharedPreferences(Constants.cacheSongsLoc, 0);
         if (settings.getBoolean(Constants.cacheSongOn, false))
         {
-            songViewToggle.setChecked(true);
+            cacheSongsToggle.setChecked(true);
         }
 
         cacheSongsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
