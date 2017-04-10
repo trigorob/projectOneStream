@@ -122,7 +122,7 @@ public class PlaylistActivity extends OSAuthenticationActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
                 SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
-                ArrayList<Song> songs = sAdapter.getSongs();
+                ArrayList<Song> songs = sAdapter.getFilteredSongs();
                 sAdapter.notifyDataSetChanged();
                 OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                 playerHandler.setCurrentListSize(songs.size());

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import music.onestream.R;
 import music.onestream.playlist.Playlist;
+import music.onestream.song.Song;
 import music.onestream.song.SongAdapter;
 import music.onestream.util.AsyncResponse;
 import music.onestream.util.Constants;
@@ -34,7 +35,6 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
     private RestServiceActionsHandler restActionHandler;
     private Playlist combinedList;
     private boolean newList = false;
-    private boolean previouslyExisting = false;
     private String domain;
 
     public String getDomain() {
@@ -58,10 +58,15 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
         if (playlist != null && playlist.getName() != null)
         {
             setTitle(playlist.getName());
+            oldPlaylist = (Playlist) getIntent().getSerializableExtra("oldPlaylist");
+            if (oldPlaylist == null) {
+                oldPlaylist = new Playlist(playlist.getName(), playlist.getOwner(), new ArrayList<Song>());
+            }
         }
         else
         {
             setTitle(Constants.defaultPlaylistName);
+            oldPlaylist = null;
         }
         if (tempCombinedList != null)
         {
@@ -72,19 +77,11 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
             combinedList.addSongs(OneStreamActivity.getPlaylistHandler().getList("Library").getSongInfo());
         }
 
-        previouslyExisting = getIntent().getBooleanExtra("previouslyExisting", false);
-
         if (isListInDatabase())
-        {
-            oldPlaylist = new Playlist();
-            oldPlaylist.setSongInfo(playlist.getSongInfo());
-            oldPlaylist.setName(playlist.getName());
-            oldPlaylist.setOwner(playlist.getOwner());
-        }
-        else
         {
             newList = true;
         }
+
         if (playlist == null) {
 
             playlist = new Playlist();
@@ -168,6 +165,7 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
                 Bundle b = new Bundle();
                 b.putSerializable("Playlist", playlist);
                 b.putSerializable("combinedList", combinedList);
+                b.putSerializable("oldPlaylist", oldPlaylist);
                 addSongs.putExtras(b);
                 startActivityForResult(addSongs, 0);
             }
@@ -198,7 +196,7 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
     }
 
     public boolean isListInDatabase() {
-        return (playlist != null && !newList && playlist.getOwner().equals(domain) && previouslyExisting);
+        return (oldPlaylist != null && !oldPlaylist.getOwner().equals(""));
     }
 
     private void handleDelete()
@@ -272,4 +270,5 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
     public void processFinish(Object[] result) {
         return;
     }
+
 }

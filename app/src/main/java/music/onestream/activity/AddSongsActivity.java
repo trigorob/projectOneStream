@@ -54,7 +54,12 @@ public class AddSongsActivity extends AppCompatActivity {
             }
 
             this.oldCombinedList = new Playlist();
-            this.oldPlaylist = new Playlist();
+            this.oldPlaylist = (Playlist) getIntent().getSerializableExtra("oldPlaylist");
+
+            if (oldPlaylist == null)
+            {
+                oldPlaylist = new Playlist();
+            }
 
             for (int i = 0; i < playlist.size(); i++)
             {
@@ -143,6 +148,7 @@ public class AddSongsActivity extends AppCompatActivity {
                     Intent addSongs = new Intent(v.getContext(), EditPlaylistActivity.class);
                     Bundle b = new Bundle();
                     b.putSerializable("Playlist", playlist);
+                    b.putSerializable("oldPlaylist", oldPlaylist);
                     b.putSerializable("combinedList", combinedList);
                     addSongs.putExtras(b);
                     startActivityForResult(addSongs, 0);

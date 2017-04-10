@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -485,7 +486,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
         String type = currentSong.getType();
 
-        if (!this.parentClass.equals(Constants.songActivity) && OneStreamActivity.isSongViewEnabled()) {
+        if (this.parentClass.equals(Constants.songActivity) && OneStreamActivity.shouldUseSongView()) {
 
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
@@ -528,7 +529,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     }
 
     public boolean viewingCurrentList() {
-        return (OneStreamActivity.getPlaylistHandler().getCurrentSongs() != null && ((SongAdapter)mainList.getAdapter()).getSongs()
+        return (OneStreamActivity.getPlaylistHandler().getCurrentSongs() != null &&
+                ((SongAdapter)mainList.getAdapter()).getFilteredSongs()
                 .equals(OneStreamActivity.getPlaylistHandler().getCurrentSongs()));
     }
 
@@ -553,12 +555,14 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void setButtonColors(int filter)
     {
-        if (filter == -1) {
+        if (filter == 0) {
             fabIO.setColorFilter(null);
             prev.setColorFilter(null);
             random.setColorFilter(null);
             next.setColorFilter(null);
             rewind.setColorFilter(null);
+            seekBar.getThumb().setColorFilter(null);
+            seekBar.getProgressDrawable().setColorFilter(null);
         }
         else {
             fabIO.setColorFilter(filter);
@@ -566,6 +570,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             random.setColorFilter(filter);
             next.setColorFilter(filter);
             rewind.setColorFilter(filter);
+            seekBar.getThumb().setColorFilter(filter, PorterDuff.Mode.SRC_ATOP);
+            seekBar.getProgressDrawable().setColorFilter(filter, PorterDuff.Mode.SRC_ATOP);
         }
     }
 
@@ -609,6 +615,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void playSoundCloudSong(Song currentSong) {
         String uri = currentSong.getUri()+ "?client_id=" + Constants.SOUNDCLOUD_CLIENT_ID;
+        currentSongType = Constants.soundCloud;
         mp = initMediaPlayer(mp, uri);
         mp.prepareAsync();
     }
@@ -625,12 +632,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void stopSong() {
 
-        if (currentSongNotSpotify())
+        if (isPlayerPlaying())
         {
             mp.pause();
             currentSongPosition = mp.getCurrentPosition();
         }
-        else if ((currentSongType.equals(Constants.spotify)))
+        else if (isSpotifyPlaying())
         {
             spotPlayer.pause(opCallback);
             currentSongPosition = (int) spotPlayer.getPlaybackState().positionMs;
@@ -814,13 +821,19 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
         if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
-            nextSong();
+            handleNext();
         }
         else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyTrackChanged)) {
             Metadata.Track track = spotPlayer.getMetadata().currentTrack;
             if (track != null)
             {
                 seekBar.setMax ((int) track.durationMs);
+            }
+        }
+        else if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyPlay)) {
+            if (isPlayerPlaying())
+            {
+                mp.stop();
             }
         }
     }
@@ -847,13 +860,18 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             OneStreamActivity.getPlaylistHandler().getList(Constants.spotify).removeSongItem(invalidSong);
             OneStreamActivity.getPlaylistHandler().getList(Constants.library).removeSongItem(invalidSong);
             OneStreamActivity.notifyLibraryAdapter();
+            OneStreamActivity.notifySpotifyAdapter();
         }
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        mp.start();
-        currentSongType = Constants.soundCloud;
+        if (currentSongType.equals(Constants.soundCloud)) {
+            if (isSpotifyPlaying()) {
+                resetPlayers();
+            }
+            mp.start();
+        }
         seekBar.setMax(mp.getDuration());
     }
 }

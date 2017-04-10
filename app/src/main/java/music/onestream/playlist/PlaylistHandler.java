@@ -383,10 +383,12 @@ public class PlaylistHandler implements AsyncResponse {
         LocalMusicGetter directoryContent =
                 ((LocalMusicGetter) musicGetterHandler.getLocalMusicGetter().get(nestedDirectory));
         ArrayList<Song> totalListContent = directoryContent.getSongs();
-        listContent.addSongs(totalListContent);
-        OneStreamActivity.notifyLocalAdapter();
-        combinedList.addSongs(totalListContent);
-        OneStreamActivity.notifyLibraryAdapter();
+        if (totalListContent != null) {
+            listContent.addSongs(totalListContent);
+            OneStreamActivity.notifyLocalAdapter();
+            combinedList.addSongs(totalListContent);
+            OneStreamActivity.notifyLibraryAdapter();
+        }
 
         totalDirectories += directoryContent.getDirectories().size() - 1;
         for (File file : directoryContent.getDirectories()) {
@@ -433,6 +435,13 @@ public class PlaylistHandler implements AsyncResponse {
         if (!nextHref.equals("")) {
             getSoundCloudLibrary(nextHref);
         }
+    }
+
+    public void cacheAll() {
+        cacheResult(Constants.spotifyMusicGetter);
+        cacheResult(Constants.soundCloudMusicGetter);
+        cacheResult(Constants.musicLoaderService);
+        cacheResult(Constants.restServiceActionsHandler);
     }
 
     //Dont calculate artist/albums/genres: Do that at runtime for sanity purposes

@@ -1,6 +1,5 @@
 package music.onestream.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import java.io.File;
 import music.onestream.R;
 import music.onestream.util.Constants;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends OSActivity {
 
     /**
      * Called when the activity is first created.
@@ -96,6 +95,7 @@ public class SettingsActivity extends Activity {
                     {
                         editor.putBoolean(Constants.songViewOn, false);
                     }
+                    OneStreamActivity.setSongViewEnabled(songViewToggle.isChecked());
                     editor.commit();
                 }
             });
@@ -122,6 +122,7 @@ public class SettingsActivity extends Activity {
                     editor.putBoolean(Constants.cacheSongOn, false);
                 }
                 editor.commit();
+                toggleSongCaching();
             }
         });
 
@@ -140,6 +141,7 @@ public class SettingsActivity extends Activity {
                 if (cachePlaylistsToggle.isChecked())
                 {
                     editor.putBoolean(Constants.cachePlaylistsOn, true);
+                    OneStreamActivity.getPlaylistHandler().cacheAll();
                 }
                 else
                 {
@@ -218,6 +220,11 @@ public class SettingsActivity extends Activity {
                 });
             }
         });
+    }
+
+    //Todo: Add soundcloud etc caching later if desired
+    private void toggleSongCaching() {
+        initSpotifyPlayer();
     }
 
     private DialogProperties getDialogProperties() {

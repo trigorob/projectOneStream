@@ -96,6 +96,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
             }
             mainList.setAdapter(combinedAdapter);
             mainList.invalidateViews();
+            mainList.setSelection(playerHandler.getCurrentSongListPosition());
         }
     }
 
@@ -274,7 +275,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                 }
                 else {
                     SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
-                    ArrayList<Song> songs = sAdapter.getSongs();
+                    ArrayList<Song> songs = sAdapter.getFilteredSongs();
                     sAdapter.notifyDataSetChanged();
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
                     playerHandler.setCurrentListSize(songs.size());
@@ -296,15 +297,18 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                 initPlayerHandler(this.getApplicationContext(), Constants.oneStreamActivity,
                         loginButton, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
-        playerHandler.setButtonColors(-1);
+        playerHandler.setButtonColors(0);
     }
 
-    public static boolean isSongViewEnabled() {
+    public static boolean shouldUseSongView() {
         return songViewEnabled;
     }
 
-    public void initPlaylistHandler() {
+    public static void setSongViewEnabled(boolean enabled) {
+        songViewEnabled = enabled;
+    }
 
+    public void initPlaylistHandler() {
         SharedPreferences settings = getSharedPreferences(Constants.songViewLoc, 0);
         songViewEnabled = settings.getBoolean(Constants.songViewOn, false);
         settings = getSharedPreferences(Constants.cachePlaylistsLoc, 0);
@@ -382,13 +386,6 @@ public class OneStreamActivity extends OSAuthenticationActivity {
         return playlistHandler;
     }
 
-    private void resetAdapterSelection() {
-        if (!onPlaylistPage())
-        {
-            ((SongAdapter) mainList.getAdapter()).setSelected(null);
-        }
-    }
-
     public void initButtonListeners() {
 
         final ImageButton loginButton = (ImageButton) findViewById(R.id.loginLauncherLinkerButton);
@@ -440,61 +437,58 @@ public class OneStreamActivity extends OSAuthenticationActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
             @Override
             public void onPageSelected(int position) {
-                resetAdapterSelection();
-                switch (mViewPager.getCurrentItem()) {
-                    case 0:
-                        currentPage = Constants.OneStream_Library_Pos;
-                        mainList.setAdapter(combinedAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 1:
-                        currentPage = Constants.OneStream_Local_Pos;
-                        mainList.setAdapter(adapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 2:
-                        currentPage = Constants.OneStream_Spotify_Pos;
-                        mainList.setAdapter(spotifyAdapter);
-                        if (playerHandler.isSpotifyLoggedOut())
-                        {
-                            setLoginButtonVisible(true, loginButton);
-                        }
-                        else {
+                if (position != currentPage) {
+                    switch (mViewPager.getCurrentItem()) {
+                        case 0:
+                            currentPage = Constants.OneStream_Library_Pos;
+                            mainList.setAdapter(combinedAdapter);
                             setLoginButtonVisible(false, loginButton);
-                        }
-                        break;
-                    case 3:
-                        currentPage = Constants.OneStream_SoundCloud_Pos;
-                        if (playerHandler.isSoundCloudLoggedOut())
-                        {
-                            setLoginButtonVisible(true, loginButton);
-                        }
-                        else {
+                            break;
+                        case 1:
+                            currentPage = Constants.OneStream_Local_Pos;
+                            mainList.setAdapter(adapter);
                             setLoginButtonVisible(false, loginButton);
-                        }
-                        mainList.setAdapter(soundCloudAdapter);
-                        break;
-                    case 4:
-                        currentPage = Constants.OneStream_Playlists_Pos;
-                        mainList.setAdapter(playlistAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 5:
-                        currentPage = Constants.OneStream_Artists_Pos;
-                        mainList.setAdapter(artistsAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 6:
-                        currentPage = Constants.OneStream_Albums_Pos;
-                        mainList.setAdapter(albumsAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
-                    case 7:
-                        currentPage = Constants.OneStream_Genres_Pos;
-                        mainList.setAdapter(genresAdapter);
-                        setLoginButtonVisible(false, loginButton);
-                        break;
+                            break;
+                        case 2:
+                            currentPage = Constants.OneStream_Spotify_Pos;
+                            mainList.setAdapter(spotifyAdapter);
+                            if (playerHandler.isSpotifyLoggedOut()) {
+                                setLoginButtonVisible(true, loginButton);
+                            } else {
+                                setLoginButtonVisible(false, loginButton);
+                            }
+                            break;
+                        case 3:
+                            currentPage = Constants.OneStream_SoundCloud_Pos;
+                            if (playerHandler.isSoundCloudLoggedOut()) {
+                                setLoginButtonVisible(true, loginButton);
+                            } else {
+                                setLoginButtonVisible(false, loginButton);
+                            }
+                            mainList.setAdapter(soundCloudAdapter);
+                            break;
+                        case 4:
+                            currentPage = Constants.OneStream_Playlists_Pos;
+                            mainList.setAdapter(playlistAdapter);
+                            setLoginButtonVisible(false, loginButton);
+                            break;
+                        case 5:
+                            currentPage = Constants.OneStream_Artists_Pos;
+                            mainList.setAdapter(artistsAdapter);
+                            setLoginButtonVisible(false, loginButton);
+                            break;
+                        case 6:
+                            currentPage = Constants.OneStream_Albums_Pos;
+                            mainList.setAdapter(albumsAdapter);
+                            setLoginButtonVisible(false, loginButton);
+                            break;
+                        case 7:
+                            currentPage = Constants.OneStream_Genres_Pos;
+                            mainList.setAdapter(genresAdapter);
+                            setLoginButtonVisible(false, loginButton);
+                            break;
                     }
+                }
                     filter(textFilter.getText());
             }
             @Override
