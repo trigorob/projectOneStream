@@ -71,6 +71,8 @@ public class PlaylistUITests {
                 withParent(withParent(withId(R.id.tabs)))
         )).perform(scrollTo()).perform(click());
 
+        SystemClock.sleep(1000);
+
         //Check if playlist is displayed in list
         onView(withText("Playlists")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText(playlistName)).check(ViewAssertions.matches(isDisplayed()));
@@ -120,6 +122,8 @@ public class PlaylistUITests {
                 withChild(withText(Constants.OneStream_Playlists)),
                 withParent(withParent(withId(R.id.tabs)))
         )).perform(scrollTo()).perform(click());
+
+        SystemClock.sleep(1000);
 
         //Select playlist in playlist list
         onView(withText(playlistName)).perform(click());
@@ -171,6 +175,8 @@ public class PlaylistUITests {
                 withParent(withParent(withId(R.id.tabs)))
         )).perform(scrollTo()).perform(click());
 
+        SystemClock.sleep(1000);
+
         //Select Playlist
         onView(withText(playlistName)).perform(click());
 
@@ -213,6 +219,8 @@ public class PlaylistUITests {
                 withChild(withText(Constants.OneStream_Playlists)),
                 withParent(withParent(withId(R.id.tabs)))
         )).perform(scrollTo()).perform(click());
+
+        SystemClock.sleep(1000);
 
         //Check if playlist is removed from list
         onView(withText(playlistName)).check(doesNotExist());
