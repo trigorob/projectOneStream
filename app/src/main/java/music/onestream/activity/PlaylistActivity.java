@@ -125,7 +125,6 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                 ArrayList<Song> songs = sAdapter.getFilteredSongs();
                 sAdapter.notifyDataSetChanged();
                 OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
-                playerHandler.setCurrentListSize(songs.size());
                 playerHandler.setCurrentSongListPosition(position);
                 playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
             }});

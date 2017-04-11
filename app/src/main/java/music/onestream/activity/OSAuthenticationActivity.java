@@ -67,4 +67,5 @@ public class OSAuthenticationActivity extends OSActivity {
             getLoginHandler().authenticateSoundcloud();
         }
     }
+
 }

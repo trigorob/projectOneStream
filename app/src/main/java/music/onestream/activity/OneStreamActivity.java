@@ -278,7 +278,6 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                     ArrayList<Song> songs = sAdapter.getFilteredSongs();
                     sAdapter.notifyDataSetChanged();
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
-                    playerHandler.setCurrentListSize(songs.size());
                     playerHandler.setCurrentSongListPosition(position);
                     playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
                 }
@@ -504,10 +503,6 @@ public class OneStreamActivity extends OSAuthenticationActivity {
             }
         });
 
-    }
-
-    public static Intent createIntent(Context context) {
-        return new Intent(context, OneStreamActivity.class);
     }
 
     @Override

@@ -116,6 +116,7 @@ public class PlaylistHandler implements AsyncResponse {
 
     public void setCurrentSongs(ArrayList<Song> list) {
         this.currentSongs = list;
+        playerHandler.setCurrentListSize(list.size());
     }
 
     public ArrayList<Song> getCurrentSongs()

@@ -520,7 +520,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     }
 
     public void setListSelection(int songIndex) {
-        ((SongAdapter) mainList.getAdapter()).setSelected(currentSong);
+        SongAdapter sAdapter = ((SongAdapter) mainList.getAdapter());
+        sAdapter.setSelected(currentSong);
         if (mainList.getFirstVisiblePosition() > songIndex
                 || mainList.getLastVisiblePosition() < songIndex) {
             mainList.smoothScrollToPositionFromTop(songIndex, 0, 0);
@@ -530,8 +531,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public boolean viewingCurrentList() {
         return (OneStreamActivity.getPlaylistHandler().getCurrentSongs() != null &&
-                ((SongAdapter)mainList.getAdapter()).getFilteredSongs()
-                .equals(OneStreamActivity.getPlaylistHandler().getCurrentSongs()));
+                OneStreamActivity.getPlaylistHandler().getCurrentSongs().equals
+                        (((SongAdapter)mainList.getAdapter()).getFilteredSongs()));
     }
 
     public void setSongViewDisplay(Song song) {
@@ -622,7 +623,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
     public void playSpotifySong(Song currentSong) {
         spotPlayer.refreshCache();
-        if (!spotPlayer.isLoggedIn())
+        if (isSpotifyLoggedOut())
         {
             spotPlayer.login(CredentialsHandler.getToken(context, Constants.spotify));
         }
@@ -809,9 +810,12 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
     }
     @Override
-    public void onLoggedOut() {}
+    public void onLoggedOut() {
+    }
     @Override
-    public void onLoginFailed(Error error) {}
+    public void onLoginFailed(Error error) {
+
+    }
     @Override
     public void onTemporaryError() {}
     @Override

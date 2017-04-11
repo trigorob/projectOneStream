@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import music.onestream.R;
+import music.onestream.activity.OneStreamActivity;
 import music.onestream.util.Constants;
 
 /**
@@ -104,13 +105,21 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
     @Override
     public Filter getFilter() {
 
-        Filter filter = new Filter() {
+        final Filter filter = new Filter() {
 
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
-                filteredSongs = (ArrayList<Song>) results.values;
+                if (OneStreamActivity.getPlayerHandler().viewingCurrentList()) {
+                    filteredSongs = (ArrayList<Song>) results.values;
+                    OneStreamActivity.getPlaylistHandler().setCurrentSongs(filteredSongs);
+                    OneStreamActivity.getPlayerHandler().setCurrentSongListPosition(filteredSongs.indexOf(selected));
+                }
+                else
+                {
+                    filteredSongs = (ArrayList<Song>) results.values;
+                }
                 notifyDataSetChanged();
             }
 
