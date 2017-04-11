@@ -486,7 +486,13 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
         String type = currentSong.getType();
 
-        if (this.parentClass.equals(Constants.songActivity) && OneStreamActivity.shouldUseSongView()) {
+        if (viewingCurrentList())
+        {
+            setListSelection(songIndex);
+        }
+
+        if (!this.parentClass.equals(Constants.songActivity)
+                && OneStreamActivity.shouldUseSongView()) {
 
             Intent songActivity = new Intent(context, SongActivity.class);
             Bundle b = new Bundle();
@@ -510,10 +516,6 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             playSoundCloudSong(currentSong);
         }
 
-        if (viewingCurrentList())
-        {
-            setListSelection(songIndex);
-        }
         fabIO.setImageResource(R.drawable.pause);
         setSongViewDisplay(currentSong);
         serviceIconPausePlay(true);

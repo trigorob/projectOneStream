@@ -95,7 +95,7 @@ public class SettingsActivity extends OSActivity {
                     {
                         editor.putBoolean(Constants.songViewOn, false);
                     }
-                    OneStreamActivity.setSongViewEnabled(songViewToggle.isChecked());
+                    OneStreamActivity.setSongViewEnabled(true);
                     editor.commit();
                 }
             });
