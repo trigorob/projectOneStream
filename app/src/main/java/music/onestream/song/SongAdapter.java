@@ -114,7 +114,12 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
                 if (OneStreamActivity.getPlayerHandler().viewingCurrentList()) {
                     filteredSongs = (ArrayList<Song>) results.values;
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(filteredSongs);
-                    OneStreamActivity.getPlayerHandler().setCurrentSongListPosition(filteredSongs.indexOf(selected));
+                    int currentPos = filteredSongs.indexOf(selected);
+                    if (currentPos == -1 && filteredSongs.size() > 0)
+                    {
+                        currentPos = 0;
+                    }
+                    OneStreamActivity.getPlayerHandler().setCurrentSongListPosition(currentPos);
                 }
                 else
                 {
