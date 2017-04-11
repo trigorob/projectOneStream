@@ -525,7 +525,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         SongAdapter sAdapter = ((SongAdapter) mainList.getAdapter());
         sAdapter.setSelected(currentSong);
         if (mainList.getFirstVisiblePosition() > songIndex
-                || mainList.getLastVisiblePosition() < songIndex) {
+                || mainList.getLastVisiblePosition()-1 < songIndex) {
             mainList.smoothScrollToPositionFromTop(songIndex, 0, 0);
         }
         mainList.setItemChecked(songIndex, true);

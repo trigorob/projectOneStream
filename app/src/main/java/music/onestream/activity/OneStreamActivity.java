@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -97,8 +98,12 @@ public class OneStreamActivity extends OSAuthenticationActivity {
             mainList.setAdapter(combinedAdapter);
             mainList.invalidateViews();
         }
-        if (mainList.getAdapter() != null) {
+        if (mainList.getAdapter() != null && playerHandler.viewingCurrentList()) {
             mainList.setSelection(playerHandler.getCurrentSongListPosition());
+            if (songViewEnabled && !onPlaylistPage()) {
+                ((SongAdapter) mainList.getAdapter()).setSelected(playerHandler.getCurrentSong());
+            }
+            ((ArrayAdapter) mainList.getAdapter()).notifyDataSetChanged();
         }
     }
 
@@ -278,12 +283,10 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                 else {
                     SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
                     ArrayList<Song> songs = sAdapter.getFilteredSongs();
-                    int currentPos = songs.indexOf(sAdapter.getItem(position));
-                    playerHandler.setCurrentSongListPosition(currentPos);
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
-                    sAdapter.setSelected(songs.get(currentPos));
+                    playerHandler.setCurrentSongListPosition(position);
+                    playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
                     sAdapter.notifyDataSetChanged();
-                    playerHandler.playSong(currentPos);
                 }
             }});
     }
