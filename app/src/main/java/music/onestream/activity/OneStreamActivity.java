@@ -96,6 +96,8 @@ public class OneStreamActivity extends OSAuthenticationActivity {
             }
             mainList.setAdapter(combinedAdapter);
             mainList.invalidateViews();
+        }
+        if (mainList.getAdapter() != null) {
             mainList.setSelection(playerHandler.getCurrentSongListPosition());
         }
     }
@@ -275,11 +277,20 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                 }
                 else {
                     SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
-                    ArrayList<Song> songs = sAdapter.getFilteredSongs();
-                    sAdapter.notifyDataSetChanged();
+                    ArrayList<Song> songs;
+                    if (!shouldUseSongView()) {
+                        songs = sAdapter.getFilteredSongs();
+                    }
+                    else
+                    {
+                        songs = sAdapter.getSongs();
+                    }
+                    int currentPos = songs.indexOf(sAdapter.getItem(position));
+                    playerHandler.setCurrentSongListPosition(currentPos);
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
-                    playerHandler.setCurrentSongListPosition(position);
-                    playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
+                    sAdapter.setSelected(songs.get(currentPos));
+                    sAdapter.notifyDataSetChanged();
+                    playerHandler.playSong(currentPos);
                 }
             }});
     }
@@ -488,7 +499,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                             break;
                     }
                 }
-                    filter(textFilter.getText());
+                filter(textFilter.getText());
             }
             @Override
             public void onPageScrollStateChanged(int state) {}

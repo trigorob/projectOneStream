@@ -123,6 +123,7 @@ public class SongAdapter extends ArrayAdapter<Song> implements Filterable {
                 }
                 else
                 {
+                    setSelected(null);
                     filteredSongs = (ArrayList<Song>) results.values;
                 }
                 notifyDataSetChanged();

@@ -534,7 +534,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
     public boolean viewingCurrentList() {
         return (OneStreamActivity.getPlaylistHandler().getCurrentSongs() != null &&
                 OneStreamActivity.getPlaylistHandler().getCurrentSongs().equals
-                        (((SongAdapter)mainList.getAdapter()).getFilteredSongs()));
+                        (((SongAdapter) mainList.getAdapter()).getFilteredSongs()));
     }
 
     public void setSongViewDisplay(Song song) {
@@ -627,7 +627,10 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         spotPlayer.refreshCache();
         if (isSpotifyLoggedOut())
         {
-            spotPlayer.login(CredentialsHandler.getToken(context, Constants.spotify));
+            String token = CredentialsHandler.getToken(context, Constants.spotify);
+            if (!token.equals(null)) {
+                spotPlayer.login(token);
+            }
         }
         spotPlayer.playUri(opCallback, currentSong.getUri(),0,0);
         currentSongType = Constants.spotify;
