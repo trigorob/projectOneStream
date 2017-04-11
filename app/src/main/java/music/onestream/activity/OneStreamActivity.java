@@ -277,14 +277,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                 }
                 else {
                     SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
-                    ArrayList<Song> songs;
-                    if (!shouldUseSongView()) {
-                        songs = sAdapter.getFilteredSongs();
-                    }
-                    else
-                    {
-                        songs = sAdapter.getSongs();
-                    }
+                    ArrayList<Song> songs = sAdapter.getFilteredSongs();
                     int currentPos = songs.indexOf(sAdapter.getItem(position));
                     playerHandler.setCurrentSongListPosition(currentPos);
                     OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
