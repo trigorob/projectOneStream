@@ -117,7 +117,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         instance.parentClass = parentClass;
         if (isPlaying())
         {
-            instance.fabIO.setImageResource(R.drawable.pause);
+            instance.setIconPlaying(false);
         }
         if (isRandomNext())
         {
@@ -135,6 +135,17 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
         }
 
     }
+
+    public void setIconPlaying(boolean playing) {
+        if (playing)
+        {
+            fabIO.setImageResource(R.drawable.play);
+        }
+        else {
+            fabIO.setImageResource(R.drawable.pause);
+        }
+    }
+
     public boolean currentSongNotSpotify()
     {
         return (currentSongType.equals(Constants.local) ||
@@ -321,7 +332,7 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if (fabIO != null) {
-                    fabIO.setImageResource(R.drawable.pause);
+                    setIconPlaying(false);
                 }
             }
 
@@ -332,12 +343,13 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(isPlayerPlaying() && fromUser && currentSongNotSpotify())
+                if(fromUser && currentSongNotSpotify())
                 {
                     currentSongPosition = progress;
                     mp.seekTo(currentSongPosition);
+                    mp.start();
                 }
-                else if (fromUser && currentSongType.equals(Constants.spotify) && isSpotifyPlaying())
+                else if (fromUser && currentSongType.equals(Constants.spotify))
                 {
                     currentSongPosition = progress;
                     spotPlayer.resume(opCallback);
@@ -491,18 +503,8 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             setListSelection(songIndex);
         }
 
-        if (!this.parentClass.equals(Constants.songActivity)
-                && OneStreamActivity.shouldUseSongView()) {
-
-            Intent songActivity = new Intent(context, SongActivity.class);
-            Bundle b = new Bundle();
-            Playlist p = new Playlist("", "", (OneStreamActivity.getPlaylistHandler().getCurrentSongs()));
-            b.putSerializable("Playlist", p);
-            //Don't use the actual index here, because we might be filtering the list
-            b.putSerializable("songIndex", (p.getSongInfo().indexOf(currentSong)));
-            songActivity.putExtras(b);
-            songActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(songActivity);
+        if (shouldLaunchSongView()) {
+            launchSongView();
             return;
         }
 
@@ -516,9 +518,27 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             playSoundCloudSong(currentSong);
         }
 
-        fabIO.setImageResource(R.drawable.pause);
+        setIconPlaying(false);
         setSongViewDisplay(currentSong);
         serviceIconPausePlay(true);
+    }
+
+    public boolean shouldLaunchSongView() {
+        return !this.parentClass.equals(Constants.songActivity)
+                && OneStreamActivity.shouldUseSongView();
+    }
+
+    public void launchSongView() {
+
+            Intent songActivity = new Intent(context, SongActivity.class);
+            Bundle b = new Bundle();
+            Playlist p = new Playlist("", "", (OneStreamActivity.getPlaylistHandler().getCurrentSongs()));
+            b.putSerializable("Playlist", p);
+            //Don't use the actual index here, because we might be filtering the list
+            b.putSerializable("songIndex", (p.getSongInfo().indexOf(currentSong)));
+            songActivity.putExtras(b);
+            songActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(songActivity);
     }
 
     public void setListSelection(int songIndex) {
@@ -648,30 +668,33 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
             spotPlayer.pause(opCallback);
             currentSongPosition = (int) spotPlayer.getPlaybackState().positionMs;
         }
-        fabIO.setImageResource(R.drawable.play);
+        setIconPlaying(true);
         serviceIconPausePlay(false);
     }
 
     public void resumeSong(int songIndex)
     {
-        if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
+        if (shouldLaunchSongView()) {
+            launchSongView();
+        }
+        else if (currentSongPosition != -1 && songIndex == currentSongListPosition) {
             if (currentSongNotSpotify()) {
                 mp.seekTo(currentSongPosition);
                 mp.start(); // starting mediaplayer
-                fabIO.setImageResource(R.drawable.pause);
+                setIconPlaying(false);
 
             } else if (currentSongType.equals(Constants.spotify)) {
-               spotPlayer.resume(opCallback);
+                spotPlayer.resume(opCallback);
                 spotPlayer.playUri(opCallback, spotPlayer.getMetadata().contextUri, 0, currentSongPosition);
-                fabIO.setImageResource(R.drawable.pause);
-            } else {
-                playSong(songIndex);
+                setIconPlaying(false);
             }
             serviceIconPausePlay(true);
-            if (viewingCurrentList())
-            {
+            if (viewingCurrentList()) {
                 setListSelection(songIndex);
             }
+        }
+        else {
+            playSong(songIndex);
         }
     }
 

@@ -57,8 +57,13 @@ public class SongActivity extends OSActivity {
     protected void onResume() {
         super.onResume();
         initPlayerHandler();
-        if (!playerHandler.isPlaying() && startedSongActivity) {
-            playerHandler.playSong(playerHandler.getCurrentSongListPosition());
+        if (startedSongActivity) {
+            if (!playerHandler.isPlaying()) {
+                playerHandler.playSong(playerHandler.getCurrentSongListPosition());
+            }
+            else {
+                playerHandler.setSongViewDisplay(playerHandler.getCurrentSong());
+            }
             playerHandler.serviceIconPausePlay(true);
             startedSongActivity = false;
         }

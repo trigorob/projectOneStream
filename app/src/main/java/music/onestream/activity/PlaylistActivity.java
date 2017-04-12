@@ -125,10 +125,25 @@ public class PlaylistActivity extends OSAuthenticationActivity {
             {
                 SongAdapter sAdapter = (SongAdapter) mainList.getAdapter();
                 ArrayList<Song> songs = sAdapter.getFilteredSongs();
-                sAdapter.notifyDataSetChanged();
                 OneStreamActivity.getPlaylistHandler().setCurrentSongs(songs);
-                playerHandler.setCurrentSongListPosition(position);
-                playerHandler.playSong(songs.indexOf(sAdapter.getItem(position)));
+                Song prevSong = playerHandler.getCurrentSong();
+                Song currentSong = sAdapter.getItem(position);
+                if (prevSong == null || (!songs.get(position).equals(prevSong))) {
+                    playerHandler.setCurrentSongListPosition(position);
+                    playerHandler.playSong(songs.indexOf(currentSong));
+                }
+                else {
+                    if (!playerHandler.isPlaying()) {
+                        playerHandler.resumeSong(songs.indexOf(currentSong));
+                    }
+                    else {
+                        sAdapter.setSelected(currentSong);
+                        if (playerHandler.shouldLaunchSongView()) {
+                            playerHandler.launchSongView();
+                        }
+                    }
+                }
+                sAdapter.notifyDataSetChanged();
             }});
         loginLauncherLinkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
