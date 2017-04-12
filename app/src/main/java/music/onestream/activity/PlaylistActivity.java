@@ -85,6 +85,7 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                     loginLauncherLinkerButton.setImageResource(R.drawable.soundify);
                     return;
                 }
+                loginLauncherLinkerButton.bringToFront();
             }
             else if (s.getType().equals(Constants.soundCloud) && playerHandler.isSoundCloudLoggedOut())
             {
@@ -98,6 +99,7 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                     loginLauncherLinkerButton.setImageResource(R.drawable.soundify);
                     return;
                 }
+                loginLauncherLinkerButton.bringToFront();
             }
             else {
                 playlistAdapter.add(s);
@@ -192,7 +194,7 @@ public class PlaylistActivity extends OSAuthenticationActivity {
                  initPlayerHandler(this.getApplicationContext(), Constants.playlistActivity,
                          loginButton, fabIO, prev, next, rewind,
                         random, seekbar, mainList);
-        playerHandler.setButtonColors(-1);
+        playerHandler.setButtonColors(0);
     }
 
     @Override

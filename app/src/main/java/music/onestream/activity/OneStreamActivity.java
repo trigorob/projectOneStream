@@ -98,7 +98,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
             mainList.setAdapter(combinedAdapter);
             mainList.invalidateViews();
         }
-        if (mainList.getAdapter() != null && playerHandler.viewingCurrentList()) {
+        if (mainList.getAdapter() != null && !onPlaylistPage() && playerHandler.viewingCurrentList()) {
             mainList.setSelection(playerHandler.getCurrentSongListPosition());
             if (songViewEnabled && !onPlaylistPage()) {
                 ((SongAdapter) mainList.getAdapter()).setSelected(playerHandler.getCurrentSong());
@@ -381,6 +381,7 @@ public class OneStreamActivity extends OSAuthenticationActivity {
                 loginButton.setImageResource(R.drawable.soundcloud);
                 mainList.setVisibility(View.INVISIBLE);
             }
+            loginButton.bringToFront();
         }
         else {
             loginButton.setVisibility(View.INVISIBLE);
