@@ -343,17 +343,16 @@ public class PlayerActionsHandler implements SeekBar.OnSeekBarChangeListener,
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser && currentSongNotSpotify())
-                {
-                    currentSongPosition = progress;
-                    mp.seekTo(currentSongPosition);
-                    mp.start();
-                }
-                else if (fromUser && currentSongType.equals(Constants.spotify))
-                {
-                    currentSongPosition = progress;
-                    spotPlayer.resume(opCallback);
-                    spotPlayer.seekToPosition(opCallback,progress);
+                if (seekBar.getMax() >= 1000) {
+                    if (fromUser && currentSongNotSpotify()) {
+                        currentSongPosition = progress;
+                        mp.seekTo(currentSongPosition);
+                        mp.start();
+                    } else if (fromUser && currentSongType.equals(Constants.spotify)) {
+                        currentSongPosition = progress;
+                        spotPlayer.resume(opCallback);
+                        spotPlayer.seekToPosition(opCallback, progress);
+                    }
                 }
             }
         });
