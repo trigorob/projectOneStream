@@ -202,7 +202,7 @@ public class EditPlaylistActivity extends OSActivity implements AsyncResponse {
     private void handleDelete()
     {
         Object[] params = new Object[2];
-        if (!newList) {
+        if (isListInDatabase()) {
             playlist.setOwner(domain);
             playlist.setName(oldPlaylist.getName());
             params[0] = Constants.deletePlaylist;
